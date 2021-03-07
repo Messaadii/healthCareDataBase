@@ -49,12 +49,8 @@ public class PatientResource {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		patient.setPatientCreationDate(dateFormat.format(cal.getTime()));
-		if(doctorRepository.existsByDoctorUserName(patient.getPatientUserName()) || patientRepository.existsByPatientUserName(patient.getPatientUserName()) || pharmacyRepository.existsByPharmacyUserName(patient.getPatientUserName()))
-			return "userName already exist";
-		else {
-			patientRepository.save(patient);
-			return "patient with name " + patient.getPatientFirstName() + " added";
-		}
+		patientRepository.save(patient);
+		return "userCreated";
 	}
 	@PostMapping(value="/{patientId}/medicalProfile/edit")
 	public MedicalProfile editMedicalProfile(@PathVariable(name="patientId") Integer patientId,@RequestBody final MedicalProfile NewMedicalProfile) {
@@ -70,6 +66,10 @@ public class PatientResource {
 			return "disease added";
 		}else
 		return "there is no patient with id: "+patientId;
+	}
+	@GetMapping(value="/getPatientIdFromUsernameAndPassword/{username}/{password}")
+	public Integer getPatientIdFromUsernameAndPassword(@PathVariable(name="username") String username,@PathVariable(name="password") String password) {
+		return patientRepository.getPatientIdFromUsernameAndPassword(username,password);
 	}
 
 }
