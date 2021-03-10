@@ -1,5 +1,6 @@
 package com.healthCare.healthCareDataBase.Resource;
 
+import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,6 +23,9 @@ import com.healthCare.healthCareDataBase.Repository.MedicalProfileDiseaseReposit
 import com.healthCare.healthCareDataBase.Repository.MedicalProfileRepository;
 import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
+
+import dtos.OneString;
+import dtos.UsernameAndPassDto;
 
 @CrossOrigin
 @RestController
@@ -69,7 +73,46 @@ public class PatientResource {
 	}
 	@GetMapping(value="/getPatientIdFromUsernameAndPassword/{username}/{password}")
 	public Integer getPatientIdFromUsernameAndPassword(@PathVariable(name="username") String username,@PathVariable(name="password") String password) {
-		return patientRepository.getPatientIdFromUsernameAndPassword(username,password);
+		return patientRepository.getPatientIdFromUsernameAndPass(username,password);
 	}
+	
+	@PostMapping(value="/getPatientSecureLoginFromUsernameAndPass")
+	public String getPatientSecureLoginFromUsernameAndPass(@RequestBody final UsernameAndPassDto usernameAndPass) {
+		Integer patientId = patientRepository.getPatientIdFromUsernameAndPass(usernameAndPass.getUsername(),usernameAndPass.getPassword());
+		if (patientId == null)
+			return "invalidInfo";
+		else {
+			String secureLogin=secureString(25);
+			patientRepository.getPatientSecureLoginFromId(patientId, secureLogin);
+			return secureLogin;
+		}
+	}
+	
+	@PostMapping(value="/getPatientInfoFromSecureLogin")
+	public Patient getPatientInfoFromSecureLogin(@RequestBody final OneString secureLogin) {
+		return patientRepository.getPatientInfoFromSecureLogin(secureLogin.getOne());
+	}
+	public String secureString(int len){
+		 String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&é(-/+*)=}@à^ç_è[]{#";
+		 SecureRandom rnd = new SecureRandom();
+		   StringBuilder sb = new StringBuilder(len);
+		   for(int i = 0; i < len; i++)
+		      sb.append(AB.charAt(rnd.nextInt(AB.length())));
+		   return sb.toString();
+		   }
 
+	@PostMapping(value="/updatePatientInfoBySecureLogin")
+	public String updatePatientInfoBySecureLogin(@RequestBody final Patient patient) {
+		if(patientRepository.existsByPatientUserName(patient.getPatientUserName()) || pharmacyRepository.existsByPharmacyUserName(patient.getPatientUserName()) || doctorRepository.existsByDoctorUserName(patient.getPatientUserName())) {
+			if(patientRepository.findUserNameBySecureLogin(patient.getPatientSecureLogin()).equals(patient.getPatientUserName())){ 
+				  patientRepository.updatePatientInfoBySecureLogin(patient.getPatientSecureLogin(),patient.getPatientUserName(), patient.getPatientFirstName(),patient.getPatientLastName(),patient.getPatientCity(),patient.getPatientBirthDay(),patient.getPatientGender(),patient.getPatientPassword());
+				  return "updated";
+				}else
+				  return "usernameExist";
+		}
+		else {
+			patientRepository.updatePatientInfoBySecureLogin(patient.getPatientSecureLogin(),patient.getPatientUserName(), patient.getPatientFirstName(),patient.getPatientLastName(),patient.getPatientCity(),patient.getPatientBirthDay(),patient.getPatientGender(),patient.getPatientPassword());
+			return "updated";
+		}
+	}
 }

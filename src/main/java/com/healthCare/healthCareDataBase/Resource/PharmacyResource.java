@@ -1,5 +1,6 @@
 package com.healthCare.healthCareDataBase.Resource;
 
+import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,6 +19,8 @@ import com.healthCare.healthCareDataBase.Model.Pharmacy;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
 import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
+
+import dtos.UsernameAndPassDto;
 
 @CrossOrigin
 @RestController
@@ -47,6 +50,26 @@ public class PharmacyResource {
 	
 	@GetMapping(value="/getPharmacyIdFromUsernameAndPassword/{username}/{password}")
 	public Integer getPharmacyIdFromUsernameAndPassword(@PathVariable(name="username") String username,@PathVariable(name="password") String password) {
-		return pharmacyRepository.getPharmacyIdFromUsernameAndPassword(username,password);
+		return pharmacyRepository.getPharmacyIdFromUsernameAndPass(username,password);
 	}
+	
+	@PostMapping(value="/getPharmacySecureLoginFromUsernameAndPass")
+	public String getPharmacySecureLoginFromUsernameAndPass(@RequestBody final UsernameAndPassDto usernameAndPass) {
+		Integer pharmacytId = pharmacyRepository.getPharmacyIdFromUsernameAndPass(usernameAndPass.getUsername(),usernameAndPass.getPassword());
+		if (pharmacytId==null)
+			return "invalidInfo";
+		else {
+			String secureLogin=secureString(25);
+			pharmacyRepository.getPharmacySecureLoginFromId(pharmacytId, secureLogin);
+			return secureLogin;
+		}
+	}
+	public String secureString(int len){
+		 String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&é(-/+*)=}@à^ç_è[]{#";
+		 SecureRandom rnd = new SecureRandom();
+		   StringBuilder sb = new StringBuilder(len);
+		   for(int i = 0; i < len; i++)
+		      sb.append(AB.charAt(rnd.nextInt(AB.length())));
+		   return sb.toString();
+		 }
 }

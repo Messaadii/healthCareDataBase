@@ -49,6 +49,9 @@ public class Patient {
 	@Column(name="patientCreationDate")
 	private String patientCreationDate;
 	
+	@Column(name="patientSecureLogin")
+	private String patientSecureLogin;
+	
 	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinColumn(name = "medicalProfileId", referencedColumnName = "medicalProfileId")
 	private MedicalProfile medicalProfile = new MedicalProfile();
@@ -59,6 +62,14 @@ public class Patient {
 	
 	
 	
+	public String getPatientSecureLogin() {
+		return patientSecureLogin;
+	}
+
+	public void setPatientSecureLogin(String patientSecureLogin) {
+		this.patientSecureLogin = patientSecureLogin;
+	}
+
 	public String getPatientCreationDate() {
 		return patientCreationDate;
 	}

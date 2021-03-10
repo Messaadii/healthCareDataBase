@@ -33,7 +33,18 @@ public class Pharmacy {
 	@Column(name="pharmacyCreationDate")
 	private String pharmacyCreationDate;
 	
+	@Column(name="pharmacySecureLogin")
+	private String pharmacySecureLogin;
 	
+	
+	public String getPharmacySecureLogin() {
+		return pharmacySecureLogin;
+	}
+
+	public void setPharmacySecureLogin(String pharmacySecureLogin) {
+		this.pharmacySecureLogin = pharmacySecureLogin;
+	}
+
 	public String getPharmacyCreationDate() {
 		return pharmacyCreationDate;
 	}

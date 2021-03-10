@@ -1,5 +1,6 @@
 package com.healthCare.healthCareDataBase.Resource;
 
+import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -19,6 +20,8 @@ import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
 import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
 import com.healthCare.healthCareDataBase.Repository.SpecialityRepository;
+
+import dtos.UsernameAndPassDto;
 
 @CrossOrigin
 @RestController
@@ -59,9 +62,24 @@ public class DoctorResource {
 		}else
 		    return "there is no speciality with id: " + specialityId;
 	}
-	@GetMapping(value="/getDoctorIdFromUsernameAndPassword/{username}/{password}")
-	public Integer getDoctorIdFromUsernameAndPassword(@PathVariable(name="username") String username,@PathVariable(name="password") String password) {
-		return doctorRepository.getDoctorIdFromUsernameAndPassword(username,password);
+	@PostMapping(value="/getDoctorSecureLoginFromUsernameAndPass")
+	public String getDoctorSecureLoginFromUsernameAndPass(@RequestBody final UsernameAndPassDto usernameAndPass) {
+		Integer docId = doctorRepository.getDoctorIdFromUsernameAndPass(usernameAndPass.getUsername(),usernameAndPass.getPassword());
+		if(docId==null) {
+			return "invalidInfo";
+		}else {
+			String secureLogin=secureString(25);
+			doctorRepository.getDoctorSecureLoginFromId(docId, secureLogin);
+			return secureLogin;
+		}	
 	}
-
+	public String secureString(int len){
+		 String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&é(-/+*)=}@à^ç_è[]{#";
+		 SecureRandom rnd = new SecureRandom();
+		   StringBuilder sb = new StringBuilder(len);
+		   for(int i = 0; i < len; i++)
+		      sb.append(AB.charAt(rnd.nextInt(AB.length())));
+		   return sb.toString();
+		   }
 }
+

@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Model.MedicamentStock;
-import com.healthCare.healthCareDataBase.Model.MedicamentStockModel;
 import com.healthCare.healthCareDataBase.Repository.MedicamentStockRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
+
+import dtos.MedicamentStockDto;
 
 @CrossOrigin
 @RestController
@@ -34,7 +35,7 @@ public class MedicamentStockResource {
 	}
 	
 	@PostMapping(value="/add") 
-	public String add(@RequestBody final MedicamentStockModel medicamentStockModel) {
+	public String add(@RequestBody final MedicamentStockDto medicamentStockModel) {
 		if(pharmacyRepository.existsById(medicamentStockModel.getPharmacyId())) {
 			if(medicamentStockRepository.checkIfStockExist(medicamentStockModel.getMedicamentId(),medicamentStockModel.getPharmacyId())==medicamentStockModel.getMedicamentId()) {
 				Integer newQte=medicamentStockRepository.getStockQte(medicamentStockModel.getMedicamentId(),medicamentStockModel.getPharmacyId()) +medicamentStockModel.getMedicamentStockQte();

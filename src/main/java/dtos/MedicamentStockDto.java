@@ -1,6 +1,6 @@
-package com.healthCare.healthCareDataBase.Model;
+package dtos;
 
-public class MedicamentStockModel {
+public class MedicamentStockDto {
 	private Integer medicamentId,medicamentStockQte,pharmacyId;
 
 	public Integer getMedicamentId() {
