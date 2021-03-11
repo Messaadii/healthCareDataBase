@@ -69,6 +69,9 @@ public class DoctorResource {
 			return "invalidInfo";
 		}else {
 			String secureLogin=secureString(25);
+			while(doctorRepository.existsByDoctorSecureLogin(secureLogin)||patientRepository.existsByPatientSecureLogin(secureLogin)||pharmacyRepository.existsByPharmacySecureLogin(secureLogin)) {
+				secureLogin=secureString(25);
+			}
 			doctorRepository.getDoctorSecureLoginFromId(docId, secureLogin);
 			return secureLogin;
 		}	

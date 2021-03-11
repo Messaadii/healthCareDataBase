@@ -13,6 +13,6 @@ public interface MedicalProfileRepository extends JpaRepository<MedicalProfile, 
 	@Modifying
     @Transactional 
 	@Query(value="update medical_profile mp set mp.height= ?2, mp.weight= ?3 where mp.medical_profile_id = ?1",nativeQuery=true)
-	void editMedicalProfile(Integer patientId, double height, double weight);
+	void updateHeightAndWeightByMedicalProfileId(Integer patientIdFromSecureLogin, double double1, double double12);
 
 }

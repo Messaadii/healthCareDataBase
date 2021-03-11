@@ -60,6 +60,9 @@ public class PharmacyResource {
 			return "invalidInfo";
 		else {
 			String secureLogin=secureString(25);
+			while(doctorRepository.existsByDoctorSecureLogin(secureLogin)||patientRepository.existsByPatientSecureLogin(secureLogin)||pharmacyRepository.existsByPharmacySecureLogin(secureLogin)) {
+				secureLogin=secureString(25);
+			}
 			pharmacyRepository.getPharmacySecureLoginFromId(pharmacytId, secureLogin);
 			return secureLogin;
 		}

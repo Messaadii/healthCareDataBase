@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.healthCare.healthCareDataBase.Model.MedicalProfile;
 import com.healthCare.healthCareDataBase.Model.MedicalProfileDisease;
 import com.healthCare.healthCareDataBase.Model.Patient;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
@@ -25,6 +24,7 @@ import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
 
 import dtos.OneString;
+import dtos.StringAndTowDouble;
 import dtos.UsernameAndPassDto;
 
 @CrossOrigin
@@ -56,11 +56,6 @@ public class PatientResource {
 		patientRepository.save(patient);
 		return "userCreated";
 	}
-	@PostMapping(value="/{patientId}/medicalProfile/edit")
-	public MedicalProfile editMedicalProfile(@PathVariable(name="patientId") Integer patientId,@RequestBody final MedicalProfile NewMedicalProfile) {
-		medicalProfileRepository.editMedicalProfile(patientId, NewMedicalProfile.getHeight(),NewMedicalProfile.getWeight());
-		return null;
-	}
 	@PostMapping(value="/{patientId}/medicalProfile/addDisease")
 	public String addDisease(@PathVariable(name="patientId") Integer patientId ,@RequestBody final MedicalProfileDisease medicalProfileDisease) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -83,6 +78,9 @@ public class PatientResource {
 			return "invalidInfo";
 		else {
 			String secureLogin=secureString(25);
+			while(doctorRepository.existsByDoctorSecureLogin(secureLogin)||patientRepository.existsByPatientSecureLogin(secureLogin)||pharmacyRepository.existsByPharmacySecureLogin(secureLogin)) {
+				secureLogin=secureString(25);
+			}
 			patientRepository.getPatientSecureLoginFromId(patientId, secureLogin);
 			return secureLogin;
 		}
@@ -114,5 +112,11 @@ public class PatientResource {
 			patientRepository.updatePatientInfoBySecureLogin(patient.getPatientSecureLogin(),patient.getPatientUserName(), patient.getPatientFirstName(),patient.getPatientLastName(),patient.getPatientCity(),patient.getPatientBirthDay(),patient.getPatientGender(),patient.getPatientPassword());
 			return "updated";
 		}
+	}
+	
+	@PostMapping(value="/updateMedicalProfileBySecureLogin")
+	public String updateMedicalProfileBySecureLogin(@RequestBody final StringAndTowDouble stringAndTowDouble) {
+		medicalProfileRepository.updateHeightAndWeightByMedicalProfileId(patientRepository.getPatientIdFromSecureLogin(stringAndTowDouble.getString()),stringAndTowDouble.getDouble1(),stringAndTowDouble.getDouble2());
+		return "updated";
 	}
 }

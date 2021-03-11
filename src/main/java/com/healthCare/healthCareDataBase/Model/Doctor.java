@@ -52,8 +52,8 @@ public class Doctor {
 	@Column(name="doctorCreationDate")
 	private String doctorCreationDate;
 	
-	@Column(name="DoctorSecureLogin")
-	private String DoctorSecureLogin;
+	@Column(name="doctorSecureLogin")
+	private String doctorSecureLogin;
 	
 	@ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinTable(name = "doctor_speciality",joinColumns = { @JoinColumn(name = "doctor_id", referencedColumnName = "doctorId") },inverseJoinColumns = { @JoinColumn(name = "speciality_id", referencedColumnName = "specialityId") })
@@ -61,11 +61,11 @@ public class Doctor {
 
 	
 	public String getDoctorSecureLogin() {
-		return DoctorSecureLogin;
+		return doctorSecureLogin;
 	}
 
 	public void setDoctorSecureLogin(String doctorSecureLogin) {
-		DoctorSecureLogin = doctorSecureLogin;
+		this.doctorSecureLogin = doctorSecureLogin;
 	}
 
 	public String getDoctorCreationDate() {

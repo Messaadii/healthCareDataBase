@@ -10,6 +10,7 @@ import com.healthCare.healthCareDataBase.Model.Pharmacy;
 
 public interface PharmacyRepository extends JpaRepository<Pharmacy, Integer>{
 	boolean existsByPharmacyUserName(String userName);
+	boolean existsByPharmacySecureLogin(String secureLogin);
 
 	@Query(value="select p.pharmacy_id from pharmacy p where p.pharmacy_user_name=?1 and p.pharmacy_password=?2",nativeQuery=true)
 	Integer getPharmacyIdFromUsernameAndPass(String username, String password);

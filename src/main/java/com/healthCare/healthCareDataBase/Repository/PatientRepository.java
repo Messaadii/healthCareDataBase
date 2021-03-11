@@ -11,6 +11,7 @@ import com.healthCare.healthCareDataBase.Model.Patient;
 
 public interface PatientRepository extends JpaRepository<Patient, Integer>{
 	boolean existsByPatientUserName(String userName);
+	boolean existsByPatientSecureLogin(String secureLogin);
 	
 	@Query(value="select p.patient_id from patients p where p.patient_user_name=?1 and p.patient_password=?2",nativeQuery=true)
 	Integer getPatientIdFromUsernameAndPass(String username, String password);
@@ -32,6 +33,9 @@ public interface PatientRepository extends JpaRepository<Patient, Integer>{
 
 	@Query(value="select p.patient_user_name from patients p where p.patient_secure_login= ?1",nativeQuery=true)
 	String findUserNameBySecureLogin(String patientSecureLogin);
+	
+	@Query(value="select p.medical_profile_id from patients p where p.patient_secure_login= ?1",nativeQuery=true)
+	Integer getPatientIdFromSecureLogin(String secureLogin);
 
 	
 }

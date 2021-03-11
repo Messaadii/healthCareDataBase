@@ -12,6 +12,7 @@ import com.healthCare.healthCareDataBase.Model.Doctor;
 public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
 
 	boolean existsByDoctorUserName(String userName);
+	boolean existsByDoctorSecureLogin(String secureLogin);
 
 	@Modifying
     @Transactional
