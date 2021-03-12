@@ -55,11 +55,22 @@ public class Doctor {
 	@Column(name="doctorSecureLogin")
 	private String doctorSecureLogin;
 	
+	@Column(name="doctorStatus")
+	private String doctorStatus;
+	
 	@ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinTable(name = "doctor_speciality",joinColumns = { @JoinColumn(name = "doctor_id", referencedColumnName = "doctorId") },inverseJoinColumns = { @JoinColumn(name = "speciality_id", referencedColumnName = "specialityId") })
 	private  List<Speciality> speciality;
 
 	
+	public String getDoctorStatus() {
+		return doctorStatus;
+	}
+
+	public void setDoctorStatus(String doctorStatus) {
+		this.doctorStatus = doctorStatus;
+	}
+
 	public String getDoctorSecureLogin() {
 		return doctorSecureLogin;
 	}

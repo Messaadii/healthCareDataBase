@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Model.Doctor;
+import com.healthCare.healthCareDataBase.Repository.AdminRepository;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
 import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
@@ -37,6 +38,9 @@ public class DoctorResource {
 	@Autowired
 	SpecialityRepository specialityRepository;
 	
+	@Autowired
+	AdminRepository adminRepository;
+	
 	@GetMapping(value="/all")
 	public List<Doctor>getAll(){
 		return doctorRepository.findAll();
@@ -47,6 +51,7 @@ public class DoctorResource {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		doctor.setDoctorCreationDate(dateFormat.format(cal.getTime()));
+		doctor.setDoctorStatus("notApproved");
 		doctorRepository.save(doctor);
 		return"userCreated";
 	}
@@ -69,7 +74,7 @@ public class DoctorResource {
 			return "invalidInfo";
 		}else {
 			String secureLogin=secureString(25);
-			while(doctorRepository.existsByDoctorSecureLogin(secureLogin)||patientRepository.existsByPatientSecureLogin(secureLogin)||pharmacyRepository.existsByPharmacySecureLogin(secureLogin)) {
+			while(doctorRepository.existsByDoctorSecureLogin(secureLogin)||patientRepository.existsByPatientSecureLogin(secureLogin)||pharmacyRepository.existsByPharmacySecureLogin(secureLogin)||adminRepository.existsByAdminSecureLogin(secureLogin)) {
 				secureLogin=secureString(25);
 			}
 			doctorRepository.getDoctorSecureLoginFromId(docId, secureLogin);
@@ -84,5 +89,11 @@ public class DoctorResource {
 		      sb.append(AB.charAt(rnd.nextInt(AB.length())));
 		   return sb.toString();
 		   }
+
+	@GetMapping(value="/getNotApprovedDoctors")
+	public List<Doctor> getNotApprovedDoctors() {
+		return doctorRepository.getNotApprovedDoctors();
+	}
+
 }
 

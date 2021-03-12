@@ -1,6 +1,8 @@
 package com.healthCare.healthCareDataBase.Repository;
 
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +28,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
     @Transactional
 	@Query(value="update doctors d set d.doctor_secure_login= ?2 where d.doctor_id = ?1",nativeQuery=true)
 	void getDoctorSecureLoginFromId(Integer id,String secureString);
+	
+	@Query(value="select * from doctors d where d.doctor_status='notApproved'",nativeQuery=true)
+	List<Doctor> getNotApprovedDoctors();
 }

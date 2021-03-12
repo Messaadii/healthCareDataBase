@@ -36,7 +36,18 @@ public class Pharmacy {
 	@Column(name="pharmacySecureLogin")
 	private String pharmacySecureLogin;
 	
+	@Column(name="pharmacyStatus")
+	private String pharmacyStatus;
 	
+	
+	public String getPharmacyStatus() {
+		return pharmacyStatus;
+	}
+
+	public void setPharmacyStatus(String pharmacyStatus) {
+		this.pharmacyStatus = pharmacyStatus;
+	}
+
 	public String getPharmacySecureLogin() {
 		return pharmacySecureLogin;
 	}

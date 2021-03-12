@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Model.MedicalProfileDisease;
 import com.healthCare.healthCareDataBase.Model.Patient;
+import com.healthCare.healthCareDataBase.Repository.AdminRepository;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
 import com.healthCare.healthCareDataBase.Repository.MedicalProfileDiseaseRepository;
 import com.healthCare.healthCareDataBase.Repository.MedicalProfileRepository;
@@ -42,6 +43,8 @@ public class PatientResource {
 	MedicalProfileRepository medicalProfileRepository;
 	@Autowired
 	MedicalProfileDiseaseRepository medicalProfileDiseaseRepository;
+	@Autowired
+	AdminRepository adminRepository;
 	
 	@GetMapping(value="/all")
 	public List<Patient>getAll(){
@@ -78,7 +81,7 @@ public class PatientResource {
 			return "invalidInfo";
 		else {
 			String secureLogin=secureString(25);
-			while(doctorRepository.existsByDoctorSecureLogin(secureLogin)||patientRepository.existsByPatientSecureLogin(secureLogin)||pharmacyRepository.existsByPharmacySecureLogin(secureLogin)) {
+			while(doctorRepository.existsByDoctorSecureLogin(secureLogin)||patientRepository.existsByPatientSecureLogin(secureLogin)||pharmacyRepository.existsByPharmacySecureLogin(secureLogin)||adminRepository.existsByAdminSecureLogin(secureLogin)) {
 				secureLogin=secureString(25);
 			}
 			patientRepository.getPatientSecureLoginFromId(patientId, secureLogin);
@@ -101,7 +104,7 @@ public class PatientResource {
 
 	@PostMapping(value="/updatePatientInfoBySecureLogin")
 	public String updatePatientInfoBySecureLogin(@RequestBody final Patient patient) {
-		if(patientRepository.existsByPatientUserName(patient.getPatientUserName()) || pharmacyRepository.existsByPharmacyUserName(patient.getPatientUserName()) || doctorRepository.existsByDoctorUserName(patient.getPatientUserName())) {
+		if(patientRepository.existsByPatientUserName(patient.getPatientUserName()) || pharmacyRepository.existsByPharmacyUserName(patient.getPatientUserName()) || doctorRepository.existsByDoctorUserName(patient.getPatientUserName())|| adminRepository.existsByAdminUserName(patient.getPatientUserName())) {
 			if(patientRepository.findUserNameBySecureLogin(patient.getPatientSecureLogin()).equals(patient.getPatientUserName())){ 
 				  patientRepository.updatePatientInfoBySecureLogin(patient.getPatientSecureLogin(),patient.getPatientUserName(), patient.getPatientFirstName(),patient.getPatientLastName(),patient.getPatientCity(),patient.getPatientBirthDay(),patient.getPatientGender(),patient.getPatientPassword());
 				  return "updated";
