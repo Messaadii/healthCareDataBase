@@ -59,6 +59,7 @@ public class PatientResource {
 		patientRepository.save(patient);
 		return "userCreated";
 	}
+	
 	@PostMapping(value="/{patientId}/medicalProfile/addDisease")
 	public String addDisease(@PathVariable(name="patientId") Integer patientId ,@RequestBody final MedicalProfileDisease medicalProfileDisease) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -69,6 +70,7 @@ public class PatientResource {
 		}else
 		return "there is no patient with id: "+patientId;
 	}
+	
 	@GetMapping(value="/getPatientIdFromUsernameAndPassword/{username}/{password}")
 	public Integer getPatientIdFromUsernameAndPassword(@PathVariable(name="username") String username,@PathVariable(name="password") String password) {
 		return patientRepository.getPatientIdFromUsernameAndPass(username,password);
@@ -93,6 +95,7 @@ public class PatientResource {
 	public Patient getPatientInfoFromSecureLogin(@RequestBody final OneString secureLogin) {
 		return patientRepository.getPatientInfoFromSecureLogin(secureLogin.getOne());
 	}
+	
 	public String secureString(int len){
 		 String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&é(-/+*)=}@à^ç_è[]{#";
 		 SecureRandom rnd = new SecureRandom();

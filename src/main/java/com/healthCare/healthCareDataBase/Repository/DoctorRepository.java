@@ -31,4 +31,17 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
 	
 	@Query(value="select * from doctors d where d.doctor_status='notApproved'",nativeQuery=true)
 	List<Doctor> getNotApprovedDoctors();
+	
+	@Query(value="select * from doctors d where d.doctor_secure_login= ?1",nativeQuery=true)
+	Doctor getDoctorInfoFromSecureLogin(String one);
+	
+	@Query(value="select d.doctor_user_name from doctors d where d.doctor_secure_login= ?1",nativeQuery=true)
+	Object findUserNameBySecureLogin(String doctorSecureLogin);
+	
+	@Modifying
+    @Transactional
+	@Query(value="update doctors d set d.doctor_user_name=?2,d.doctor_first_name=?3,d.doctor_last_name=?4,d.doctor_city=?5,d.doctor_Birth_day=?6,d.doctor_gender=?7,d.doctor_password=?8 where d.doctor_secure_login= ?1",nativeQuery=true)
+	void updatePatientInfoBySecureLogin(String doctorSecureLogin, String doctorUserName, String doctorFirstName,
+			String doctorLastName, String doctorCity, String doctorBirthDay, String doctorGender,
+			String doctorPassword);
 }

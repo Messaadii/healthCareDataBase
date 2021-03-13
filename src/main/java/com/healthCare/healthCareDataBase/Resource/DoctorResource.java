@@ -22,6 +22,7 @@ import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
 import com.healthCare.healthCareDataBase.Repository.SpecialityRepository;
 
+import dtos.OneString;
 import dtos.UsernameAndPassDto;
 
 @CrossOrigin
@@ -55,6 +56,7 @@ public class DoctorResource {
 		doctorRepository.save(doctor);
 		return"userCreated";
 	}
+	
 	@PostMapping(value="/{doctorId}/addspeciality")
 	public String addSpeciality(@PathVariable(name="doctorId") Integer doctorId,@RequestBody final Integer specialityId) {
 		if(specialityRepository.existsBySpecialityId(specialityId)) {
@@ -67,6 +69,7 @@ public class DoctorResource {
 		}else
 		    return "there is no speciality with id: " + specialityId;
 	}
+	
 	@PostMapping(value="/getDoctorSecureLoginFromUsernameAndPass")
 	public String getDoctorSecureLoginFromUsernameAndPass(@RequestBody final UsernameAndPassDto usernameAndPass) {
 		Integer docId = doctorRepository.getDoctorIdFromUsernameAndPass(usernameAndPass.getUsername(),usernameAndPass.getPassword());
@@ -81,6 +84,27 @@ public class DoctorResource {
 			return secureLogin;
 		}	
 	}
+	
+	@PostMapping(value="/getDoctorInfoFromSecureLogin")
+	public Doctor getPatientInfoFromSecureLogin(@RequestBody final OneString secureLogin) {
+		return doctorRepository.getDoctorInfoFromSecureLogin(secureLogin.getOne());
+	}
+	
+	@PostMapping(value="/updateDoctorInfoBySecureLogin")
+	public String updateDoctorInfoBySecureLogin(@RequestBody final Doctor doctor) {
+		if(patientRepository.existsByPatientUserName(doctor.getDoctorUserName()) || pharmacyRepository.existsByPharmacyUserName(doctor.getDoctorUserName()) || doctorRepository.existsByDoctorUserName(doctor.getDoctorUserName())|| adminRepository.existsByAdminUserName(doctor.getDoctorUserName())) {
+			if(doctorRepository.findUserNameBySecureLogin(doctor.getDoctorSecureLogin()).equals(doctor.getDoctorUserName())){ 
+				doctorRepository.updatePatientInfoBySecureLogin(doctor.getDoctorSecureLogin(),doctor.getDoctorUserName(), doctor.getDoctorFirstName(),doctor.getDoctorLastName(),doctor.getDoctorCity(),doctor.getDoctorBirthDay(),doctor.getDoctorGender(),doctor.getDoctorPassword());
+				  return "updated";
+				}else
+				  return "usernameExist";
+		}
+		else {
+			doctorRepository.updatePatientInfoBySecureLogin(doctor.getDoctorSecureLogin(),doctor.getDoctorUserName(), doctor.getDoctorFirstName(),doctor.getDoctorLastName(),doctor.getDoctorCity(),doctor.getDoctorBirthDay(),doctor.getDoctorGender(),doctor.getDoctorPassword());
+			return "updated";
+		}
+	}
+	
 	public String secureString(int len){
 		 String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&é(-/+*)=}@à^ç_è[]{#";
 		 SecureRandom rnd = new SecureRandom();

@@ -8,9 +8,6 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,17 +29,17 @@ public class ImageResource {
 	ImageRepository imageRepository;
 
 	@PostMapping("/upload")
-	public BodyBuilder uplaodImage(@RequestParam("imageFile") MultipartFile file) throws IOException {
+	public String uplaodImage(@RequestParam("imageFile") MultipartFile file) throws IOException {
 
 		Image img = new Image(file.getOriginalFilename(), file.getContentType(),
 				compressBytes(file.getBytes()));
 		
 		if(imageRepository.existsByImageName(file.getOriginalFilename())) {
 			imageRepository.UpdateByImageName(img.getImageName(),img.getImageType(),img.getPicByte());
-			return ResponseEntity.status(HttpStatus.OK);
+			return "imageUpdated";
 		}else {
 			imageRepository.save(img);
-			return ResponseEntity.status(HttpStatus.OK);
+			return "imageUpdated";
 		}
 	}
 
