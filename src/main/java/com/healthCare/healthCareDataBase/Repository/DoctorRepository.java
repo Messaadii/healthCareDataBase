@@ -44,4 +44,9 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
 	void updatePatientInfoBySecureLogin(String doctorSecureLogin, String doctorUserName, String doctorFirstName,
 			String doctorLastName, String doctorCity, String doctorBirthDay, String doctorGender,
 			String doctorPassword);
+	
+	@Modifying
+    @Transactional
+	@Query(value="update doctors d set d.doctor_status=?2 where d.doctor_secure_login= ?1",nativeQuery=true)
+	void changeDoctorStatusBySecureId(String stringOne, String stringTwo);
 }

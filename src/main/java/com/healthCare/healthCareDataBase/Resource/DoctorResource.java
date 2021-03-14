@@ -23,6 +23,7 @@ import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
 import com.healthCare.healthCareDataBase.Repository.SpecialityRepository;
 
 import dtos.OneString;
+import dtos.TwoStrings;
 import dtos.UsernameAndPassDto;
 
 @CrossOrigin
@@ -119,5 +120,10 @@ public class DoctorResource {
 		return doctorRepository.getNotApprovedDoctors();
 	}
 
+	@PostMapping(value="changeDoctorStatusBySecureId")
+	public String changeDoctorStatusBySecureId(@RequestBody final TwoStrings twoStrings) {
+		doctorRepository.changeDoctorStatusBySecureId(twoStrings.getStringOne(),twoStrings.getStringTwo());
+		return "doctorStatusUpdated";
+	}
 }
 

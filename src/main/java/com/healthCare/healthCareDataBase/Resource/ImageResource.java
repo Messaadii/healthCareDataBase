@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.healthCare.healthCareDataBase.Model.Image;
 import com.healthCare.healthCareDataBase.Repository.ImageRepository;
+
+import dtos.OneString;
 
 @RestController
 @CrossOrigin
@@ -52,7 +55,11 @@ public class ImageResource {
 		return img;
 	}
 
-	// compress the image bytes before storing it in the database
+	@PostMapping(value="checkIfDocumentExist")
+	public boolean checkIfDocumentExist(@RequestBody final OneString oneString) {
+		return imageRepository.existsByImageName(oneString.getOne());
+	}
+	
 	public static byte[] compressBytes(byte[] data) {
 		Deflater deflater = new Deflater();
 		deflater.setInput(data);
@@ -72,7 +79,6 @@ public class ImageResource {
 		return outputStream.toByteArray();
 	}
 
-	// uncompress the image bytes before returning it to the angular application
 	public static byte[] decompressBytes(byte[] data) {
 		Inflater inflater = new Inflater();
 		inflater.setInput(data);
