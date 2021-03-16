@@ -19,6 +19,8 @@ public interface ImageRepository extends JpaRepository<Image,Long>{
     @Transactional
 	@Query(value="update images i set i.image_name= ?1, i.image_type=?2, i.pic_byte=?3 where i.image_name = ?1",nativeQuery=true)
 	void UpdateByImageName(String imageName, String imageType, byte[] picByte);
+
+	long deleteByImageName(String one);
 	
 	
 }

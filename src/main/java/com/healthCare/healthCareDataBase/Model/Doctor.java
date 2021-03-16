@@ -58,6 +58,18 @@ public class Doctor {
 	@Column(name="doctorStatus")
 	private String doctorStatus;
 	
+	@Column(name="maxPatientPerDay")
+	private String maxPatientPerDay;
+	
+	@Column(name="startTime")
+	private String startTime;
+	
+	@Column(name="exactAdress")
+	private String exactAdress;
+	
+	@Column(name="workDays")
+	private String workDays;
+	
 	@ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinTable(name = "doctor_speciality",joinColumns = { @JoinColumn(name = "doctor_id", referencedColumnName = "doctorId") },inverseJoinColumns = { @JoinColumn(name = "speciality_id", referencedColumnName = "specialityId") })
 	private  List<Speciality> speciality;
@@ -167,12 +179,38 @@ public class Doctor {
 		this.speciality = speciality;
 	}
 
-	
-	
-	
-	
-	
-	
+	public String getMaxPatientPerDay() {
+		return maxPatientPerDay;
+	}
+
+	public void setMaxPatientPerDay(String maxPatientPerDay) {
+		this.maxPatientPerDay = maxPatientPerDay;
+	}
+
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getExactAdress() {
+		return exactAdress;
+	}
+
+	public void setExactAdress(String exactAdress) {
+		this.exactAdress = exactAdress;
+	}
+
+	public String getWorkDays() {
+		return workDays;
+	}
+
+	public void setWorkDays(String workDays) {
+		this.workDays = workDays;
+	}
+
 	
 
 }

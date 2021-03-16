@@ -7,8 +7,11 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,16 +51,24 @@ public class ImageResource {
 
 	@GetMapping(path = { "/get/{imageName}" })
 	public Image getImage(@PathVariable("imageName") String imageName) throws IOException {
-
-		final Optional<Image> retrievedImage = imageRepository.findByImageName(imageName);
-		Image img = new Image(retrievedImage.get().getImageName(), retrievedImage.get().getImageType(),
-				decompressBytes(retrievedImage.get().getPicByte()));
-		return img;
+		if(imageRepository.existsByImageName(imageName)){
+			final Optional<Image> retrievedImage = imageRepository.findByImageName(imageName);
+			Image img = new Image(retrievedImage.get().getImageName(), retrievedImage.get().getImageType(),
+					decompressBytes(retrievedImage.get().getPicByte()));
+			return img;
+		}else
+			return null;
 	}
 
 	@PostMapping(value="checkIfDocumentExist")
 	public boolean checkIfDocumentExist(@RequestBody final OneString oneString) {
 		return imageRepository.existsByImageName(oneString.getOne());
+	}
+	
+	@DeleteMapping(value="deleteByImageName/{imageName}")
+	@Transactional
+	public long deleteByImageName(@PathVariable("imageName") String imageName) {
+		return imageRepository.deleteByImageName(imageName);
 	}
 	
 	public static byte[] compressBytes(byte[] data) {

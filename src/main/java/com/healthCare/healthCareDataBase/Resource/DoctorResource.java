@@ -6,8 +6,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +25,7 @@ import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
 import com.healthCare.healthCareDataBase.Repository.SpecialityRepository;
 
+import dtos.FiveStrings;
 import dtos.OneString;
 import dtos.TwoStrings;
 import dtos.UsernameAndPassDto;
@@ -115,9 +119,9 @@ public class DoctorResource {
 		   return sb.toString();
 		   }
 
-	@GetMapping(value="/getNotApprovedDoctors")
-	public List<Doctor> getNotApprovedDoctors() {
-		return doctorRepository.getNotApprovedDoctors();
+	@GetMapping(value="/getPendingDoctors")
+	public List<Doctor> getPendingDoctors() {
+		return doctorRepository.getPendingDoctors();
 	}
 
 	@PostMapping(value="changeDoctorStatusBySecureId")
@@ -125,5 +129,24 @@ public class DoctorResource {
 		doctorRepository.changeDoctorStatusBySecureId(twoStrings.getStringOne(),twoStrings.getStringTwo());
 		return "doctorStatusUpdated";
 	}
+	
+	@PostMapping(value="changeDoctorStatusById")
+	public String changeDoctorStatusById(@RequestBody final TwoStrings twoStrings) {
+		doctorRepository.changeDoctorStatusById(Integer.parseInt(twoStrings.getStringOne()) ,twoStrings.getStringTwo());
+		return "doctorStatusUpdated";
+	}
+	
+	@PostMapping(value="updateDoctorSettingsBySecurelogin")
+	public String updateDoctorSettingsBySecurelogin(@RequestBody final FiveStrings fiveStrings) {
+		doctorRepository.updateDoctorSettingsBySecurelogin(fiveStrings.getString1(),fiveStrings.getString2(),fiveStrings.getString3(),fiveStrings.getString4(),fiveStrings.getString5());
+		return "updated";
+	}
+	
+	@DeleteMapping(value="deteleDoctorById/{id}")
+	@Transactional
+	public long deteleDoctorById(@PathVariable("id") Integer id) {
+		return doctorRepository.deleteByDoctorId(id);
+	}
+
 }
 

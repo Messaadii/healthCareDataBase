@@ -15,6 +15,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
 
 	boolean existsByDoctorUserName(String userName);
 	boolean existsByDoctorSecureLogin(String secureLogin);
+	long deleteByDoctorId(Integer id);
 
 	@Modifying
     @Transactional
@@ -29,8 +30,8 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
 	@Query(value="update doctors d set d.doctor_secure_login= ?2 where d.doctor_id = ?1",nativeQuery=true)
 	void getDoctorSecureLoginFromId(Integer id,String secureString);
 	
-	@Query(value="select * from doctors d where d.doctor_status='notApproved'",nativeQuery=true)
-	List<Doctor> getNotApprovedDoctors();
+	@Query(value="select * from doctors d where d.doctor_status='pending' or d.doctor_status='reVerify'",nativeQuery=true)
+	List<Doctor> getPendingDoctors();
 	
 	@Query(value="select * from doctors d where d.doctor_secure_login= ?1",nativeQuery=true)
 	Doctor getDoctorInfoFromSecureLogin(String one);
@@ -49,4 +50,14 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
     @Transactional
 	@Query(value="update doctors d set d.doctor_status=?2 where d.doctor_secure_login= ?1",nativeQuery=true)
 	void changeDoctorStatusBySecureId(String stringOne, String stringTwo);
+	
+	@Modifying
+    @Transactional
+	@Query(value="update doctors d set d.doctor_status=?2 where d.doctor_id= ?1",nativeQuery=true)
+	void changeDoctorStatusById(int parseInt, String stringTwo);
+	
+	@Modifying
+    @Transactional
+	@Query(value="update doctors d set d.max_patient_per_day=?2,d.start_time=?3,d.exact_adress=?4,d.work_days=?5 where d.doctor_secure_login= ?1",nativeQuery=true)
+	void updateDoctorSettingsBySecurelogin(String string1, String string2, String string3, String string4, String string5);
 }
