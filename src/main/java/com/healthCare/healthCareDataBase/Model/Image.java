@@ -20,7 +20,7 @@ public class Image {
 	public Image(String name, String type, byte[] picByte) {
 		this.imageName = name;
 		this.imageType = type;
-		this.picByte = picByte;
+		this.picByte=picByte;
 	}
 
 	@Id
@@ -35,9 +35,7 @@ public class Image {
 	@Column(name = "imageType")
 	private String imageType;
 
-    //image bytes can have large lengths so we specify a value
-    //which is more than the default length for picByte column
-	@Column(name = "picByte", length = 1000)
+	@Column(name = "picByte")
 	private byte[] picByte;
 
 	public Long getImageId() {

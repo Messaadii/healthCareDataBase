@@ -59,7 +59,8 @@ public class Patient {
 	@OneToMany(targetEntity=Prescription.class, mappedBy="patientId",cascade=CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Prescription> Prescription;
 
-	
+	@OneToMany(targetEntity=Appointment.class, mappedBy="patientId",cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Appointment> appointment;
 	
 	
 	public String getPatientSecureLogin() {
@@ -157,9 +158,14 @@ public class Patient {
 	public void setMedicalProfile(MedicalProfile medicalProfile) {
 		this.medicalProfile = medicalProfile;
 	}
-	
-	
-	
-	
 
+	public List<Appointment> getAppointment() {
+		return appointment;
+	}
+
+	public void setAppointment(List<Appointment> appointment) {
+		this.appointment = appointment;
+	}
+	
+	
 }

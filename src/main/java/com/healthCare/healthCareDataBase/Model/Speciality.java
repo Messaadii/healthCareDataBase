@@ -18,11 +18,11 @@ public class Speciality {
 	@Column(name="specialityId")
 	private Integer specialityId;
 	
+	@Column(name="specialityCode")
+	private String specialityCode;
+	
 	@Column(name="specialityName")
 	private String specialityName;
-	
-	@Column(name="specialityDescription")
-	private String specialityDescription;
 
 	public Integer getSpecialityId() {
 		return specialityId;
@@ -40,12 +40,14 @@ public class Speciality {
 		this.specialityName = specialityName;
 	}
 
-	public String getSpecialityDescription() {
-		return specialityDescription;
+	public String getSpecialityCode() {
+		return specialityCode;
 	}
 
-	public void setSpecialityDescription(String specialityDescription) {
-		this.specialityDescription = specialityDescription;
+	public void setSpecialityCode(String specialityCode) {
+		this.specialityCode = specialityCode;
 	}
+	
+	
 	
 }

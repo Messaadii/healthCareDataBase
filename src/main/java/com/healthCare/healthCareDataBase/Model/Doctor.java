@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -73,8 +74,10 @@ public class Doctor {
 	@ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinTable(name = "doctor_speciality",joinColumns = { @JoinColumn(name = "doctor_id", referencedColumnName = "doctorId") },inverseJoinColumns = { @JoinColumn(name = "speciality_id", referencedColumnName = "specialityId") })
 	private  List<Speciality> speciality;
-
 	
+	@OneToMany(targetEntity=Appointment.class, mappedBy="doctorId",cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Appointment> appointment;
+
 	public String getDoctorStatus() {
 		return doctorStatus;
 	}
@@ -211,6 +214,12 @@ public class Doctor {
 		this.workDays = workDays;
 	}
 
-	
+	public List<Appointment> getAppointment() {
+		return appointment;
+	}
+
+	public void setAppointment(List<Appointment> appointment) {
+		this.appointment = appointment;
+	}
 
 }

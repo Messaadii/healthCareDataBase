@@ -25,8 +25,11 @@ import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
 import com.healthCare.healthCareDataBase.Repository.SpecialityRepository;
 
+import dtos.AppointmentDocInfo;
 import dtos.FiveStrings;
+import dtos.GetApprovedDoctors;
 import dtos.OneString;
+import dtos.IntegerAndString;
 import dtos.TwoStrings;
 import dtos.UsernameAndPassDto;
 
@@ -62,17 +65,15 @@ public class DoctorResource {
 		return"userCreated";
 	}
 	
-	@PostMapping(value="/{doctorId}/addspeciality")
-	public String addSpeciality(@PathVariable(name="doctorId") Integer doctorId,@RequestBody final Integer specialityId) {
-		if(specialityRepository.existsBySpecialityId(specialityId)) {
-			if(specialityRepository.checkIfDoctorAlreadyHaveTheSpeciality(doctorId,specialityId)==doctorId)
-				return "doctor already have this speciality";
-			else {
-				specialityRepository.addSpecialityToDoctor(doctorId,specialityId);
-				return "speciality with id " +specialityId+" added to doctor: " +doctorId;
-			}
-		}else
-		    return "there is no speciality with id: " + specialityId;
+	@PostMapping(value="/addspeciality")
+	public String addSpeciality(@RequestBody final IntegerAndString integerAndString) {
+		Integer specId = specialityRepository.getSpecialityIdBySpecialityCode(integerAndString.getString());
+		if(specialityRepository.checkIfDoctorAlreadyHaveTheSpeciality(integerAndString.getInteger(),specId)==integerAndString.getInteger())
+			return "doctorAlreadyHaveSpeciality";
+		else {
+			specialityRepository.addSpecialityToDoctor(integerAndString.getInteger(),specId);
+			return "specialityAdded";
+		}
 	}
 	
 	@PostMapping(value="/getDoctorSecureLoginFromUsernameAndPass")
@@ -147,6 +148,15 @@ public class DoctorResource {
 	public long deteleDoctorById(@PathVariable("id") Integer id) {
 		return doctorRepository.deleteByDoctorId(id);
 	}
-
+	
+	@GetMapping(value="/getApprovedDoctorsBySpecialityId/{specialityId}")
+	public List<GetApprovedDoctors> getApprovedDoctorsBySpecialityId(@PathVariable("specialityId") Integer specialityId) {
+		return doctorRepository.getApprovedDoctorsBySpecialityId(specialityId);
+	}
+	
+	@GetMapping(value="getDoctorAppointmentInfoByDoctorId/{id}")
+	public AppointmentDocInfo getDoctorAppointmentInfoByDoctorId(@PathVariable("id") Integer id) {
+		return doctorRepository.getDoctorAppointmentInfoByDoctorId(id);
+	}
 }
 

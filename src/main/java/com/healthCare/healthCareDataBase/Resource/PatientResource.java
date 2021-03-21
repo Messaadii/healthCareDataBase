@@ -125,4 +125,5 @@ public class PatientResource {
 		medicalProfileRepository.updateHeightAndWeightByMedicalProfileId(patientRepository.getPatientIdFromSecureLogin(stringAndTowDouble.getString()),stringAndTowDouble.getDouble1(),stringAndTowDouble.getDouble2());
 		return "updated";
 	}
+	
 }

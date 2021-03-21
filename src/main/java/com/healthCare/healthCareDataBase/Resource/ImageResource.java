@@ -37,6 +37,7 @@ public class ImageResource {
 	@PostMapping("/upload")
 	public String uplaodImage(@RequestParam("imageFile") MultipartFile file) throws IOException {
 
+		
 		Image img = new Image(file.getOriginalFilename(), file.getContentType(),
 				compressBytes(file.getBytes()));
 		
@@ -75,9 +76,8 @@ public class ImageResource {
 		Deflater deflater = new Deflater();
 		deflater.setInput(data);
 		deflater.finish();
-
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-		byte[] buffer = new byte[1024];
+		byte[] buffer = new byte[data.length];
 		while (!deflater.finished()) {
 			int count = deflater.deflate(buffer);
 			outputStream.write(buffer, 0, count);

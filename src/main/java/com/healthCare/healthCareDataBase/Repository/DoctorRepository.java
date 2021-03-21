@@ -11,6 +11,9 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.healthCare.healthCareDataBase.Model.Doctor;
 
+import dtos.AppointmentDocInfo;
+import dtos.GetApprovedDoctors;
+
 public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
 
 	boolean existsByDoctorUserName(String userName);
@@ -60,4 +63,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
     @Transactional
 	@Query(value="update doctors d set d.max_patient_per_day=?2,d.start_time=?3,d.exact_adress=?4,d.work_days=?5 where d.doctor_secure_login= ?1",nativeQuery=true)
 	void updateDoctorSettingsBySecurelogin(String string1, String string2, String string3, String string4, String string5);
+	
+	@Query(value="select d.doctor_id, d.doctor_first_name, d.doctor_last_name, d.doctor_city, d.doctor_gender, d.doctor_rate, d.exact_adress, d.work_days, d.max_patient_per_day from doctors d INNER JOIN doctor_speciality ds ON d.doctor_id = ds.doctor_id WHERE ds.speciality_id = ?1 and d.doctor_status = 'approved'",nativeQuery=true)
+	List<GetApprovedDoctors> getApprovedDoctorsBySpecialityId(Integer specialityId);
+	
+	@Query(value="select d.doctor_first_name, d.doctor_last_name, d.doctor_city, d.doctor_gender, d.doctor_rate, d.exact_adress, d.work_days, d.max_patient_per_day , s.speciality_code from doctors d,speciality s, doctor_speciality ds WHERE d.doctor_id = ?1 and ds.doctor_id=?1 and ds.speciality_id = s.speciality_id",nativeQuery=true)
+	AppointmentDocInfo getDoctorAppointmentInfoByDoctorId(Integer id);
 }

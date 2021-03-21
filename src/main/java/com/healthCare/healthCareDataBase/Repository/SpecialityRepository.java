@@ -21,4 +21,15 @@ public interface SpecialityRepository extends JpaRepository <Speciality, Integer
 	@Query(value="select d.doctor_id from doctor_speciality d where d.doctor_id=?1 and d.speciality_id=?2",nativeQuery=true)
 	Integer checkIfDoctorAlreadyHaveTheSpeciality(Integer doctorId, Integer specialityId);
 	
+	@Query(value="select s.speciality_id from speciality s where s.speciality_code=?1",nativeQuery=true)
+	Integer getSpecialityIdBySpecialityCode(String specialityCode);
+	
+	@Modifying
+    @Transactional
+	@Query(value="DELETE FROM doctor_speciality ds WHERE ds.doctor_id=?1",nativeQuery=true)
+	void deleteByDocorId(Integer doctorId);
+	
+	@Query(value="select s.speciality_code from speciality s, doctor_speciality ds where ds.doctor_id=?1 and ds.speciality_id = s.speciality_id",nativeQuery=true)
+	Integer getSpecialityCodeByDoctorId(Integer doctorId);
+	
 }
