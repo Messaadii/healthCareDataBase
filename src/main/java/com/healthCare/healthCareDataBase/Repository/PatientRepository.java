@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.healthCare.healthCareDataBase.Model.Patient;
 
+import dtos.AppointmentPatientInfo;
+
 
 public interface PatientRepository extends JpaRepository<Patient, Integer>{
 	boolean existsByPatientUserName(String userName);
@@ -37,5 +39,7 @@ public interface PatientRepository extends JpaRepository<Patient, Integer>{
 	@Query(value="select p.medical_profile_id from patients p where p.patient_secure_login= ?1",nativeQuery=true)
 	Integer getPatientIdFromSecureLogin(String secureLogin);
 
+	@Query(value="select p.medical_profile_id, p.patient_first_name, p.patient_last_name, p.patient_birth_day, p.patient_gender, p.patient_city from patients p where p.patient_id= ?1",nativeQuery=true)
+	AppointmentPatientInfo getAppPatientInfoById(Integer patientId);
 	
 }

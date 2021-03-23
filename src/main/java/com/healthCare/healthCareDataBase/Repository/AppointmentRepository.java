@@ -13,7 +13,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
 	@Query(value = "SELECT count(a.doctor_id) FROM appointment a where a.doctor_id=?1 and a.appointment_date=?2",nativeQuery=true)
 	public Integer appointmentsCountByDoctorIdAndDate(Integer id,String date);
 	
-	@Query(value = "SELECT count(a.doctor_id) FROM appointment a where a.doctor_id=?1 and a.patient_id=?2 and a.appointment_status='pending'",nativeQuery=true)
+	@Query(value = "SELECT count(a.doctor_id) FROM appointment a where a.doctor_id=?1 and a.patient_id=?2",nativeQuery=true)
 	public Integer checkIfAppointmentAlreadyTaken(Integer doctorId,Integer patientId);
 
 	@Modifying

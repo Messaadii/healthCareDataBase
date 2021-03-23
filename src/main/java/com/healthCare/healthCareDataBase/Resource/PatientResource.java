@@ -24,6 +24,7 @@ import com.healthCare.healthCareDataBase.Repository.MedicalProfileRepository;
 import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
 
+import dtos.AppointmentPatientInfo;
 import dtos.OneString;
 import dtos.StringAndTowDouble;
 import dtos.UsernameAndPassDto;
@@ -124,6 +125,11 @@ public class PatientResource {
 	public String updateMedicalProfileBySecureLogin(@RequestBody final StringAndTowDouble stringAndTowDouble) {
 		medicalProfileRepository.updateHeightAndWeightByMedicalProfileId(patientRepository.getPatientIdFromSecureLogin(stringAndTowDouble.getString()),stringAndTowDouble.getDouble1(),stringAndTowDouble.getDouble2());
 		return "updated";
+	}
+	
+	@GetMapping(value="/getAppPatientInfoById/{id}")
+	public AppointmentPatientInfo getAppPatientInfoById(@PathVariable(name="id") Integer id) {
+		return patientRepository.getAppPatientInfoById(id);
 	}
 	
 }
