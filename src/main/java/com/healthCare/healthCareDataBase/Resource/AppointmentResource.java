@@ -1,6 +1,7 @@
 package com.healthCare.healthCareDataBase.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,8 @@ public class AppointmentResource {
 	
 	@Autowired
 	AppointmentRepository appointmentRepository;
-	
+
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping(value="/add") 
 	public String add(@RequestBody final Appointment appointment) {
 		if(appointmentRepository.checkIfAppointmentAlreadyTaken(appointment.getDoctorId(), appointment.getPatientId()) > 0)
