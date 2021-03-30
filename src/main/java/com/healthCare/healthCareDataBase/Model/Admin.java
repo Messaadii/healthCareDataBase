@@ -1,58 +1,29 @@
 package com.healthCare.healthCareDataBase.Model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.Set;
 
-import org.hibernate.annotations.GenericGenerator;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="admins")
-public class Admin {
-	@Id
-	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
-	@GenericGenerator(name = "native",strategy = "native")
-	@Column(name="adminId")
-	private Integer adminId;
+@DiscriminatorValue("admin")
+public class Admin extends User{
 	
-	@Column(name="adminUserName")
-	private String adminUserName;
 	
+	
+	public Admin(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 120) String password, String city,
+			Set<Role> roles, String creationDate, String adminFullName) {
+		super(username, password, city, roles, creationDate);
+		this.adminFullName = adminFullName;
+	}
+
 	@Column(name="adminFullName")
 	private String adminFullName;
-	
-	@Column(name="adminSecureLogin")
-	private String adminSecureLogin;
-	
-	@Column(name="adminPassword")
-	private String adminPassword;
-	
-	public String getAdminSecureLogin() {
-		return adminSecureLogin;
-	}
-
-	public void setAdminSecureLogin(String adminSecureLogin) {
-		this.adminSecureLogin = adminSecureLogin;
-	}
-
-	public String getAdminUserName() {
-		return adminUserName;
-	}
-
-	public void setAdminUserName(String adminUserName) {
-		this.adminUserName = adminUserName;
-	}
-
-	public Integer getAdminId() {
-		return adminId;
-	}
-
-	public void setAdminId(Integer adminId) {
-		this.adminId = adminId;
-	}
 
 	public String getAdminFullName() {
 		return adminFullName;
@@ -62,14 +33,8 @@ public class Admin {
 		this.adminFullName = adminFullName;
 	}
 
-	public String getAdminPassword() {
-		return adminPassword;
+	public Admin() {
+		super();
 	}
-
-	public void setAdminPassword(String adminPassword) {
-		this.adminPassword = adminPassword;
-	}
-	
-	
 	
 }

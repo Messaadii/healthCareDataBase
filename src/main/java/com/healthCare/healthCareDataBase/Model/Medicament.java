@@ -16,7 +16,7 @@ public class Medicament {
 	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
 	@GenericGenerator(name = "native",strategy = "native")
 	@Column(name="medicamentId")
-	private Integer medicamentId;
+	private Long medicamentId;
 	
 	@Column(name="medicamentName")
 	private String medicamentName;
@@ -27,11 +27,11 @@ public class Medicament {
 	@Column(name="medicamentDescription")
 	private String medicamentDescription;
 
-	public Integer getMedicamentId() {
+	public Long getMedicamentId() {
 		return medicamentId;
 	}
 
-	public void setMedicamentId(Integer medicamentId) {
+	public void setMedicamentId(Long medicamentId) {
 		this.medicamentId = medicamentId;
 	}
 

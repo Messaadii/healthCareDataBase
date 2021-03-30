@@ -16,7 +16,7 @@ public class Disease {
 	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
 	@GenericGenerator(name = "native",strategy = "native")
 	@Column(name="diseaseId")
-	private Integer diseaseId;
+	private Long diseaseId;
 	
 	@Column(name="diseaseName")
 	private String diseaseName;

@@ -1,45 +1,41 @@
 package com.healthCare.healthCareDataBase.Model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.Set;
 
-import org.hibernate.annotations.GenericGenerator;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
-@Table (name="pharmacy")
-public class Pharmacy {
-	@Id
-	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
-	@GenericGenerator(name = "native",strategy = "native")
-	@Column(name="pharmacyId")
-	private Integer pharmacyId;
-	
-	@Column(name="pharmacyUserName")
-	private String pharmacyUserName;
-	
-	@Column(name="pharmacyName")
-	private String pharmacyName;
+@Table (name="pharmacies")
+@DiscriminatorValue("pharmacy")
+public class Pharmacy extends User{
 
-	@Column(name="pharmacyCity")
-	private String pharmacyCity;
+	public Pharmacy(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 120) String password, String city,
+			Set<Role> roles, String creationDate,String pharmacyFullName, String pharmacyStatus) {
+		super(username, password, city, roles, creationDate);
+		this.pharmacyFullName=pharmacyFullName;
+		this.pharmacyStatus = pharmacyStatus;
+	}
 	
-	@Column(name="pharmacyPassword")
-	private String pharmacyPassword;
+	@Column(name="pharmacyFullName")
+	private String pharmacyFullName;
 
-	@Column(name="pharmacyCreationDate")
-	private String pharmacyCreationDate;
-	
-	@Column(name="pharmacySecureLogin")
-	private String pharmacySecureLogin;
-	
 	@Column(name="pharmacyStatus")
 	private String pharmacyStatus;
 	
 	
+	public String getPharmacyFullName() {
+		return pharmacyFullName;
+	}
+
+	public void setPharmacyFullName(String pharmacyFullName) {
+		this.pharmacyFullName = pharmacyFullName;
+	}
+
 	public String getPharmacyStatus() {
 		return pharmacyStatus;
 	}
@@ -47,64 +43,4 @@ public class Pharmacy {
 	public void setPharmacyStatus(String pharmacyStatus) {
 		this.pharmacyStatus = pharmacyStatus;
 	}
-
-	public String getPharmacySecureLogin() {
-		return pharmacySecureLogin;
-	}
-
-	public void setPharmacySecureLogin(String pharmacySecureLogin) {
-		this.pharmacySecureLogin = pharmacySecureLogin;
-	}
-
-	public String getPharmacyCreationDate() {
-		return pharmacyCreationDate;
-	}
-
-	public void setPharmacyCreationDate(String pharmacyCreationDate) {
-		this.pharmacyCreationDate = pharmacyCreationDate;
-	}
-
-	public Integer getPharmacyId() {
-		return pharmacyId;
-	}
-
-	public void setPharmacyId(Integer pharmacyId) {
-		this.pharmacyId = pharmacyId;
-	}
-
-	public String getPharmacyUserName() {
-		return pharmacyUserName;
-	}
-
-	public void setPharmacyUserName(String pharmacyUserName) {
-		this.pharmacyUserName = pharmacyUserName;
-	}
-
-	public String getPharmacyName() {
-		return pharmacyName;
-	}
-
-	public void setPharmacyName(String pharmacyName) {
-		this.pharmacyName = pharmacyName;
-	}
-
-	public String getPharmacyCity() {
-		return pharmacyCity;
-	}
-
-	public void setPharmacyCity(String pharmacyCity) {
-		this.pharmacyCity = pharmacyCity;
-	}
-
-	public String getPharmacyPassword() {
-		return pharmacyPassword;
-	}
-
-	public void setPharmacyPassword(String pharmacyPassword) {
-		this.pharmacyPassword = pharmacyPassword;
-	}
-
-	
-	
-
 }

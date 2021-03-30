@@ -20,14 +20,14 @@ public class MedicamentStock {
 	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
 	@GenericGenerator(name = "native",strategy = "native")
 	@Column(name="medicamentStockId")
-	private Integer medicamentStockId;
+	private Long medicamentStockId;
 	
 	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinColumn(name = "medicamentId", referencedColumnName = "medicamentId")
 	private Medicament medicamentId;
 	
 	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-	@JoinColumn(name = "pharmacyId", referencedColumnName = "pharmacyId")
+	@JoinColumn(name = "pharmacyId", referencedColumnName = "user_id")
 	private Pharmacy pharmacyId;
 	
 	@Column(name="medicamentStockQte")
@@ -37,11 +37,11 @@ public class MedicamentStock {
 	private String  medicamentStockAddDate;
 	
 
-	public Integer getMedicamentStockId() {
+	public Long getMedicamentStockId() {
 		return medicamentStockId;
 	}
 
-	public void setMedicamentStockId(Integer medicamentStockId) {
+	public void setMedicamentStockId(Long medicamentStockId) {
 		this.medicamentStockId = medicamentStockId;
 	}
 

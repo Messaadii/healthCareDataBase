@@ -23,7 +23,7 @@ public class MedicalProfile {
 	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
 	@GenericGenerator(name = "native",strategy = "native")
 	@Column(name="medicalProfileId")
-	private Integer medicalProfileId;
+	private Long medicalProfileId;
 	
 	@Column(name="weight")
 	private double weight;
@@ -34,11 +34,11 @@ public class MedicalProfile {
 	@OneToMany(targetEntity=MedicalProfileDisease.class, mappedBy="medicalProfileId",cascade=CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MedicalProfileDisease> medicalProfileDisease=new ArrayList<>();
 
-	public Integer getMedicalProfileId() {
+	public Long getMedicalProfileId() {
 		return medicalProfileId;
 	}
 
-	public void setMedicalProfileId(Integer medicalProfileId) {
+	public void setMedicalProfileId(Long medicalProfileId) {
 		this.medicalProfileId = medicalProfileId;
 	}
 

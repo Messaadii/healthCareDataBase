@@ -1,32 +1,28 @@
 package com.healthCare.healthCareDataBase.Model;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.GenericGenerator;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
-@Table (name="patients")
-public class Patient {
-	@Id
-	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
-	@GenericGenerator(name = "native",strategy = "native")
-	@Column(name="patientId")
-	private Integer patientId;
+@Table(name="patients")
+@DiscriminatorValue("patient")
+public class Patient extends User{
 	
-	@Column(name="patientUserName")
-	private String patientUserName;
+	
+	
 	
 	@Column(name="patientFirstName")
 	private String patientFirstName;
@@ -34,27 +30,15 @@ public class Patient {
 	@Column(name="patientLastName")
 	private String patientLastName;
 	
-	@Column(name="patientCity")
-	private String patientCity;
-	
-	@Column(name="patientPassword")
-	private String patientPassword;
-	
 	@Column(name="patientBirthDay")
 	private String patientBirthDay;
 	
 	@Column(name="patientGender")
 	private String patientGender;
 	
-	@Column(name="patientCreationDate")
-	private String patientCreationDate;
-	
-	@Column(name="patientSecureLogin")
-	private String patientSecureLogin;
-	
 	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinColumn(name = "medicalProfileId", referencedColumnName = "medicalProfileId")
-	private MedicalProfile medicalProfile = new MedicalProfile();
+	private MedicalProfile medicalProfile;
 	
 	@OneToMany(targetEntity=Prescription.class, mappedBy="patientId",cascade=CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Prescription> Prescription;
@@ -62,22 +46,28 @@ public class Patient {
 	@OneToMany(targetEntity=Appointment.class, mappedBy="patientId",cascade=CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Appointment> appointment;
 	
+	public Patient(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 120) String password, String city,
+			Set<Role> roles, String creationDate, String patientFirstName, String patientLastName,
+			String patientBirthDay, String patientGender) {
+		super(username, password, city, roles, creationDate);
+		this.patientFirstName = patientFirstName;
+		this.patientLastName = patientLastName;
+		this.patientBirthDay = patientBirthDay;
+		this.patientGender = patientGender;
+		this.medicalProfile = new MedicalProfile();
+		this.Prescription = new ArrayList<Prescription>();
+		this.appointment = new ArrayList<Appointment>();
+	}
+
+	public Patient(@NotBlank @Size(max = 20) String userUsername, @NotBlank @Size(max = 120) String userPassword,
+			@NotBlank @Size(max = 15) String userCity, Set<Role> roles,
+			@NotBlank @Size(max = 15) String userCreationDate) {
+		super(userUsername, userPassword, userCity, roles, userCreationDate);
+	}
 	
-	public String getPatientSecureLogin() {
-		return patientSecureLogin;
-	}
-
-	public void setPatientSecureLogin(String patientSecureLogin) {
-		this.patientSecureLogin = patientSecureLogin;
-	}
-
-	public String getPatientCreationDate() {
-		return patientCreationDate;
-	}
-
-	public void setPatientCreationDate(String patientCreationDate) {
-		this.patientCreationDate = patientCreationDate;
-	}
+	public Patient(){
+		   super();
+		}
 
 	public String getPatientGender() {
 		return patientGender;
@@ -103,22 +93,6 @@ public class Patient {
 		Prescription = prescription;
 	}
 
-	public Integer getPatientId() {
-		return patientId;
-	}
-
-	public void setPatientId(Integer patientId) {
-		this.patientId = patientId;
-	}
-
-	public String getPatientUserName() {
-		return patientUserName;
-	}
-
-	public void setPatientUserName(String patientUserName) {
-		this.patientUserName = patientUserName;
-	}
-
 	public String getPatientFirstName() {
 		return patientFirstName;
 	}
@@ -133,22 +107,6 @@ public class Patient {
 
 	public void setPatientLastName(String patientLastName) {
 		this.patientLastName = patientLastName;
-	}
-
-	public String getPatientCity() {
-		return patientCity;
-	}
-
-	public void setPatientCity(String patientCity) {
-		this.patientCity = patientCity;
-	}
-
-	public String getPatientPassword() {
-		return patientPassword;
-	}
-
-	public void setPatientPassword(String patientPassword) {
-		this.patientPassword = patientPassword;
 	}
 
 	public MedicalProfile getMedicalProfile() {
@@ -166,6 +124,9 @@ public class Patient {
 	public void setAppointment(List<Appointment> appointment) {
 		this.appointment = appointment;
 	}
+
+	
+
 	
 	
 }

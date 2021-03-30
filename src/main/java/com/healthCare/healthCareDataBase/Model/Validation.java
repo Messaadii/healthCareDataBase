@@ -16,7 +16,7 @@ public class Validation {
 	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
 	@GenericGenerator(name = "native",strategy = "native")
 	@Column(name="validationId")
-	private Integer validationId;
+	private Long validationId;
 	
 	@Column(name="validationDate")
 	private String validationDate;

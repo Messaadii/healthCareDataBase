@@ -1,5 +1,7 @@
 package com.healthCare.healthCareDataBase.Repository;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.healthCare.healthCareDataBase.Model.Speciality;
 
-public interface SpecialityRepository extends JpaRepository <Speciality, Integer> {
+public interface SpecialityRepository extends JpaRepository <Speciality, Long> {
 
 	@Modifying
     @Transactional
@@ -31,5 +33,8 @@ public interface SpecialityRepository extends JpaRepository <Speciality, Integer
 	
 	@Query(value="select s.speciality_code from speciality s, doctor_speciality ds where ds.doctor_id=?1 and ds.speciality_id = s.speciality_id",nativeQuery=true)
 	Integer getSpecialityCodeByDoctorId(Integer doctorId);
+
+	@Query(value="select s.speciality_code from speciality s, doctor_speciality ds, users u where u.user_id = ds.doctor_id and u.user_secure_login = ?1 and ds.speciality_id = s.speciality_id",nativeQuery=true)
+	List<String> getDoctorSpecialitiesBySecureLogin(String one);
 	
 }

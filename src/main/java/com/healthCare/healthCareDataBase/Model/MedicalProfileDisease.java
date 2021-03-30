@@ -17,7 +17,7 @@ public class MedicalProfileDisease {
 	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
 	@GenericGenerator(name = "native",strategy = "native")
 	@Column(name="medicalProfileDiseaseId")
-	private Integer medicalProfileDiseaseId;
+	private Long medicalProfileDiseaseId;
 	
 	@Column(name="medicalProfileDiseaseDiseaseId")
 	private Integer medicalProfileDiseaseDiseaseId;
@@ -28,11 +28,11 @@ public class MedicalProfileDisease {
 	@Column(name="medicalProfileId")
 	private Integer medicalProfileId;
 
-	public Integer getMedicalProfileDiseaseId() {
+	public Long getMedicalProfileDiseaseId() {
 		return medicalProfileDiseaseId;
 	}
 
-	public void setMedicalProfileDiseaseId(Integer medicalProfileDiseaseId) {
+	public void setMedicalProfileDiseaseId(Long medicalProfileDiseaseId) {
 		this.medicalProfileDiseaseId = medicalProfileDiseaseId;
 	}
 

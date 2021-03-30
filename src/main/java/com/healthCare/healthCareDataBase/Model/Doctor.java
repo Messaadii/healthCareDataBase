@@ -1,42 +1,46 @@
 package com.healthCare.healthCareDataBase.Model;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.GenericGenerator;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
-@Table (name="doctors")
-public class Doctor {
-	@Id
-	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
-	@GenericGenerator(name = "native",strategy = "native")
-	@Column(name="doctorId")
-	private Integer doctorId;
+@Table(name="doctors")
+@DiscriminatorValue("doctor")
+public class Doctor extends User{
 	
-	@Column(name="doctorUserName")
-	private String doctorUserName;
-	
+	public Doctor(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 120) String password, String city,
+			Set<Role> roles, String creationDate, String doctorFirstName, String doctorLastName, String doctorBirthDay,
+			String doctorGender, String doctorStatus) {
+		super(username, password, city, roles, creationDate);
+		this.doctorFirstName = doctorFirstName;
+		this.doctorLastName = doctorLastName;
+		this.doctorBirthDay = doctorBirthDay;
+		this.doctorGender = doctorGender;
+		this.doctorRate = 0;
+		this.doctorStatus = doctorStatus;
+		this.speciality = new ArrayList<Speciality>();
+		this.appointment = new ArrayList<Appointment>();
+	}
+
 	@Column(name="doctorFirstName")
 	private String doctorFirstName;
 	
 	@Column(name="doctorLastName")
 	private String doctorLastName;
-	
-	@Column(name="doctorCity")
-	private String doctorCity;
 	
 	@Column(name="doctorBirthDay")
 	private String doctorBirthDay;
@@ -44,35 +48,32 @@ public class Doctor {
 	@Column(name="doctorGender")
 	private String doctorGender;
 	
-	@Column(name="doctorPassword")
-	private String doctorPassword;
-	
 	@Column(name="doctorRate")
 	private double doctorRate;
-	
-	@Column(name="doctorCreationDate")
-	private String doctorCreationDate;
-	
-	@Column(name="doctorSecureLogin")
-	private String doctorSecureLogin;
 	
 	@Column(name="doctorStatus")
 	private String doctorStatus;
 	
 	@Column(name="maxPatientPerDay")
-	private String maxPatientPerDay;
+	private Integer maxPatientPerDay;
 	
 	@Column(name="startTime")
 	private String startTime;
 	
-	@Column(name="exactAdress")
-	private String exactAdress;
+	@Column(name="exactAddress")
+	private String exactAddress;
 	
 	@Column(name="workDays")
 	private String workDays;
 	
+	@Column(name="appointmentApproximateDuration")
+	private Integer appointmentApproximateDuration;
+	
+	@Column(name="appointmentPrice")
+	private Integer appointmentPrice;
+	
 	@ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinTable(name = "doctor_speciality",joinColumns = { @JoinColumn(name = "doctor_id", referencedColumnName = "doctorId") },inverseJoinColumns = { @JoinColumn(name = "speciality_id", referencedColumnName = "specialityId") })
+    @JoinTable(name = "doctor_speciality",joinColumns = { @JoinColumn(name = "doctor_id", referencedColumnName = "user_id") },inverseJoinColumns = { @JoinColumn(name = "speciality_id", referencedColumnName = "specialityId") })
 	private  List<Speciality> speciality;
 	
 	@OneToMany(targetEntity=Appointment.class, mappedBy="doctorId",cascade=CascadeType.ALL, fetch = FetchType.LAZY)
@@ -84,22 +85,6 @@ public class Doctor {
 
 	public void setDoctorStatus(String doctorStatus) {
 		this.doctorStatus = doctorStatus;
-	}
-
-	public String getDoctorSecureLogin() {
-		return doctorSecureLogin;
-	}
-
-	public void setDoctorSecureLogin(String doctorSecureLogin) {
-		this.doctorSecureLogin = doctorSecureLogin;
-	}
-
-	public String getDoctorCreationDate() {
-		return doctorCreationDate;
-	}
-
-	public void setDoctorCreationDate(String doctorCreationDate) {
-		this.doctorCreationDate = doctorCreationDate;
 	}
 
 	public String getDoctorBirthDay() {
@@ -117,23 +102,7 @@ public class Doctor {
 	public void setDoctorGender(String doctorGender) {
 		this.doctorGender = doctorGender;
 	}
-
-	public Integer getDoctorId() {
-		return doctorId;
-	}
-
-	public void setDoctorId(Integer doctorId) {
-		this.doctorId = doctorId;
-	}
-
-	public String getDoctorUserName() {
-		return doctorUserName;
-	}
-
-	public void setDoctorUserName(String doctorUserName) {
-		this.doctorUserName = doctorUserName;
-	}
-
+	
 	public String getDoctorFirstName() {
 		return doctorFirstName;
 	}
@@ -148,22 +117,6 @@ public class Doctor {
 
 	public void setDoctorLastName(String doctorLastName) {
 		this.doctorLastName = doctorLastName;
-	}
-
-	public String getDoctorCity() {
-		return doctorCity;
-	}
-
-	public void setDoctorCity(String doctorCity) {
-		this.doctorCity = doctorCity;
-	}
-
-	public String getDoctorPassword() {
-		return doctorPassword;
-	}
-
-	public void setDoctorPassword(String doctorPassword) {
-		this.doctorPassword = doctorPassword;
 	}
 
 	public double getDoctorRate() {
@@ -182,14 +135,6 @@ public class Doctor {
 		this.speciality = speciality;
 	}
 
-	public String getMaxPatientPerDay() {
-		return maxPatientPerDay;
-	}
-
-	public void setMaxPatientPerDay(String maxPatientPerDay) {
-		this.maxPatientPerDay = maxPatientPerDay;
-	}
-
 	public String getStartTime() {
 		return startTime;
 	}
@@ -198,12 +143,12 @@ public class Doctor {
 		this.startTime = startTime;
 	}
 
-	public String getExactAdress() {
-		return exactAdress;
+	public String getExactAddress() {
+		return exactAddress;
 	}
 
-	public void setExactAdress(String exactAdress) {
-		this.exactAdress = exactAdress;
+	public void setExactAddress(String exactAddress) {
+		this.exactAddress = exactAddress;
 	}
 
 	public String getWorkDays() {
@@ -221,5 +166,35 @@ public class Doctor {
 	public void setAppointment(List<Appointment> appointment) {
 		this.appointment = appointment;
 	}
+
+	public Integer getMaxPatientPerDay() {
+		return maxPatientPerDay;
+	}
+
+	public void setMaxPatientPerDay(Integer maxPatientPerDay) {
+		this.maxPatientPerDay = maxPatientPerDay;
+	}
+
+	public Integer getAppointmentPrice() {
+		return appointmentPrice;
+	}
+
+	public void setAppointmentPrice(Integer appointmentPrice) {
+		this.appointmentPrice = appointmentPrice;
+	}
+
+	public Integer getAppointmentApproximateDuration() {
+		return appointmentApproximateDuration;
+	}
+
+	public void setAppointmentApproximateDuration(Integer appointmentApproximateDuration) {
+		this.appointmentApproximateDuration = appointmentApproximateDuration;
+	}
+
+	public Doctor() {
+		super();
+	}
+	
+	
 
 }

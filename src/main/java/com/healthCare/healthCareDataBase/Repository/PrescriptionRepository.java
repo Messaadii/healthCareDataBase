@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.healthCare.healthCareDataBase.Model.Prescription;
 
-public interface PrescriptionRepository extends JpaRepository<Prescription,Integer>{
+public interface PrescriptionRepository extends JpaRepository<Prescription,Long>{
 
 	@Modifying
 	@Transactional
