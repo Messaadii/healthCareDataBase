@@ -34,6 +34,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " d.work_days,"
 			+ " d.appointment_approximate_duration,"
 			+ " d.appointment_price,"
+			+ " d.current_patient,"
 			+ " u.user_username,"
 			+ " u.user_city"
 			+ " from doctors d, users u "
@@ -146,5 +147,12 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " from doctors d, users u "
 			+ " where u.user_id = d.user_id and d.user_id=?1",nativeQuery=true)
 	AppointmentInfoForPatient getDoctorAppointmentInfoForPatientByDoctorId(Long id);
+
+	@Modifying
+    @Transactional
+	@Query(value="update doctors d, users u set "
+			+ "d.current_patient=?2 "
+			+ "where u.user_id = d.user_id and u.user_secure_login= ?1",nativeQuery=true)
+	void changeCurrentPatientBySecureLogin(String secureLogin, Integer patientTurn);
 	
 }

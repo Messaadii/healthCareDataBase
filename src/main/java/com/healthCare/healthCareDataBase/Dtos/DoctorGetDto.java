@@ -34,5 +34,7 @@ public interface DoctorGetDto {
 	String getAppointmentApproximateDuration();
 	@Value("#{target.appointment_price}")
 	String getAppointmentPrice();
+	@Value("#{target.current_patient}")
+	String getCurrentPatient();
 
 }

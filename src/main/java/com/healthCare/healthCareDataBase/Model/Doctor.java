@@ -32,6 +32,7 @@ public class Doctor extends User{
 		this.doctorGender = doctorGender;
 		this.doctorRate = 0;
 		this.doctorStatus = doctorStatus;
+		this.currentPatient = 0;
 		this.speciality = new ArrayList<Speciality>();
 		this.appointment = new ArrayList<Appointment>();
 	}
@@ -71,6 +72,9 @@ public class Doctor extends User{
 	
 	@Column(name="appointmentPrice")
 	private Integer appointmentPrice;
+	
+	@Column(name="currentPatient")
+	private Integer currentPatient;
 	
 	@ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinTable(name = "doctor_speciality",joinColumns = { @JoinColumn(name = "doctor_id", referencedColumnName = "user_id") },inverseJoinColumns = { @JoinColumn(name = "speciality_id", referencedColumnName = "specialityId") })
@@ -190,11 +194,17 @@ public class Doctor extends User{
 	public void setAppointmentApproximateDuration(Integer appointmentApproximateDuration) {
 		this.appointmentApproximateDuration = appointmentApproximateDuration;
 	}
+	
+	public Integer getCurrentPatient() {
+		return currentPatient;
+	}
+
+	public void setCurrentPatient(Integer currentPatient) {
+		this.currentPatient = currentPatient;
+	}
 
 	public Doctor() {
 		super();
 	}
-	
-	
 
 }

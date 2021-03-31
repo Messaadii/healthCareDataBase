@@ -19,13 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.AppointmentDocInfo;
 import com.healthCare.healthCareDataBase.Dtos.AppointmentPatientInfo;
+import com.healthCare.healthCareDataBase.Dtos.CurrentPatientInfo;
 import com.healthCare.healthCareDataBase.Dtos.DoctorGetDto;
 import com.healthCare.healthCareDataBase.Dtos.DoctorSettingsDto;
+import com.healthCare.healthCareDataBase.Dtos.IdTurnAndDate;
 import com.healthCare.healthCareDataBase.Dtos.IntegerAndString;
 import com.healthCare.healthCareDataBase.Dtos.OneString;
 import com.healthCare.healthCareDataBase.Dtos.PendingDoctorGetDto;
 import com.healthCare.healthCareDataBase.Dtos.SearchedDocDto;
 import com.healthCare.healthCareDataBase.Dtos.SearchedDoctorDto;
+import com.healthCare.healthCareDataBase.Dtos.SecureLoginAndPatientTurnDto;
 import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
 import com.healthCare.healthCareDataBase.Model.Doctor;
 import com.healthCare.healthCareDataBase.Repository.AdminRepository;
@@ -131,7 +134,6 @@ public class DoctorController {
 		return specialityRepository.getDoctorSpecialitiesBySecureLogin(secureLogin.getOne());
 	}
 	
-	
 	@PostMapping(value="/getApprovedDoctorsBySpecialityIdAndCity")
 	public List<SearchedDoctorDto> getApprovedDoctorsBySpecialityIdAndCity(@RequestBody final SearchedDocDto search) {
 		Pageable pageable = PageRequest.of(search.getPage(), search.getSize(), Sort.by("doctor_rate").descending());
@@ -152,8 +154,19 @@ public class DoctorController {
 	}
 	
 	@GetMapping(value="getAppPatientInfoById/{id}")
-	public AppointmentPatientInfo getAppPatientInfoById(@PathVariable(name="id") Integer id) {
+	public AppointmentPatientInfo getAppPatientInfoById(@PathVariable(name="id") Long id) {
 		return patientRepository.getAppPatientInfoById(id);
+	}
+	
+	@PostMapping(value="getAppPatientInfoByDoctorIdTurnAndDate")
+	public CurrentPatientInfo getAppPatientInfoByDoctorIdTurnAndDate(@RequestBody final IdTurnAndDate data) {
+		return patientRepository.getAppPatientInfoByDoctorIdTurnAndDate(data.getId(),data.getDate(),data.getTurn());
+	}
+
+	@PostMapping(value="changeCurrentPatientBySecureLogin")
+	public boolean changeCurrentPatientBySecureLogin(@RequestBody final SecureLoginAndPatientTurnDto data) {
+		doctorRepository.changeCurrentPatientBySecureLogin(data.getSecureLogin(),data.getPatientTurn());
+		return true;
 	}
 }
 

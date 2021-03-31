@@ -40,7 +40,7 @@ public class MedicalProfileDiseaseController {
 	
 	@PostMapping(value="getPateintMedicalProfileDiseasesByMedicalProfileId")
 	public List<MedicalProfileDiseaseGetDto> getPateintMedicalProfileDiseasesByMedicalProfileId(@RequestBody final PageableAndIdDto pageableAndIdDto) {
-		Pageable pageable = PageRequest.of(pageableAndIdDto.getPage(), pageableAndIdDto.getSize(), Sort.by("medical_profile_disease_disease_id").descending()) ;
+		Pageable pageable = PageRequest.of(pageableAndIdDto.getPage(), pageableAndIdDto.getSize(), Sort.by("medical_profile_disease_disease_id").descending());
 		return medicalProfileDiseaseRepository.getPateintMedicalProfileDiseasesByMedicalProfileId(pageableAndIdDto.getId() ,pageable);
 	}
 	

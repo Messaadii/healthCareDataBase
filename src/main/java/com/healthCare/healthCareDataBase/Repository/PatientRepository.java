@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.healthCare.healthCareDataBase.Dtos.AppointmentPatientInfo;
+import com.healthCare.healthCareDataBase.Dtos.CurrentPatientInfo;
 import com.healthCare.healthCareDataBase.Dtos.PatientGetDto;
 import com.healthCare.healthCareDataBase.Model.Patient;
 
@@ -52,6 +53,20 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 			+ " p.patient_gender,"
 			+ " u.user_city from patients p, users u"
 			+ " where u.user_id=p.user_id and p.user_id= ?1",nativeQuery=true)
-	AppointmentPatientInfo getAppPatientInfoById(Integer patientId);
+	AppointmentPatientInfo getAppPatientInfoById(Long id);
+
+	@Query(value="select p.medical_profile_id,"
+			+ " p.user_id, "
+			+ " p.patient_first_name,"
+			+ " p.patient_last_name,"
+			+ " p.patient_birth_day,"
+			+ " p.patient_gender,"
+			+ " u.user_city from patients p, users u, appointment a"
+			+ " where u.user_id = p.user_id and"
+			+ " a.patient_id=p.user_id and"
+			+ " a.doctor_id= ?1 and"
+			+ " a.appointment_date=?2 and"
+			+ " a.patient_turn=?3",nativeQuery=true)
+	CurrentPatientInfo getAppPatientInfoByDoctorIdTurnAndDate(Long id, String date, Integer turn);
 	
 }

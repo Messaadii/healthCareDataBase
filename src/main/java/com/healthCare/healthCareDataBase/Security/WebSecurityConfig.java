@@ -84,6 +84,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/appointment/deleteAppointmentById/**").hasAuthority("PATIENT_ROLE")
 			.anyRequest().authenticated();
 
+		
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 } 

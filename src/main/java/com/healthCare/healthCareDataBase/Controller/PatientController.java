@@ -90,5 +90,6 @@ public class PatientController {
 	public AppointmentInfoForPatient getDoctorAppointmentInfoForPatientByDoctorId(@PathVariable("id") Long id) {
 		return doctorRepository.getDoctorAppointmentInfoForPatientByDoctorId(id);
 	}
+
 	
 }
