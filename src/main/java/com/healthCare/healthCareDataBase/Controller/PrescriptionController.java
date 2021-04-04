@@ -19,7 +19,7 @@ import com.healthCare.healthCareDataBase.Repository.PrescriptionRepository;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value="/prescription")
+@RequestMapping(value="/api/prescription")
 public class PrescriptionController {
 
 	@Autowired
@@ -31,12 +31,12 @@ public class PrescriptionController {
 	}
 	
 	@PostMapping(value="/add") 
-	public String add(@RequestBody final Prescription prescription) {
+	public boolean add(@RequestBody final Prescription prescription) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		prescription.setPrescriptionDate(dateFormat.format(cal.getTime()));
 		prescriptionRepository.save(prescription);
-		return"prescription with id " + prescription.getPrescriptionId() + " added";
+		return true;
 	}
 	
 	@PostMapping(value="/{prescriptionId}/addMedicamnet/{medicamentId}")

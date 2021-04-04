@@ -82,6 +82,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/appointment/getAppointmentByDoctorIdAndDate").hasAuthority("DOCTOR_ROLE")
 			.antMatchers("/api/appointment/updateAppointmentDateById").hasAuthority("PATIENT_ROLE")
 			.antMatchers("/api/appointment/deleteAppointmentById/**").hasAuthority("PATIENT_ROLE")
+			.antMatchers("/api/prescription/add").hasAuthority("DOCTOR_ROLE")
+			.antMatchers("/api/medicament/getMedicamentsByFirstLetters/**").hasAuthority("DOCTOR_ROLE")
 			.anyRequest().authenticated();
 
 		

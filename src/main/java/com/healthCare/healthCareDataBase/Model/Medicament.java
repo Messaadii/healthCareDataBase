@@ -10,8 +10,9 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name="Medicaments")
+@Table(name="medicaments")
 public class Medicament {
+	
 	@Id
 	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
 	@GenericGenerator(name = "native",strategy = "native")
@@ -21,11 +22,11 @@ public class Medicament {
 	@Column(name="medicamentName")
 	private String medicamentName;
 	
-	@Column(name="medicamentLaboratory")
+	@Column(name="laboratory_name")
 	private String medicamentLaboratory;
 	
-	@Column(name="medicamentDescription")
-	private String medicamentDescription;
+	@Column(name="codePct")
+	private Integer codePct;
 
 	public Long getMedicamentId() {
 		return medicamentId;
@@ -51,13 +52,12 @@ public class Medicament {
 		this.medicamentLaboratory = medicamentLaboratory;
 	}
 
-	public String getMedicamentDescription() {
-		return medicamentDescription;
+	public Integer getCodePct() {
+		return codePct;
 	}
 
-	public void setMedicamentDescription(String medicamentDescription) {
-		this.medicamentDescription = medicamentDescription;
+	public void setCodePct(Integer codePct) {
+		this.codePct = codePct;
 	}
-	
 	
 }

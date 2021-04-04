@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +16,7 @@ import com.healthCare.healthCareDataBase.Repository.MedicamentRepository;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value="/medicament")
+@RequestMapping(value="/api/medicament")
 public class MedicamentController {
 	
 	@Autowired
@@ -30,5 +31,10 @@ public class MedicamentController {
 	public String add(@RequestBody final Medicament medicament) {
 		medicamentRepository.save(medicament);
 		return"medicament with name " + medicament.getMedicamentName() + " added";
+	}
+	
+	@GetMapping(value="/getMedicamentsByFirstLetters/{letters}")
+	public List<String> getMedicamentsByFirstLetters(@PathVariable("letters") final String letters){
+		return medicamentRepository.getMedicamentsByFirstLetters(letters);
 	}
 }
