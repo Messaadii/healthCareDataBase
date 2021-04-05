@@ -9,9 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -29,18 +27,22 @@ public class Prescription {
 	private String prescriptionDate;
 	
 	@Column(name="patientId")
-	private Integer patientId;
+	private Long patientId;
 	
-	@ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinTable(name = "prescription_medicament",joinColumns = { @JoinColumn(name = "prescription_id", referencedColumnName = "prescriptionId") },inverseJoinColumns = { @JoinColumn(name = "medicament_id", referencedColumnName = "medicamentId") })
-	private  List<Medicament> medicament;
-
+	@Column(name="doctorId")
+	private Long doctorId;
 	
-	public Integer getPatientId() {
+	@Column(name="prescriptionStatus")
+	private String prescriptionStatus;
+	
+	@OneToMany(targetEntity=PrescriptionMedicament.class, mappedBy="prescriptionId",cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+	private  List<PrescriptionMedicament> medicament;
+	
+	public Long getPatientId() {
 		return patientId;
 	}
 
-	public void setPatientId(Integer patientId) {
+	public void setPatientId(Long patientId) {
 		this.patientId = patientId;
 	}
 
@@ -60,13 +62,28 @@ public class Prescription {
 		this.prescriptionDate = prescriptionDate;
 	}
 
-	public List<Medicament> getMedicament() {
+	public List<PrescriptionMedicament> getMedicament() {
 		return medicament;
 	}
 
-	public void setMedicament(List<Medicament> medicament) {
+	public void setMedicament(List<PrescriptionMedicament> medicament) {
 		this.medicament = medicament;
 	}
-	
+
+	public Long getDoctorId() {
+		return doctorId;
+	}
+
+	public void setDoctorId(Long doctorId) {
+		this.doctorId = doctorId;
+	}
+
+	public String getPrescriptionStatus() {
+		return prescriptionStatus;
+	}
+
+	public void setPrescriptionStatus(String prescriptionStatus) {
+		this.prescriptionStatus = prescriptionStatus;
+	}
 	
 }

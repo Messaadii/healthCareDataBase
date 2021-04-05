@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,12 +32,13 @@ public class PrescriptionController {
 	}
 	
 	@PostMapping(value="/add") 
-	public boolean add(@RequestBody final Prescription prescription) {
+	public Long add(@RequestBody final Prescription prescription) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		prescription.setPrescriptionDate(dateFormat.format(cal.getTime()));
+		prescription.setPrescriptionStatus("pending");
 		prescriptionRepository.save(prescription);
-		return true;
+		return prescription.getPrescriptionId();
 	}
 	
 	@PostMapping(value="/{prescriptionId}/addMedicamnet/{medicamentId}")
@@ -47,5 +49,16 @@ public class PrescriptionController {
 			prescriptionRepository.addMedicamentToPrescription(prescriptionId,medicamentId);
 			return "medicament add";
 		}
+	}
+	
+	@DeleteMapping(value="/deleteById/{id}")
+	public boolean deleteById(@PathVariable("id") Long id) {
+		prescriptionRepository.deleteById(id);
+		return true;
+	}
+	
+	@PostMapping(value="/getPrescriptionByDoctorIdPatientIdAndDate")
+	public Prescription getPrescriptionByDoctorIdPatientIdAndDate(@RequestBody final Prescription prescription) {
+		return prescriptionRepository.getPrescriptionByDoctorIdPatientIdAndDate(prescription.getDoctorId(),prescription.getPatientId(),prescription.getPrescriptionDate());
 	}
 }
