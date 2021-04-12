@@ -154,5 +154,16 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ "d.current_patient=?2 "
 			+ "where u.user_id = d.user_id and u.user_secure_login= ?1",nativeQuery=true)
 	void changeCurrentPatientBySecureLogin(String secureLogin, Integer patientTurn);
+
+	@Query(value="select"
+			+ " d.user_id,"
+			+ " d.doctor_first_name,"
+			+ " d.doctor_last_name,"
+			+ " d.doctor_gender,"
+			+ " d.doctor_rate,"
+			+ " u.user_city"
+			+ " from doctors d, users u "
+			+ " where d.user_id = ?1 and u.user_id=?1",nativeQuery=true)
+	SearchedDoctorDto getDoctorInfoByDoctorId(Long id);
 	
 }

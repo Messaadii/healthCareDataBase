@@ -168,5 +168,10 @@ public class DoctorController {
 		doctorRepository.changeCurrentPatientBySecureLogin(data.getSecureLogin(),data.getPatientTurn());
 		return true;
 	}
+	
+	@GetMapping(value="getDoctorInfoByDoctorId/{id}")
+	public SearchedDoctorDto getDoctorInfoByDoctorId(@PathVariable(name="id") Long id) {
+		return doctorRepository.getDoctorInfoByDoctorId(id);
+	}
 }
 

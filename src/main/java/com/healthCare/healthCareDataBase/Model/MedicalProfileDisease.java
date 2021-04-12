@@ -19,14 +19,20 @@ public class MedicalProfileDisease {
 	@Column(name="medicalProfileDiseaseId")
 	private Long medicalProfileDiseaseId;
 	
-	@Column(name="medicalProfileDiseaseDiseaseId")
-	private Integer medicalProfileDiseaseDiseaseId;
+	@Column(name="medicalProfileDiseaseName")
+	private String medicalProfileDiseaseName;
+	
+	@Column(name="medicalProfileDiseaseDiagnose")
+	private String medicalProfileDiseaseDiagnose;
 	
 	@Column (name="medicalProfileDiseaseDiagnoseDay")
 	private String  medicalProfileDiseaseDiagnoseDay;
 	
 	@Column(name="medicalProfileId")
-	private Integer medicalProfileId;
+	private Long medicalProfileId;
+	
+	@Column(name="doctorId")
+	private Long doctorId;
 
 	public Long getMedicalProfileDiseaseId() {
 		return medicalProfileDiseaseId;
@@ -36,14 +42,20 @@ public class MedicalProfileDisease {
 		this.medicalProfileDiseaseId = medicalProfileDiseaseId;
 	}
 
-	
-
-	public Integer getMedicalProfileDiseaseDiseaseId() {
-		return medicalProfileDiseaseDiseaseId;
+	public String getMedicalProfileDiseaseName() {
+		return medicalProfileDiseaseName;
 	}
 
-	public void setMedicalProfileDiseaseDiseaseId(Integer medicalProfileDiseaseDiseaseId) {
-		this.medicalProfileDiseaseDiseaseId = medicalProfileDiseaseDiseaseId;
+	public void setMedicalProfileDiseaseName(String medicalProfileDiseaseName) {
+		this.medicalProfileDiseaseName = medicalProfileDiseaseName;
+	}
+
+	public String getMedicalProfileDiseaseDiagnose() {
+		return medicalProfileDiseaseDiagnose;
+	}
+
+	public void setMedicalProfileDiseaseDiagnose(String medicalProfileDiseaseDiagnose) {
+		this.medicalProfileDiseaseDiagnose = medicalProfileDiseaseDiagnose;
 	}
 
 	public String getMedicalProfileDiseaseDiagnoseDay() {
@@ -54,12 +66,22 @@ public class MedicalProfileDisease {
 		this.medicalProfileDiseaseDiagnoseDay = medicalProfileDiseaseDiagnoseDay;
 	}
 
-	public Integer getMedicalProfileId() {
+	public Long getMedicalProfileId() {
 		return medicalProfileId;
 	}
 
-	public void setMedicalProfileId(Integer medicalProfileId) {
+	public void setMedicalProfileId(Long medicalProfileId) {
 		this.medicalProfileId = medicalProfileId;
+	}
+
+	public Long getDoctorId() {
+		return doctorId;
+	}
+
+	public void setDoctorId(Long doctorId) {
+		this.doctorId = doctorId;
 	} 
+	
+	
 	
 }

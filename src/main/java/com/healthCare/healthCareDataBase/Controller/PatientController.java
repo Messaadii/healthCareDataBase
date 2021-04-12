@@ -1,8 +1,5 @@
 package com.healthCare.healthCareDataBase.Controller;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +15,6 @@ import com.healthCare.healthCareDataBase.Dtos.AppointmentInfoForPatient;
 import com.healthCare.healthCareDataBase.Dtos.OneString;
 import com.healthCare.healthCareDataBase.Dtos.PatientGetDto;
 import com.healthCare.healthCareDataBase.Dtos.UpdateMedicalProfileIdRequest;
-import com.healthCare.healthCareDataBase.Model.MedicalProfileDisease;
 import com.healthCare.healthCareDataBase.Model.Patient;
 import com.healthCare.healthCareDataBase.Repository.AdminRepository;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
@@ -51,17 +47,6 @@ public class PatientController {
 	@GetMapping(value="/all")
 	public List<Patient>getAll(){
 		return patientRepository.findAll();
-	}
-	
-	@PostMapping(value="/{patientId}/medicalProfile/addDisease")
-	public String addDisease(@PathVariable(name="patientId") Long patientId ,@RequestBody final MedicalProfileDisease medicalProfileDisease) {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Calendar cal = Calendar.getInstance();
-		if(patientRepository.existsById(patientId)) {
-			medicalProfileDiseaseRepository.addDiseaseToMedicalProfile(patientId,dateFormat.format(cal.getTime()),medicalProfileDisease.getMedicalProfileDiseaseDiseaseId());
-			return "disease added";
-		}else
-		return "there is no patient with id: "+patientId;
 	}
 	
 	@GetMapping(value="/getPatientIdFromUsernameAndPassword/{username}/{password}")

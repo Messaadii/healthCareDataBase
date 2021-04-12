@@ -32,7 +32,7 @@ public class MedicalProfile {
 	private double height;
 	
 	@OneToMany(targetEntity=MedicalProfileDisease.class, mappedBy="medicalProfileId",cascade=CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MedicalProfileDisease> medicalProfileDisease=new ArrayList<>();
+    private List<MedicalProfileDisease> medicalProfileDisease = new ArrayList<>();
 
 	public Long getMedicalProfileId() {
 		return medicalProfileId;
