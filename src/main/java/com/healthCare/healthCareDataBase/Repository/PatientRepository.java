@@ -61,6 +61,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 			+ " p.patient_last_name,"
 			+ " p.patient_birth_day,"
 			+ " p.patient_gender,"
+			+ " a.appointment_id,"
 			+ " u.user_city from patients p, users u, appointment a"
 			+ " where u.user_id = p.user_id and"
 			+ " a.patient_id=p.user_id and"

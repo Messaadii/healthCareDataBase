@@ -4,6 +4,7 @@ public class IntegerAndString {
 	
 	private Integer integer;
 	private String string;
+	
 	public Integer getInteger() {
 		return integer;
 	}
@@ -16,8 +17,5 @@ public class IntegerAndString {
 	public void setString(String string) {
 		this.string = string;
 	}
-	
-	
-	
 
 }

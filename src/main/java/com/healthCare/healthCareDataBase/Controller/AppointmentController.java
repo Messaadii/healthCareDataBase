@@ -66,9 +66,15 @@ public class AppointmentController {
 		Pageable pageable= PageRequest.of(pageableAndIdDto.getPage(), pageableAndIdDto.getSize(), Sort.by("appointment_date").ascending());
 		return appointmentRepository.getAppointmentByDoctorIdAndDate(pageableAndIdDto.getId(),pageableAndIdDto.getDate(), pageable);
 	}
+	
 	@PostMapping(value="getAppointmentNumberByDoctorIdAndDate")
 	public Integer getAppointmentNumberByDoctorIdAndDate(@RequestBody final PageableAndIdDto pageableAndIdDto) {
 		return appointmentRepository.getAppointmentNumberByDoctorIdAndDate(pageableAndIdDto.getId(),pageableAndIdDto.getDate());
 	}
 	
+	@PostMapping(value="changeAppointmentStatusById")
+	public boolean changeAppointmentStatusById(@RequestBody final IntegerAndString data){
+		appointmentRepository.changeAppointmentStatusById(data.getInteger(),data.getString());
+		return true;
+	}
 }

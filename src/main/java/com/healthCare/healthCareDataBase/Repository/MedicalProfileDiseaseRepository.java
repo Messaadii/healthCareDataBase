@@ -37,8 +37,8 @@ public interface MedicalProfileDiseaseRepository extends JpaRepository<MedicalPr
 			+ " m.medical_profile_disease_name,"
 			+ " m.medical_profile_disease_diagnose"
 			+ " from medical_profile_disease m"
-			+ " where m.medical_profile_id=?1 and m.medical_profile_disease_diagnose_day like ?2%",nativeQuery=true)
-	List<DiseaseGet> getDiagnoseByMedicalProfileIdAndDate(Long medicalProfileId, String date);
+			+ " where m.medical_profile_id=?1 and m.doctor_id=?3 and m.medical_profile_disease_diagnose_day like ?2%",nativeQuery=true)
+	List<DiseaseGet> getDiagnoseByMedicalProfileIdDoctorIdAndDate(Long medicalProfileId, String date, Long doctorId);
 
 	@Modifying
 	@Transactional

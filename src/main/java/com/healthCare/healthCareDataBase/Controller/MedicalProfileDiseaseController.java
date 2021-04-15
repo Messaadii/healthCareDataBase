@@ -38,9 +38,9 @@ public class MedicalProfileDiseaseController {
 		return medicalProfileDiseaseRepository.findAll();
 	}
 	
-	@PostMapping(value="getDiagnoseByMedicalProfileIdAndDate")
-	public List<DiseaseGet> getDiagnoseByMedicalProfileIdAndDate (@RequestBody final DiagnoseRequest data) {
-		return medicalProfileDiseaseRepository.getDiagnoseByMedicalProfileIdAndDate(data.getMedicalProfileId(),data.getDate());
+	@PostMapping(value="getDiagnoseByMedicalProfileIdDoctorIdAndDate")
+	public List<DiseaseGet> getDiagnoseByMedicalProfileIdDoctorIdAndDate (@RequestBody final DiagnoseRequest data) {
+		return medicalProfileDiseaseRepository.getDiagnoseByMedicalProfileIdDoctorIdAndDate(data.getMedicalProfileId(),data.getDate(),data.getDoctorId());
 	}
 	
 	@DeleteMapping(value="deleteDiagnoseByMedicalProfileIdDoctorIdAndDate")

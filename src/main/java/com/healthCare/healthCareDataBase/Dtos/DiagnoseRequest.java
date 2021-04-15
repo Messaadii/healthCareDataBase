@@ -4,6 +4,15 @@ public class DiagnoseRequest {
 	
 	private Long medicalProfileId;
 	private String date;
+	private Long doctorId;
+	
+	
+	public Long getDoctorId() {
+		return doctorId;
+	}
+	public void setDoctorId(Long doctorId) {
+		this.doctorId = doctorId;
+	}
 	public Long getMedicalProfileId() {
 		return medicalProfileId;
 	}

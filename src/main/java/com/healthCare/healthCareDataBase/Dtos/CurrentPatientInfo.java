@@ -18,5 +18,7 @@ public interface CurrentPatientInfo {
 	String getPatientGender();
 	@Value("#{target.user_city}")
 	String getUserCity();
+	@Value("#{target.appointment_id}")
+	String getAppointmentId();
 
 }

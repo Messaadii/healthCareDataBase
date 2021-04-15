@@ -33,4 +33,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 	@Query(value="select count(a.doctor_id) from appointment a where a.doctor_id= ?1 and a.appointment_date=?2",nativeQuery=true)
 	public Integer getAppointmentNumberByDoctorIdAndDate(Long id, String date);
 
+	@Modifying
+    @Transactional
+	@Query(value="update appointment a set a.appointment_status=?2 where a.appointment_id= ?1",nativeQuery=true)
+	public void changeAppointmentStatusById(Integer integer, String string);
+
 }
