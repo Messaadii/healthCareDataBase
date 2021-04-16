@@ -68,4 +68,5 @@ public class MedicalProfileDiseaseController {
 	public Integer getPateintMedicalProfileDiseasesNumberByMedicalProfileId(@PathVariable("id") final Long id) {
 		return medicalProfileDiseaseRepository.getMedicalProfileDiseasesNumber(id);
 	}
+	
 }

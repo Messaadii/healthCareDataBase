@@ -66,7 +66,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/api/doctor/getDoctorAppointmentInfoByDoctorId/**",
                     "/api/appointment/appointmentsCountByDoctorIdAndDate",
                     "/api/image/get/**",
-                    "/api/appointment/getAppointmentNumberByDoctorIdAndDate").permitAll()
+                    "/api/appointment/getAppointmentNumberByDoctorIdAndDate",
+                    "/api/doctor/getDoctorInfoByDoctorId/**").permitAll()
 			.antMatchers("/api/admin/**").hasAuthority("ADMIN_ROLE")
 			.antMatchers("/api/doctor/**").hasAnyAuthority("DOCTOR_ROLE","ADMIN_ROLE")
 			.antMatchers("/api/patient/**").hasAnyAuthority("PATIENT_ROLE","ADMIN_ROLE")
@@ -86,11 +87,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/medicament/getMedicamentsByFirstLetters/**").hasAuthority("DOCTOR_ROLE")
 			.antMatchers("/api/prescriptionMedicament/add").hasAuthority("DOCTOR_ROLE")
 			.antMatchers("/api/prescription/deleteById/**").hasAuthority("DOCTOR_ROLE")
-			.antMatchers("/api/prescription/getPrescriptionByDoctorIdPatientIdAndDate").hasAuthority("DOCTOR_ROLE")
+			.antMatchers("/api/prescription/getPrescriptionByDoctorIdPatientIdAndDate").hasAnyAuthority("DOCTOR_ROLE","PATIENT_ROLE")
 			.antMatchers("/api/medicalProfileDisease/getDiagnoseByMedicalProfileIdDoctorIdAndDate").hasAuthority("DOCTOR_ROLE")
 			.antMatchers("/api/medicalProfileDisease/add").hasAuthority("DOCTOR_ROLE")
 			.antMatchers("/api/medicalProfileDisease/deleteDiagnoseByMedicalProfileIdDoctorIdAndDate").hasAuthority("DOCTOR_ROLE")
 			.antMatchers("/api/appointment/changeAppointmentStatusById").hasAuthority("DOCTOR_ROLE")
+			.antMatchers("/api/prescriptionMedicament/getPrescriptionsByPatientIdAndPrescriptionStatus").hasAuthority("PATIENT_ROLE")
+			.antMatchers("/api/prescriptionMedicament/getMedicamentsByPrescriptionId/**").hasAuthority("PATIENT_ROLE")
 			.anyRequest().authenticated();
 		
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

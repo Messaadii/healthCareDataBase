@@ -20,6 +20,7 @@ public class Prescription {
 	@Id
 	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
 	@GenericGenerator(name = "native",strategy = "native")
+	
 	@Column(name="prescriptionId")
 	private Long prescriptionId;
 	

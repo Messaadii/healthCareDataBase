@@ -6,6 +6,9 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.healthCare.healthCareDataBase.Dtos.GetPatientPrescription;
+import com.healthCare.healthCareDataBase.Dtos.PrescriptionByIdAndStatus;
 import com.healthCare.healthCareDataBase.Model.Prescription;
 import com.healthCare.healthCareDataBase.Repository.PrescriptionRepository;
 
@@ -60,5 +65,11 @@ public class PrescriptionController {
 	@PostMapping(value="/getPrescriptionByDoctorIdPatientIdAndDate")
 	public Prescription getPrescriptionByDoctorIdPatientIdAndDate(@RequestBody final Prescription prescription) {
 		return prescriptionRepository.getPrescriptionByDoctorIdPatientIdAndDate(prescription.getDoctorId(),prescription.getPatientId(),prescription.getPrescriptionDate());
+	}
+	
+	@PostMapping(value="/getPrescriptionsByPatientIdAndPrescriptionStatus")
+	public List<GetPatientPrescription> getPrescriptionsByPatientIdAndPrescriptionStatus(@RequestBody final PrescriptionByIdAndStatus data) {
+		Pageable pageable = PageRequest.of(data.getPage(), data.getSize(), Sort.by("prescription_id").descending());
+		return prescriptionRepository.getPrescriptionsByPatientIdAndPrescriptionStatus(data.getPatientId(),data.getPrescriptionStatus(),pageable);
 	}
 }
