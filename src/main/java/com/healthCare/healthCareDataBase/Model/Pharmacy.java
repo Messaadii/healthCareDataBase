@@ -15,25 +15,25 @@ import javax.validation.constraints.Size;
 public class Pharmacy extends User{
 
 	public Pharmacy(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 120) String password, String city,
-			Set<Role> roles, String creationDate,String pharmacyFullName, String pharmacyStatus) {
+			Set<Role> roles, String creationDate,String pharmacyName, String pharmacyStatus) {
 		super(username, password, city, roles, creationDate);
-		this.pharmacyFullName=pharmacyFullName;
+		this.pharmacyName=pharmacyName;
 		this.pharmacyStatus = pharmacyStatus;
 	}
 	
-	@Column(name="pharmacyFullName")
-	private String pharmacyFullName;
+	@Column(name="pharmacyName")
+	private String pharmacyName;
 
 	@Column(name="pharmacyStatus")
 	private String pharmacyStatus;
 	
 	
-	public String getPharmacyFullName() {
-		return pharmacyFullName;
+	public String getPharmacyName() {
+		return pharmacyName;
 	}
 
-	public void setPharmacyFullName(String pharmacyFullName) {
-		this.pharmacyFullName = pharmacyFullName;
+	public void setPharmacyName(String pharmacyName) {
+		this.pharmacyName = pharmacyName;
 	}
 
 	public String getPharmacyStatus() {

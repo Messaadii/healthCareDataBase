@@ -94,8 +94,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/appointment/changeAppointmentStatusById").hasAuthority("DOCTOR_ROLE")
 			.antMatchers("/api/prescriptionMedicament/getPrescriptionsByPatientIdAndPrescriptionStatus").hasAuthority("PATIENT_ROLE")
 			.antMatchers("/api/prescriptionMedicament/getMedicamentsByPrescriptionId/**").hasAuthority("PATIENT_ROLE")
+			.antMatchers("/api/pharmacy/getPharmacyInfoFromSecureLogin/**").hasAuthority("PHARMACIST_ROLE")
+
 			.anyRequest().authenticated();
-		
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 } 
