@@ -71,8 +71,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/admin/**").hasAuthority("ADMIN_ROLE")
 			.antMatchers("/api/doctor/**").hasAnyAuthority("DOCTOR_ROLE","ADMIN_ROLE")
 			.antMatchers("/api/patient/**").hasAnyAuthority("PATIENT_ROLE","ADMIN_ROLE")
+			.antMatchers("/api/pharmacy/**").hasAnyAuthority("PHARMACIST_ROLE","ADMIN_ROLE")
 			.antMatchers("/api/validation/**").hasAuthority("ADMIN_ROLE")
-			.antMatchers("/api/image/upload").hasAnyAuthority("DOCTOR_ROLE","PATIENT_ROLE")
+			.antMatchers("/api/image/upload").hasAnyAuthority("DOCTOR_ROLE","PATIENT_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/image/**").hasAuthority("ADMIN_ROLE")
 			.antMatchers("/api/medicalProfile/add").hasAuthority("DOCTOR_ROLE")
 			.antMatchers("/api/medicalProfileDisease/getPateintMedicalProfileDiseasesByMedicalProfileId").hasAnyAuthority("DOCTOR_ROLE","PATIENT_ROLE")
@@ -94,7 +95,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/appointment/changeAppointmentStatusById").hasAuthority("DOCTOR_ROLE")
 			.antMatchers("/api/prescriptionMedicament/getPrescriptionsByPatientIdAndPrescriptionStatus").hasAuthority("PATIENT_ROLE")
 			.antMatchers("/api/prescriptionMedicament/getMedicamentsByPrescriptionId/**").hasAuthority("PATIENT_ROLE")
-			.antMatchers("/api/pharmacy/getPharmacyInfoFromSecureLogin/**").hasAuthority("PHARMACIST_ROLE")
+			.antMatchers("/api/pharmacy/getPharmacyInfoFromSecureLogin").hasAuthority("PHARMACIST_ROLE")
 
 			.anyRequest().authenticated();
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

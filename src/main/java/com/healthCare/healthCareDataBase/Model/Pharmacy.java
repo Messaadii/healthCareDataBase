@@ -11,29 +11,29 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table (name="pharmacies")
-@DiscriminatorValue("pharmacy")
+@DiscriminatorValue("pharmacist")
 public class Pharmacy extends User{
 
 	public Pharmacy(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 120) String password, String city,
-			Set<Role> roles, String creationDate,String pharmacyName, String pharmacyStatus) {
+			Set<Role> roles, String creationDate,String pharmacyFullName, String pharmacyStatus) {
 		super(username, password, city, roles, creationDate);
-		this.pharmacyName=pharmacyName;
+		this.pharmacyFullName=pharmacyFullName;
 		this.pharmacyStatus = pharmacyStatus;
 	}
 	
-	@Column(name="pharmacyName")
-	private String pharmacyName;
+	@Column(name="pharmacyFullName")
+	private String pharmacyFullName;
 
 	@Column(name="pharmacyStatus")
 	private String pharmacyStatus;
 	
 	
-	public String getPharmacyName() {
-		return pharmacyName;
+	public String getPharmacyFullName() {
+		return pharmacyFullName;
 	}
 
-	public void setPharmacyName(String pharmacyName) {
-		this.pharmacyName = pharmacyName;
+	public void setPharmacyFullName(String pharmacyFullName) {
+		this.pharmacyFullName = pharmacyFullName;
 	}
 
 	public String getPharmacyStatus() {
@@ -43,4 +43,10 @@ public class Pharmacy extends User{
 	public void setPharmacyStatus(String pharmacyStatus) {
 		this.pharmacyStatus = pharmacyStatus;
 	}
+
+	public Pharmacy() {
+		super();
+	}
+	
+	
 }

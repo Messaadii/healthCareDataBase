@@ -22,7 +22,7 @@ import com.healthCare.healthCareDataBase.Repository.UserRepository;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value="/pharmacy")
+@RequestMapping(value="/api/pharmacy")
 public class PharmacyController {
 	
 	@Autowired
@@ -53,7 +53,7 @@ public class PharmacyController {
 	
 	@PostMapping(value="/updatePharmacyInfoBySecureLogin")
 	public boolean updatePharmacyInfoBySecureLogin(@RequestBody final Pharmacy pharmacy) {
-		pharmacyRepository.updatePharmacyInfoBySecureLogin(pharmacy.getUserSecureLogin(), pharmacy.getPharmacyName(),pharmacy.getPharmacyStatus(),pharmacy.getUserCity());
+		pharmacyRepository.updatePharmacyInfoBySecureLogin(pharmacy.getUserSecureLogin(), pharmacy.getPharmacyFullName(),pharmacy.getUserCity());
 			return true;
 	}
 }
