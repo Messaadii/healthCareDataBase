@@ -41,5 +41,13 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 	
 	@Query(value="select ph.pharmacy_user_name from pharmacies ph where ph.pharmacy_secure_login= ?1",nativeQuery=true)
 	String findUserNameBySecureLogin(String pharmacySecureLogin);
+
+	@Modifying
+    @Transactional
+	@Query(value="update pharmacies ph,"
+			+ " users u set ph.pharmacy_status=?2"
+			+ " where u.user_id = ph.user_id and"
+			+ " u.user_secure_login= ?1",nativeQuery=true)
+	void changePharamcyStatusBySecureLogin(String stringOne, String stringTwo);
 	
 }

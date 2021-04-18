@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.OneString;
 import com.healthCare.healthCareDataBase.Dtos.PharmacyGetDto;
+import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
 import com.healthCare.healthCareDataBase.Model.Pharmacy;
 import com.healthCare.healthCareDataBase.Repository.AdminRepository;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
@@ -55,5 +56,11 @@ public class PharmacyController {
 	public boolean updatePharmacyInfoBySecureLogin(@RequestBody final Pharmacy pharmacy) {
 		pharmacyRepository.updatePharmacyInfoBySecureLogin(pharmacy.getUserSecureLogin(), pharmacy.getPharmacyFullName(),pharmacy.getUserCity());
 			return true;
+	}
+	
+	@PostMapping(value="changePharamcyStatusBySecureLogin")
+	public boolean changePharamcyStatusBySecureLogin(@RequestBody final TwoStrings data) {
+		pharmacyRepository.changePharamcyStatusBySecureLogin(data.getStringOne(),data.getStringTwo());
+		return true;
 	}
 }

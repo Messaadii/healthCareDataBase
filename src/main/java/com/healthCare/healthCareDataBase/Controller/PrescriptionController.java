@@ -72,4 +72,5 @@ public class PrescriptionController {
 		Pageable pageable = PageRequest.of(data.getPage(), data.getSize(), Sort.by("prescription_id").descending());
 		return prescriptionRepository.getPrescriptionsByPatientIdAndPrescriptionStatus(data.getPatientId(),data.getPrescriptionStatus(),pageable);
 	}
+	
 }
