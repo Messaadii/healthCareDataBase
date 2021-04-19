@@ -3,6 +3,9 @@ package com.healthCare.healthCareDataBase.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.healthCare.healthCareDataBase.Dtos.IntegerAndString;
 import com.healthCare.healthCareDataBase.Dtos.OneString;
+import com.healthCare.healthCareDataBase.Dtos.PageableDto;
+import com.healthCare.healthCareDataBase.Dtos.PendingPharmcyGetDto;
 import com.healthCare.healthCareDataBase.Dtos.PharmacyGetDto;
 import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
 import com.healthCare.healthCareDataBase.Model.Pharmacy;
@@ -61,6 +67,24 @@ public class PharmacyController {
 	@PostMapping(value="changePharamcyStatusBySecureLogin")
 	public boolean changePharamcyStatusBySecureLogin(@RequestBody final TwoStrings data) {
 		pharmacyRepository.changePharamcyStatusBySecureLogin(data.getStringOne(),data.getStringTwo());
+		return true;
+	}
+	
+	@PostMapping(value="getPendingPharmacies")
+	public List<PendingPharmcyGetDto> getPendingPharmacies(@RequestBody final PageableDto data) {
+		Pageable pageable = PageRequest.of(data.getPage(), data.getSize(), Sort.by("user_id"));
+		return pharmacyRepository.getPendingPharmacies(pageable);
+	}
+	
+	@PostMapping(value="changePharmacyStatusById")
+	public boolean changePharmacyStatusById (@RequestBody final IntegerAndString data) {
+		pharmacyRepository.changePharmacyStatusById(data.getInteger(),data.getString());
+		return true;
+	}
+	
+	@GetMapping(value="deleteByUserId/{id}")
+	public boolean deleteByUserId(@PathVariable("id") final Long id) {
+		pharmacyRepository.deleteById(id);
 		return true;
 	}
 }

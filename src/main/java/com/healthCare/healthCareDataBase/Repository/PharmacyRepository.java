@@ -1,15 +1,21 @@
 package com.healthCare.healthCareDataBase.Repository;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import com.healthCare.healthCareDataBase.Dtos.PendingPharmcyGetDto;
 import com.healthCare.healthCareDataBase.Dtos.PharmacyGetDto;
 import com.healthCare.healthCareDataBase.Model.Pharmacy;
 
 public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
+	
+	long deleteByUserId(Long id);
 	
 	@Query(value="select ph.user_id,"
 			+ " ph.pharmacy_status,"
@@ -49,5 +55,21 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 			+ " where u.user_id = ph.user_id and"
 			+ " u.user_secure_login= ?1",nativeQuery=true)
 	void changePharamcyStatusBySecureLogin(String stringOne, String stringTwo);
+
+	@Query(value="select ph.pharmacy_full_name,"
+			+ " ph.user_id,"
+			+ " u.user_city,"
+			+ " u.user_username,"
+			+ " ph.pharmacy_status"
+			+ " from pharmacies ph, users u where"
+			+ " ph.user_id=u.user_id and (ph.pharmacy_status='pending' or ph.pharmacy_status='reVerify')",nativeQuery=true)
+	List<PendingPharmcyGetDto> getPendingPharmacies(Pageable pageable);
+
+	@Modifying
+    @Transactional
+	@Query(value="update pharmacies ph"
+			+ " set ph.pharmacy_status = ?2"
+			+ " where ph.user_id = ?1",nativeQuery=true)
+	void changePharmacyStatusById(Integer integer, String string);
 	
 }
