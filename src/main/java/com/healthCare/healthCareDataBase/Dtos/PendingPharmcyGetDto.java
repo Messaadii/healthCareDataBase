@@ -14,5 +14,9 @@ public interface PendingPharmcyGetDto {
 	String getUserUsername();
 	@Value("#{target.pharmacy_status}")
 	String getPharmacyStatus();
+	@Value("#{target.pharmacy_exact_address}")
+	String getPharmacyExactAddress();
+	@Value("#{target.pharmacy_type}")
+	String getPharmacyType();
 
 }

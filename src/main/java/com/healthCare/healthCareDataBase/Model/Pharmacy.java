@@ -27,6 +27,11 @@ public class Pharmacy extends User{
 	@Column(name="pharmacyStatus")
 	private String pharmacyStatus;
 	
+	@Column(name="pharmacyType")
+	private String pharmacyType;
+	
+	@Column(name="pharmacyExactAddress")
+	private String pharmacyExactAddress;
 	
 	public String getPharmacyFullName() {
 		return pharmacyFullName;
@@ -42,6 +47,22 @@ public class Pharmacy extends User{
 
 	public void setPharmacyStatus(String pharmacyStatus) {
 		this.pharmacyStatus = pharmacyStatus;
+	}
+
+	public String getPharmacyType() {
+		return pharmacyType;
+	}
+
+	public void setPharmacyType(String pharmacyType) {
+		this.pharmacyType = pharmacyType;
+	}
+
+	public String getPharmacyExactAddress() {
+		return pharmacyExactAddress;
+	}
+
+	public void setPharmacyExactAddress(String pharmacyExactAddress) {
+		this.pharmacyExactAddress = pharmacyExactAddress;
 	}
 
 	public Pharmacy() {

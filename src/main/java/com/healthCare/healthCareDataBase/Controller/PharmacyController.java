@@ -19,7 +19,7 @@ import com.healthCare.healthCareDataBase.Dtos.OneString;
 import com.healthCare.healthCareDataBase.Dtos.PageableDto;
 import com.healthCare.healthCareDataBase.Dtos.PendingPharmcyGetDto;
 import com.healthCare.healthCareDataBase.Dtos.PharmacyGetDto;
-import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
+import com.healthCare.healthCareDataBase.Dtos.PharmacySettingsDto;
 import com.healthCare.healthCareDataBase.Model.Pharmacy;
 import com.healthCare.healthCareDataBase.Repository.AdminRepository;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
@@ -64,9 +64,9 @@ public class PharmacyController {
 			return true;
 	}
 	
-	@PostMapping(value="changePharamcyStatusBySecureLogin")
-	public boolean changePharamcyStatusBySecureLogin(@RequestBody final TwoStrings data) {
-		pharmacyRepository.changePharamcyStatusBySecureLogin(data.getStringOne(),data.getStringTwo());
+	@PostMapping(value="changePharamcyStatusAndSettingsBySecureLogin")
+	public boolean changePharamcyStatusAndSettingsBySecureLogin(@RequestBody final PharmacySettingsDto data) {
+		pharmacyRepository.changePharamcyStatusAndSettingsBySecureLogin(data.getSecureLogin(),data.getStatus(),data.getExactAddress(),data.getAccountType());
 		return true;
 	}
 	

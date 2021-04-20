@@ -51,16 +51,20 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 	@Modifying
     @Transactional
 	@Query(value="update pharmacies ph,"
-			+ " users u set ph.pharmacy_status=?2"
+			+ " users u set ph.pharmacy_status = ?2,"
+			+ " ph.pharmacy_exact_address = ?3,"
+			+ "	ph.pharmacy_type = ?4"
 			+ " where u.user_id = ph.user_id and"
 			+ " u.user_secure_login= ?1",nativeQuery=true)
-	void changePharamcyStatusBySecureLogin(String stringOne, String stringTwo);
+	void changePharamcyStatusAndSettingsBySecureLogin(String secureLogin,String status, String exactAddress, String accountType);
 
 	@Query(value="select ph.pharmacy_full_name,"
 			+ " ph.user_id,"
 			+ " u.user_city,"
 			+ " u.user_username,"
-			+ " ph.pharmacy_status"
+			+ " ph.pharmacy_status,"
+			+ " ph.pharmacy_exact_address,"
+			+ " ph.pharmacy_type"
 			+ " from pharmacies ph, users u where"
 			+ " ph.user_id=u.user_id and (ph.pharmacy_status='pending' or ph.pharmacy_status='reVerify')",nativeQuery=true)
 	List<PendingPharmcyGetDto> getPendingPharmacies(Pageable pageable);
