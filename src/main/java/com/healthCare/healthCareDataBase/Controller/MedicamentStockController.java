@@ -5,22 +5,27 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.MedicamentStockDto;
+import com.healthCare.healthCareDataBase.Dtos.SearchMedForPharmacyDto;
 import com.healthCare.healthCareDataBase.Model.MedicamentStock;
 import com.healthCare.healthCareDataBase.Repository.MedicamentStockRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value="/medicamentstock")
+@RequestMapping(value="/api/medicamentstock")
 public class MedicamentStockController {
 	
 	@Autowired
@@ -49,5 +54,23 @@ public class MedicamentStockController {
 		}else
 			return "there is no pharmacy with id: "+medicamentStockModel.getPharmacyId();
 		
+	}
+	
+	@GetMapping(value="/getStockNumberByPharmacyId/{id}")
+	public Integer getStockNumberByPharmacyId(@PathVariable final Long id) {
+		return medicamentStockRepository.getStockNumberByPharmacyId(id);
+	}
+	
+	@Transactional
+	@DeleteMapping(value="/deleteByPharmacyId/{id}")
+	public boolean deleteByPharmacyId(@PathVariable final Long id) {
+		medicamentStockRepository.deleteByPharmacyId(id);
+		return true;
+	}
+	
+	@PostMapping(value="searchMedByNameAndPharmacyId")
+	public List<MedicamentStock> searchMedByNameAndPharmacyId(@RequestBody final SearchMedForPharmacyDto data) {
+		System.out.println(data.getMedicamentName());
+		return medicamentStockRepository.searchMedByNameAndPharmacyId(data.getPharmacyId(),data.getMedicamentName());
 	}
 }

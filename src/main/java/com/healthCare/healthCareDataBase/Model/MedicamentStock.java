@@ -1,14 +1,10 @@
 package com.healthCare.healthCareDataBase.Model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -22,20 +18,11 @@ public class MedicamentStock {
 	@Column(name="medicamentStockId")
 	private Long medicamentStockId;
 	
-	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-	@JoinColumn(name = "medicamentId", referencedColumnName = "medicamentId")
-	private Medicament medicamentId;
+	@Column(name="pharmacyId")
+	private Long pharmacyId;
 	
-	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-	@JoinColumn(name = "pharmacyId", referencedColumnName = "user_id")
-	private Pharmacy pharmacyId;
-	
-	@Column(name="medicamentStockQte")
-	private Integer medicamentStockQte;
-	
-	@Column(name="medicamentStockAddDate")
-	private String  medicamentStockAddDate;
-	
+	@Column(name="medicamentName")
+	private String medicamentName;
 
 	public Long getMedicamentStockId() {
 		return medicamentStockId;
@@ -45,40 +32,20 @@ public class MedicamentStock {
 		this.medicamentStockId = medicamentStockId;
 	}
 
-	public Medicament getMedicamentId() {
-		return medicamentId;
-	}
-
-	public void setMedicamentId(Medicament medicamentId) {
-		this.medicamentId = medicamentId;
-	}
-
-	public Pharmacy getPharmacyId() {
+	public Long getPharmacyId() {
 		return pharmacyId;
 	}
 
-	public void setPharmacyId(Pharmacy pharmacyId) {
+	public void setPharmacyId(Long pharmacyId) {
 		this.pharmacyId = pharmacyId;
 	}
 
-	public Integer getMedicamentStockQte() {
-		return medicamentStockQte;
+	public String getMedicamentName() {
+		return medicamentName;
 	}
 
-	public void setMedicamentStockQte(Integer medicamentStockQte) {
-		this.medicamentStockQte = medicamentStockQte;
+	public void setMedicamentName(String medicamentName) {
+		this.medicamentName = medicamentName;
 	}
-
-	public String getMedicamentStockAddDate() {
-		return medicamentStockAddDate;
-	}
-
-	public void setMedicamentStockAddDate(String medicamentStockAddDate) {
-		this.medicamentStockAddDate = medicamentStockAddDate;
-	}
-
-	
-	
-	
 	
 }
