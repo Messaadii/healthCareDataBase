@@ -68,9 +68,15 @@ public class MedicamentStockController {
 		return true;
 	}
 	
+	@Transactional
+	@DeleteMapping(value="/deleteByMedicamentStockId/{id}")
+	public boolean deleteByMedicamentStockId(@PathVariable final Long id) {
+		medicamentStockRepository.deleteByMedicamentStockId(id);
+		return true;
+	}
+	
 	@PostMapping(value="searchMedByNameAndPharmacyId")
 	public List<MedicamentStock> searchMedByNameAndPharmacyId(@RequestBody final SearchMedForPharmacyDto data) {
-		System.out.println(data.getMedicamentName());
 		return medicamentStockRepository.searchMedByNameAndPharmacyId(data.getPharmacyId(),data.getMedicamentName());
 	}
 }

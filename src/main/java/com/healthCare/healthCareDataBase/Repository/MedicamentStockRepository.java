@@ -13,6 +13,7 @@ import com.healthCare.healthCareDataBase.Model.MedicamentStock;
 public interface MedicamentStockRepository extends JpaRepository <MedicamentStock,Long>{
 
 	long deleteByPharmacyId(Long id);
+	long deleteByMedicamentStockId(Long id);
 	
 	@Modifying
 	@Transactional
@@ -33,7 +34,7 @@ public interface MedicamentStockRepository extends JpaRepository <MedicamentStoc
 	@Query(value = "SELECT count(md.pharmacy_id) FROM medicament_stocks md where md.pharmacy_id=?1",nativeQuery=true)
 	Integer getStockNumberByPharmacyId(Long id);
 
-	@Query(value = "SELECT * FROM medicament_stocks md where md.pharmacy_id=?1 and md.medicament_name like ?2",nativeQuery=true)
+	@Query(value = "SELECT * FROM medicament_stocks md where md.pharmacy_id=?1 and md.medicament_name like %?2%",nativeQuery=true)
 	List<MedicamentStock> searchMedByNameAndPharmacyId(Long pharmacyId, String medicamentName);
 
 }

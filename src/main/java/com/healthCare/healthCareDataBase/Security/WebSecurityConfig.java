@@ -101,6 +101,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/pharmacy/getPharmacyInfoFromSecureLogin").hasAuthority("PHARMACIST_ROLE")
 			.antMatchers("/api/medicamentstock/getStockNumberByPharmacyId/**").hasAuthority("PHARMACIST_ROLE")
 			.antMatchers("/api/medicamentstock/deleteByPharmacyId/**").hasAuthority("PHARMACIST_ROLE")
+			.antMatchers("/api/medicamentstock/deleteByMedicamentStockId/**").hasAuthority("PHARMACIST_ROLE")
 			.antMatchers("/api/medicamentstock/searchMedByNameAndPharmacyId").hasAuthority("PHARMACIST_ROLE")
 			.anyRequest().authenticated();
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
