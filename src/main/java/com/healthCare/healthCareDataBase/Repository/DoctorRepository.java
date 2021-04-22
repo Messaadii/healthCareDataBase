@@ -15,6 +15,7 @@ import com.healthCare.healthCareDataBase.Dtos.AppointmentInfoForPatient;
 import com.healthCare.healthCareDataBase.Dtos.DoctorGetDto;
 import com.healthCare.healthCareDataBase.Dtos.PendingDoctorGetDto;
 import com.healthCare.healthCareDataBase.Dtos.SearchedDoctorDto;
+import com.healthCare.healthCareDataBase.Dtos.TopRatedDoctorsDto;
 import com.healthCare.healthCareDataBase.Model.Doctor;
 
 public interface DoctorRepository extends JpaRepository<Doctor, Long>{
@@ -165,5 +166,19 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " from doctors d, users u "
 			+ " where d.user_id = ?1 and u.user_id=?1",nativeQuery=true)
 	SearchedDoctorDto getDoctorInfoByDoctorId(Long id);
+
+	@Query(value="select u.user_id,"
+			+ " d.doctor_first_name,"
+			+ " d.doctor_last_name,"
+			+ " u.user_city,"
+			+ " d.doctor_gender,"
+			+ " d.doctor_rate,"
+			+ " s.speciality_name"
+			+ " from doctors d, users u, speciality s, doctor_speciality ds"
+			+ " where d.user_id = u.user_id and"
+			+ " d.user_id = ds.doctor_id"
+			+ " and ds.speciality_id = s.speciality_id and"
+			+ " d.doctor_status = 'approved'",nativeQuery=true)
+	List<TopRatedDoctorsDto> getTopRatedDoctor(Pageable pageable);
 	
 }

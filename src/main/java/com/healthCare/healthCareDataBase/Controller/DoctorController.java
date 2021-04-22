@@ -25,10 +25,12 @@ import com.healthCare.healthCareDataBase.Dtos.DoctorSettingsDto;
 import com.healthCare.healthCareDataBase.Dtos.IdTurnAndDate;
 import com.healthCare.healthCareDataBase.Dtos.IntegerAndString;
 import com.healthCare.healthCareDataBase.Dtos.OneString;
+import com.healthCare.healthCareDataBase.Dtos.PageableDto;
 import com.healthCare.healthCareDataBase.Dtos.PendingDoctorGetDto;
 import com.healthCare.healthCareDataBase.Dtos.SearchedDocDto;
 import com.healthCare.healthCareDataBase.Dtos.SearchedDoctorDto;
 import com.healthCare.healthCareDataBase.Dtos.SecureLoginAndPatientTurnDto;
+import com.healthCare.healthCareDataBase.Dtos.TopRatedDoctorsDto;
 import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
 import com.healthCare.healthCareDataBase.Model.Doctor;
 import com.healthCare.healthCareDataBase.Repository.AdminRepository;
@@ -172,6 +174,12 @@ public class DoctorController {
 	@GetMapping(value="getDoctorInfoByDoctorId/{id}")
 	public SearchedDoctorDto getDoctorInfoByDoctorId(@PathVariable(name="id") Long id) {
 		return doctorRepository.getDoctorInfoByDoctorId(id);
+	}
+	
+	@PostMapping(value="/getTopRatedDoctor")
+	public List<TopRatedDoctorsDto> getTopRatedDoctor(@RequestBody final PageableDto search) {
+		Pageable pageable = PageRequest.of(search.getPage(), search.getSize(), Sort.by("doctor_rate").descending());
+		return doctorRepository.getTopRatedDoctor(pageable);
 	}
 }
 

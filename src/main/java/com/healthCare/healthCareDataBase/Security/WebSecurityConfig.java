@@ -70,7 +70,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/api/doctor/getDoctorInfoByDoctorId/**",
                     "/api/image/checkIfDocumentExist",
                     "/api/uploadExcelFile/import/**",
-                    "/api/medicamentstock/get/**").permitAll()
+                    "/api/medicamentstock/get/**",
+                    "/api/doctor/getTopRatedDoctor").permitAll()
 			.antMatchers("/api/admin/**").hasAuthority("ADMIN_ROLE")
 			.antMatchers("/api/doctor/**").hasAnyAuthority("DOCTOR_ROLE","ADMIN_ROLE")
 			.antMatchers("/api/patient/**").hasAnyAuthority("PATIENT_ROLE","ADMIN_ROLE")
