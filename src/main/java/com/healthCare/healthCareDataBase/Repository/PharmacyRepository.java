@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
 import com.healthCare.healthCareDataBase.Dtos.PendingPharmcyGetDto;
 import com.healthCare.healthCareDataBase.Dtos.PharmacyGetDto;
 import com.healthCare.healthCareDataBase.Model.Pharmacy;
@@ -75,5 +76,10 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 			+ " set ph.pharmacy_status = ?2"
 			+ " where ph.user_id = ?1",nativeQuery=true)
 	void changePharmacyStatusById(Integer integer, String string);
+
+	@Query(value="select p.pharmacy_full_name"
+			+ " from pharmacies p"
+			+ " where p.user_id= ?1",nativeQuery=true)
+	FirstAndLastNameDto getUserFullNameById(Long id);
 	
 }

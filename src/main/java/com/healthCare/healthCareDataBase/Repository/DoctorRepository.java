@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.healthCare.healthCareDataBase.Dtos.AppointmentDocInfo;
 import com.healthCare.healthCareDataBase.Dtos.AppointmentInfoForPatient;
 import com.healthCare.healthCareDataBase.Dtos.DoctorGetDto;
+import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
 import com.healthCare.healthCareDataBase.Dtos.PendingDoctorGetDto;
 import com.healthCare.healthCareDataBase.Dtos.SearchedDoctorDto;
 import com.healthCare.healthCareDataBase.Dtos.TopRatedDoctorsDto;
@@ -180,5 +181,11 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " and ds.speciality_id = s.speciality_id and"
 			+ " d.doctor_status = 'approved'",nativeQuery=true)
 	List<TopRatedDoctorsDto> getTopRatedDoctor(Pageable pageable);
+
+	@Query(value="select d.doctor_first_name,"
+			+ " d.doctor_last_name"
+			+ " from doctors d"
+			+ " where d.user_id= ?1",nativeQuery=true)
+	FirstAndLastNameDto getUserFullNameById(Long id);
 	
 }

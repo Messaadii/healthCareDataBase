@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
 import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
 import com.healthCare.healthCareDataBase.Dtos.UpdatePasswordRequestDto;
+import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
+import com.healthCare.healthCareDataBase.Repository.PatientRepository;
+import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
 import com.healthCare.healthCareDataBase.Repository.UserRepository;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -24,6 +28,15 @@ public class UserController {
 	
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	DoctorRepository doctorRepository;
+	
+	@Autowired
+	PatientRepository patientRepository;
+	
+	@Autowired
+	PharmacyRepository pharmacyRepository;
 	
 	@GetMapping(value="/existsByUsername/{username}")
 	public boolean existsByUsername(@PathVariable("username") final String username) {
@@ -48,5 +61,18 @@ public class UserController {
 			userRepository.updateUsernameBySecureLogin(twoStrings.getStringOne(),twoStrings.getStringTwo());
 			return true;
 		}
+	}
+	
+	@GetMapping(value="getUserFullNameById/{id}")
+	public FirstAndLastNameDto getUserFullNameById(@PathVariable("id") Long id) {
+		String userType = userRepository.getUserTypeByUserId(id);
+		if("doctor".equals(userType))
+		  return doctorRepository.getUserFullNameById(id);
+		else if ("patient".equals(userType))
+		  return patientRepository.getUserFullNameById(id);
+		else if ("pharmacist".equals(userType))
+		  return pharmacyRepository.getUserFullNameById(id);
+		else
+		  return null;
 	}
 }

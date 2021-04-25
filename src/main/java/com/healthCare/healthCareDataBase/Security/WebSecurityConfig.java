@@ -71,7 +71,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/api/image/checkIfDocumentExist",
                     "/api/uploadExcelFile/import/**",
                     "/api/medicamentstock/get/**",
-                    "/api/doctor/getTopRatedDoctor").permitAll()
+                    "/api/doctor/getTopRatedDoctor",
+                    "/api/patient/getUserFullNameById/**",
+                    "/api/user/getUserFullNameById/**").permitAll()
 			.antMatchers("/api/admin/**").hasAuthority("ADMIN_ROLE")
 			.antMatchers("/api/doctor/**").hasAnyAuthority("DOCTOR_ROLE","ADMIN_ROLE")
 			.antMatchers("/api/patient/**").hasAnyAuthority("PATIENT_ROLE","ADMIN_ROLE")
@@ -104,6 +106,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/medicamentstock/deleteByPharmacyId/**").hasAuthority("PHARMACIST_ROLE")
 			.antMatchers("/api/medicamentstock/deleteByMedicamentStockId/**").hasAuthority("PHARMACIST_ROLE")
 			.antMatchers("/api/medicamentstock/searchMedByNameAndPharmacyId").hasAuthority("PHARMACIST_ROLE")
+			.antMatchers("/api/question/add").hasAuthority("PATIENT_ROLE")
+			.antMatchers("/api/question/getAll").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
+			.antMatchers("/api/comment/getAll").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
+			.antMatchers("/api/comment/add").hasAuthority("DOCTOR_ROLE")
+			.antMatchers("/api/point/add").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE")
+			.antMatchers("/api/point/deleteById/**").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE")
 			.anyRequest().authenticated();
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}

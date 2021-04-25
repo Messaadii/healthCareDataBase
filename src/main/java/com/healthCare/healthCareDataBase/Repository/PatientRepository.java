@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.healthCare.healthCareDataBase.Dtos.AppointmentPatientInfo;
 import com.healthCare.healthCareDataBase.Dtos.CurrentPatientInfo;
+import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
 import com.healthCare.healthCareDataBase.Dtos.PatientGetDto;
 import com.healthCare.healthCareDataBase.Model.Patient;
 
@@ -69,5 +70,11 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 			+ " a.appointment_date=?2 and"
 			+ " a.patient_turn=?3",nativeQuery=true)
 	CurrentPatientInfo getAppPatientInfoByDoctorIdTurnAndDate(Long id, String date, Integer turn);
+
+	@Query(value="select p.patient_first_name,"
+			+ " p.patient_last_name"
+			+ " from patients p"
+			+ " where p.user_id= ?1",nativeQuery=true)
+	FirstAndLastNameDto getUserFullNameById(Long id);
 	
 }

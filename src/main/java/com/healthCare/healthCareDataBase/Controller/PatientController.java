@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.AppointmentInfoForPatient;
+import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
 import com.healthCare.healthCareDataBase.Dtos.OneString;
 import com.healthCare.healthCareDataBase.Dtos.PatientGetDto;
 import com.healthCare.healthCareDataBase.Dtos.UpdateMedicalProfileIdRequest;
@@ -74,6 +75,11 @@ public class PatientController {
 	@GetMapping(value="getDoctorAppointmentInfoForPatientByDoctorId/{id}")
 	public AppointmentInfoForPatient getDoctorAppointmentInfoForPatientByDoctorId(@PathVariable("id") Long id) {
 		return doctorRepository.getDoctorAppointmentInfoForPatientByDoctorId(id);
+	}
+	
+	@GetMapping(value="getUserFullNameById/{id}")
+	public FirstAndLastNameDto getUserFullNameById(@PathVariable("id") Long id) {
+		return patientRepository.getUserFullNameById(id);
 	}
 
 	
