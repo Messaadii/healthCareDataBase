@@ -112,6 +112,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/comment/add").hasAuthority("DOCTOR_ROLE")
 			.antMatchers("/api/point/add").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE")
 			.antMatchers("/api/point/deleteById/**").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE")
+			.antMatchers("/api/notificaiotn/add").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
+			.antMatchers("/api/notificaiotn/getAll").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
+			.antMatchers("/api/notificaiotn/changeUnreadNotification").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
+			.antMatchers("/api/notificaiotn/deleteNotificationById/**").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.anyRequest().authenticated();
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}

@@ -76,6 +76,12 @@ public class Doctor extends User{
 	@Column(name="currentPatient")
 	private Integer currentPatient;
 	
+	@Column(name="doctorLatitude")
+	private String doctorLatitude;
+	
+	@Column(name="doctorLongitude")
+	private String doctorLongitude;
+	
 	@ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinTable(name = "doctor_speciality",joinColumns = { @JoinColumn(name = "doctor_id", referencedColumnName = "user_id") },inverseJoinColumns = { @JoinColumn(name = "speciality_id", referencedColumnName = "specialityId") })
 	private  List<Speciality> speciality;
@@ -201,6 +207,22 @@ public class Doctor extends User{
 
 	public void setCurrentPatient(Integer currentPatient) {
 		this.currentPatient = currentPatient;
+	}
+
+	public String getDoctorLatitude() {
+		return doctorLatitude;
+	}
+
+	public void setDoctorLatitude(String doctorLatitude) {
+		this.doctorLatitude = doctorLatitude;
+	}
+
+	public String getDoctorLongitude() {
+		return doctorLongitude;
+	}
+
+	public void setDoctorLongitude(String doctorLongitude) {
+		this.doctorLongitude = doctorLongitude;
 	}
 
 	public Doctor() {

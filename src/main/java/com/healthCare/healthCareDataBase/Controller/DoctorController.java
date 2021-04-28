@@ -32,7 +32,9 @@ import com.healthCare.healthCareDataBase.Dtos.SearchedDoctorDto;
 import com.healthCare.healthCareDataBase.Dtos.SecureLoginAndPatientTurnDto;
 import com.healthCare.healthCareDataBase.Dtos.TopRatedDoctorsDto;
 import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
+import com.healthCare.healthCareDataBase.Dtos.UpdatePositionDto;
 import com.healthCare.healthCareDataBase.Model.Doctor;
+import com.healthCare.healthCareDataBase.Model.Notification;
 import com.healthCare.healthCareDataBase.Repository.AdminRepository;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
 import com.healthCare.healthCareDataBase.Repository.PatientRepository;
@@ -55,9 +57,12 @@ public class DoctorController {
 	SpecialityRepository specialityRepository;
 	@Autowired
 	UserRepository userRepository;
+	@Autowired
+	NotificationController notificationController;
 	
 	@Autowired
 	AdminRepository adminRepository;
+	
 	
 	@GetMapping(value="/all")
 	public List<Doctor>getAll(){
@@ -108,6 +113,13 @@ public class DoctorController {
 
 	@PostMapping(value="changeDoctorStatusBySecureLogin")
 	public boolean changeDoctorStatusBySecureLogin(@RequestBody final TwoStrings twoStrings) {
+		if("approved".equals(twoStrings.getStringTwo())) {
+			Notification notification = new Notification();
+			notification.setNotificationType("setYourGeoLocation");
+			notification.setSenderId(-1);
+			notification.setRecipientId(doctorRepository.getDoctorIdFromSecureLogin(twoStrings.getStringOne()));
+			notificationController.add(notification);
+		}
 		doctorRepository.changeDoctorStatusBySecureLogin(twoStrings.getStringOne(),twoStrings.getStringTwo());
 		return true;
 	}
@@ -180,6 +192,12 @@ public class DoctorController {
 	public List<TopRatedDoctorsDto> getTopRatedDoctor(@RequestBody final PageableDto search) {
 		Pageable pageable = PageRequest.of(search.getPage(), search.getSize(), Sort.by("doctor_rate").descending());
 		return doctorRepository.getTopRatedDoctor(pageable);
+	}
+	
+	@PostMapping(value="/updatePositionBySecureLogin")
+	public boolean updatePositionBySecureLogin(@RequestBody final UpdatePositionDto data) {
+		doctorRepository.updatePositionBySecureLogin(data.getSecureLogin(),data.getLatitude(),data.getLongitude());
+		return true;
 	}
 }
 

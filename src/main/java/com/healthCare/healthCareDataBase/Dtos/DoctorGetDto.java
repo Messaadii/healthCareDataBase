@@ -36,5 +36,9 @@ public interface DoctorGetDto {
 	String getAppointmentPrice();
 	@Value("#{target.current_patient}")
 	String getCurrentPatient();
+	@Value("#{target.doctor_latitude}")
+	String getDoctorLatitude();
+	@Value("#{target.doctor_longitude}")
+	String getDoctorLongitude();
 
 }

@@ -37,6 +37,8 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " d.appointment_approximate_duration,"
 			+ " d.appointment_price,"
 			+ " d.current_patient,"
+			+ " d.doctor_latitude,"
+			+ " d.doctor_longitude,"
 			+ " u.user_username,"
 			+ " u.user_city"
 			+ " from doctors d, users u "
@@ -109,9 +111,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " d.doctor_status = 'approved' and"
 			+ " u.user_city = ?2",nativeQuery=true)
 	List<SearchedDoctorDto> getApprovedDoctorsBySpecialityIdAndCity(String specialityCode,String city, Pageable pageable);
-	
-	
-	
+
 	
 	@Modifying
     @Transactional
@@ -125,6 +125,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
     @Transactional
 	@Query(value="update doctors d set d.doctor_secure_login= ?2 where d.doctor_id = ?1",nativeQuery=true)
 	void getDoctorSecureLoginFromId(Integer id,String secureString);
+	
+	@Query(value="select u.user_id from users u where u.user_secure_login = ?1",nativeQuery=true)
+	Long getDoctorIdFromSecureLogin(String secureString);
+	
 	
 	@Query(value="select d.appointment_approximate_duration, "
 			+ "d.appointment_price, "
@@ -187,5 +191,13 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " from doctors d"
 			+ " where d.user_id= ?1",nativeQuery=true)
 	FirstAndLastNameDto getUserFullNameById(Long id);
+
+	@Modifying
+    @Transactional
+	@Query(value="update doctors d, users u set"
+			+ " d.doctor_latitude=?2,"
+			+ " d.doctor_longitude=?3"
+			+ " where u.user_id = d.user_id and u.user_secure_login= ?1",nativeQuery=true)
+	void updatePositionBySecureLogin(String secureLogin, String latitude, String longitude);
 	
 }

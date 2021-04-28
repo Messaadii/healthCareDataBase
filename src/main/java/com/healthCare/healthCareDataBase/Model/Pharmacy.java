@@ -33,6 +33,12 @@ public class Pharmacy extends User{
 	@Column(name="pharmacyExactAddress")
 	private String pharmacyExactAddress;
 	
+	@Column(name="pharmacyLatitude")
+	private Long pharmacyLatitude;
+	
+	@Column(name="pharmacyLongitude")
+	private Long pharmacyLongitude;
+	
 	public String getPharmacyFullName() {
 		return pharmacyFullName;
 	}
@@ -63,6 +69,22 @@ public class Pharmacy extends User{
 
 	public void setPharmacyExactAddress(String pharmacyExactAddress) {
 		this.pharmacyExactAddress = pharmacyExactAddress;
+	}
+
+	public Long getPharmacyLatitude() {
+		return pharmacyLatitude;
+	}
+
+	public void setPharmacyLatitude(Long pharmacyLatitude) {
+		this.pharmacyLatitude = pharmacyLatitude;
+	}
+
+	public Long getPharmacyLongitude() {
+		return pharmacyLongitude;
+	}
+
+	public void setPharmacyLongitude(Long pharmacyLongitude) {
+		this.pharmacyLongitude = pharmacyLongitude;
 	}
 
 	public Pharmacy() {
