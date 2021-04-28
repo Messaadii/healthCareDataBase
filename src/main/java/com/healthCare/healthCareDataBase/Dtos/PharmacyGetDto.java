@@ -14,6 +14,10 @@ public interface PharmacyGetDto {
 	String getUserCity();
 	@Value("#{target.pharmacy_status}")
 	String getPharmacyStatus();
+	@Value("#{target.pharmacy_latitude}")
+	String getPharmacyLatitude();
+	@Value("#{target.pharmacy_longitude}")
+	String getPharmacyLongitude();
 
 }
 

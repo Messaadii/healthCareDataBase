@@ -21,6 +21,8 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 	@Query(value="select ph.user_id,"
 			+ " ph.pharmacy_status,"
 			+ " ph.pharmacy_full_name,"
+			+ " ph.pharmacy_longitude,"
+			+ " ph.pharmacy_latitude,"
 			+ " u.user_city,"
 			+ " u.user_username"
 			+ " from pharmacies ph, users u"
@@ -81,5 +83,13 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 			+ " from pharmacies p"
 			+ " where p.user_id= ?1",nativeQuery=true)
 	FirstAndLastNameDto getUserFullNameById(Long id);
+
+	@Modifying
+    @Transactional
+	@Query(value="update pharmacies p, users u set"
+			+ " p.pharmacy_latitude=?2,"
+			+ " p.pharmacy_longitude=?3"
+			+ " where u.user_id = p.user_id and u.user_secure_login= ?1",nativeQuery=true)
+	void updatePositionBySecureLogin(String secureLogin, String latitude, String longitude);
 	
 }

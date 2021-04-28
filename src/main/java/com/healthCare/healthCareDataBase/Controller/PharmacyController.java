@@ -20,6 +20,8 @@ import com.healthCare.healthCareDataBase.Dtos.PageableDto;
 import com.healthCare.healthCareDataBase.Dtos.PendingPharmcyGetDto;
 import com.healthCare.healthCareDataBase.Dtos.PharmacyGetDto;
 import com.healthCare.healthCareDataBase.Dtos.PharmacySettingsDto;
+import com.healthCare.healthCareDataBase.Dtos.UpdatePositionDto;
+import com.healthCare.healthCareDataBase.Model.Notification;
 import com.healthCare.healthCareDataBase.Model.Pharmacy;
 import com.healthCare.healthCareDataBase.Repository.AdminRepository;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
@@ -42,6 +44,8 @@ public class PharmacyController {
 	AdminRepository adminRepository;
 	@Autowired
 	UserRepository userRepository;
+	@Autowired
+	NotificationController notificationController;
 	
 	@GetMapping(value="/all")
 	public List<Pharmacy>getAll(){
@@ -79,12 +83,25 @@ public class PharmacyController {
 	@PostMapping(value="changePharmacyStatusById")
 	public boolean changePharmacyStatusById (@RequestBody final IntegerAndString data) {
 		pharmacyRepository.changePharmacyStatusById(data.getInteger(),data.getString());
+		if("approved".equals(data.getString())) {
+			Notification notification = new Notification();
+			notification.setNotificationType("setYourGeoLocation");
+			notification.setSenderId(-1);
+			notification.setRecipientId(data.getInteger());
+			notificationController.add(notification);
+		}
 		return true;
 	}
 	
 	@GetMapping(value="deleteByUserId/{id}")
 	public boolean deleteByUserId(@PathVariable("id") final Long id) {
 		pharmacyRepository.deleteById(id);
+		return true;
+	}
+	
+	@PostMapping(value="/updatePositionBySecureLogin")
+	public boolean updatePositionBySecureLogin(@RequestBody final UpdatePositionDto data) {
+		pharmacyRepository.updatePositionBySecureLogin(data.getSecureLogin(),data.getLatitude(),data.getLongitude());
 		return true;
 	}
 }
