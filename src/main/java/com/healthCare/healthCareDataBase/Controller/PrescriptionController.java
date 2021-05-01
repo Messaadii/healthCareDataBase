@@ -73,4 +73,5 @@ public class PrescriptionController {
 		return prescriptionRepository.getPrescriptionsByPatientIdAndPrescriptionStatus(data.getPatientId(),data.getPrescriptionStatus(),pageable);
 	}
 	
+	
 }

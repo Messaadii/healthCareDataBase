@@ -34,10 +34,10 @@ public class Pharmacy extends User{
 	private String pharmacyExactAddress;
 	
 	@Column(name="pharmacyLatitude")
-	private Long pharmacyLatitude;
+	private String pharmacyLatitude;
 	
 	@Column(name="pharmacyLongitude")
-	private Long pharmacyLongitude;
+	private String pharmacyLongitude;
 	
 	public String getPharmacyFullName() {
 		return pharmacyFullName;
@@ -71,19 +71,19 @@ public class Pharmacy extends User{
 		this.pharmacyExactAddress = pharmacyExactAddress;
 	}
 
-	public Long getPharmacyLatitude() {
+	public String getPharmacyLatitude() {
 		return pharmacyLatitude;
 	}
 
-	public void setPharmacyLatitude(Long pharmacyLatitude) {
+	public void setPharmacyLatitude(String pharmacyLatitude) {
 		this.pharmacyLatitude = pharmacyLatitude;
 	}
 
-	public Long getPharmacyLongitude() {
+	public String getPharmacyLongitude() {
 		return pharmacyLongitude;
 	}
 
-	public void setPharmacyLongitude(Long pharmacyLongitude) {
+	public void setPharmacyLongitude(String pharmacyLongitude) {
 		this.pharmacyLongitude = pharmacyLongitude;
 	}
 

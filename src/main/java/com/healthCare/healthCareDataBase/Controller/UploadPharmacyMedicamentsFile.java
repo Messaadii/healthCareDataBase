@@ -41,10 +41,11 @@ public class UploadPharmacyMedicamentsFile {
 
                 XSSFRow row = worksheet.getRow(index);
 
-                med.setMedicamentName(row.getCell(0).getStringCellValue());
-                med.setPharmacyId(id);
-
-                medicamentStockRepository.save(med);
+                if(row.getCell(0).getStringCellValue() != null) {
+                	med.setMedicamentName(row.getCell(0).getStringCellValue());
+                    med.setPharmacyId(id);
+                    medicamentStockRepository.save(med);
+                }
             }
         }
 

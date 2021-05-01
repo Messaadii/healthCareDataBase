@@ -10,7 +10,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.healthCare.healthCareDataBase.Dtos.GetPatientPrescription;
+import com.healthCare.healthCareDataBase.Model.Pharmacy;
 import com.healthCare.healthCareDataBase.Model.Prescription;
+import com.healthCare.healthCareDataBase.Model.User;
 
 public interface PrescriptionRepository extends JpaRepository<Prescription,Long>{
 
@@ -27,5 +29,5 @@ public interface PrescriptionRepository extends JpaRepository<Prescription,Long>
 
 	@Query(value="select p.prescription_id, p.prescription_date, p.doctor_id from prescription p where p.patient_id=?1 and p.prescription_status=?2",nativeQuery=true)
 	List<GetPatientPrescription> getPrescriptionsByPatientIdAndPrescriptionStatus(Long patientId, String prescriptionStatus, Pageable pageable);
-	
+
 }

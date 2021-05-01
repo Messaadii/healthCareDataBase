@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import com.healthCare.healthCareDataBase.Dtos.FindPharmacyGet;
 import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
 import com.healthCare.healthCareDataBase.Dtos.PendingPharmcyGetDto;
 import com.healthCare.healthCareDataBase.Dtos.PharmacyGetDto;
@@ -91,5 +92,27 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 			+ " p.pharmacy_longitude=?3"
 			+ " where u.user_id = p.user_id and u.user_secure_login= ?1",nativeQuery=true)
 	void updatePositionBySecureLogin(String secureLogin, String latitude, String longitude);
+	
+	@Query(value="select p.pharmacy_full_name,"
+			+ " p.pharmacy_exact_address,"
+			+ " p.user_id,"
+			+ " p.pharmacy_type,"
+			+ " p.pharmacy_latitude,"
+			+ " p.pharmacy_longitude,"
+			+ " u.user_city,"
+			+ " (6371"
+			+ " * acos("
+			+ " cos( radians(?2) ) "
+			+ " * cos( radians( p.pharmacy_latitude ) )"
+			+ " * cos( radians( p.pharmacy_longitude ) - radians(?3) )"
+			+ " + sin( radians(?2) )"
+			+ "  * sin( radians( p.pharmacy_latitude  ) ))) as distance"
+			+ " from pharmacies p, medicament_stocks m, users u"
+			+ " where m.medicament_name in ?1 and m.pharmacy_id = p.user_id and u.user_id = p.user_id"
+			+ " group by m.pharmacy_id"
+			+ " having count(m.pharmacy_id)=?5 and distance < ?4 "
+			+ " order by distance",nativeQuery=true)
+	public List<FindPharmacyGet> findPharmacyByPrescriptonMedicamentAndGeoLocation(String [] medicamentsName, String userLatitude,
+			String userLongitude, Integer searchRaduis,Integer length, Pageable pageable);
 	
 }

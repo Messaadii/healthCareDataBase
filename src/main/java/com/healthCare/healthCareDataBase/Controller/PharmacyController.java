@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.healthCare.healthCareDataBase.Dtos.FindPharmacyGet;
+import com.healthCare.healthCareDataBase.Dtos.FindPresDto;
 import com.healthCare.healthCareDataBase.Dtos.IntegerAndString;
 import com.healthCare.healthCareDataBase.Dtos.OneString;
 import com.healthCare.healthCareDataBase.Dtos.PageableDto;
@@ -104,4 +106,13 @@ public class PharmacyController {
 		pharmacyRepository.updatePositionBySecureLogin(data.getSecureLogin(),data.getLatitude(),data.getLongitude());
 		return true;
 	}
+	
+	@PostMapping(value="findPharmacyByPrescriptonMedicamentAndGeoLocation")
+	public List<FindPharmacyGet> findPharmacyByPrescriptonMedicamentAndGeoLocation(@RequestBody final FindPresDto data){
+		Pageable pageable = PageRequest.of(data.getPage(), data.getSize());
+		if(data.getSearchRaduis()==0)
+			data.setSearchRaduis(5000);
+		return pharmacyRepository.findPharmacyByPrescriptonMedicamentAndGeoLocation(data.getMedicamentsName(),data.getUserLatitude(),data.getUserLongitude(),data.getSearchRaduis(),data.getMedicamentsName().length,pageable);
+	}
+	
 }
