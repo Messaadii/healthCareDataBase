@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.healthCare.healthCareDataBase.Dtos.UserTypeAndUserIdDto;
 import  com.healthCare.healthCareDataBase.Model.User;
 
 @Repository
@@ -39,7 +40,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query(value="select u.user_type from users u where u.user_id= ?1",nativeQuery=true)
 	public String getUserTypeByUserId(Long id);
 	
+	@Query(value="select u.user_type from users u where u.user_username= ?1",nativeQuery=true)
+	public String getUserTypeByUsername(String email);
 	
-	
+	@Query(value="select u.user_type,u.user_id from users u where u.user_username= ?1",nativeQuery=true)
+	public UserTypeAndUserIdDto getUserTypeAndIdByUsername(String email);
 	
 }

@@ -20,4 +20,6 @@ public interface PatientGetDto {
 	String getUserCity();
 	@Value("#{target.patient_birth_day}")
 	String getPatientBirthDay();
+	@Value("#{target.patient_status}")
+	String getPatientStatus();
 }

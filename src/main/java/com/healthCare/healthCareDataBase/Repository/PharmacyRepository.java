@@ -78,7 +78,7 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 	@Query(value="update pharmacies ph"
 			+ " set ph.pharmacy_status = ?2"
 			+ " where ph.user_id = ?1",nativeQuery=true)
-	void changePharmacyStatusById(Integer integer, String string);
+	void changePharmacyStatusById(Long integer, String string);
 
 	@Query(value="select p.pharmacy_full_name"
 			+ " from pharmacies p"
@@ -114,5 +114,10 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 			+ " order by distance",nativeQuery=true)
 	public List<FindPharmacyGet> findPharmacyByPrescriptonMedicamentAndGeoLocation(String [] medicamentsName, String userLatitude,
 			String userLongitude, Integer searchRaduis,Integer length, Pageable pageable);
+
+	@Query(value="select p.pharmacy_status"
+			+ " from pharmacies p, users u"
+			+ " where u.user_id = p.user_id and u.user_username= ?1",nativeQuery=true)
+	Integer getVerificationCodeByEmail(String userEmail);
 	
 }

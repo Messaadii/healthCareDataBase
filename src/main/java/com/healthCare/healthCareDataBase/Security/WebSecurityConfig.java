@@ -74,7 +74,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/api/doctor/getTopRatedDoctor",
                     "/api/patient/getUserFullNameById/**",
                     "/api/user/getUserFullNameById/**",
-                    "/api/pharmacy/findPharmacyByPrescriptonMedicamentAndGeoLocation").permitAll()
+                    "/api/pharmacy/findPharmacyByPrescriptonMedicamentAndGeoLocation",
+                    "/api/mail/send",
+                    "/api/user/checkVerifacationCode",
+                    "/api/user/updateUserStatusByEmail").permitAll()
 			.antMatchers("/api/admin/**").hasAuthority("ADMIN_ROLE")
 			.antMatchers("/api/doctor/**").hasAnyAuthority("DOCTOR_ROLE","ADMIN_ROLE")
 			.antMatchers("/api/patient/**").hasAnyAuthority("PATIENT_ROLE","ADMIN_ROLE")

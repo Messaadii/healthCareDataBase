@@ -199,5 +199,7 @@ public class DoctorController {
 		doctorRepository.updatePositionBySecureLogin(data.getSecureLogin(),data.getLatitude(),data.getLongitude());
 		return true;
 	}
+	
+	
 }
 

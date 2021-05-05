@@ -15,13 +15,13 @@ public interface SpecialityRepository extends JpaRepository <Speciality, Long> {
 	@Modifying
     @Transactional
 	@Query(value="INSERT INTO doctor_speciality VALUES (?1, ?2)",nativeQuery=true)
-	void addSpecialityToDoctor(Integer doctorId, Integer specialityId);
+	void addSpecialityToDoctor(Long doctorId, Integer specialityId);
 	
 	boolean existsBySpecialityId(Integer specialityId);
 	boolean existsBySpecialityName(String specialityName);
 
 	@Query(value="select d.doctor_id from doctor_speciality d where d.doctor_id=?1 and d.speciality_id=?2",nativeQuery=true)
-	Integer checkIfDoctorAlreadyHaveTheSpeciality(Integer doctorId, Integer specialityId);
+	Long checkIfDoctorAlreadyHaveTheSpeciality(Long doctorId, Integer specialityId);
 	
 	@Query(value="select s.speciality_id from speciality s where s.speciality_code=?1",nativeQuery=true)
 	Integer getSpecialityIdBySpecialityCode(String specialityCode);

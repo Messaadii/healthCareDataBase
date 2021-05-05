@@ -36,6 +36,9 @@ public class Patient extends User{
 	@Column(name="patientGender")
 	private String patientGender;
 	
+	@Column(name="patientStatus")
+	private String patientStatus;
+	
 	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinColumn(name = "medicalProfileId", referencedColumnName = "medicalProfileId")
 	private MedicalProfile medicalProfile;
@@ -48,12 +51,13 @@ public class Patient extends User{
 	
 	public Patient(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 120) String password, String city,
 			Set<Role> roles, String creationDate, String patientFirstName, String patientLastName,
-			String patientBirthDay, String patientGender) {
+			String patientBirthDay, String patientGender,String patientStatus) {
 		super(username, password, city, roles, creationDate);
 		this.patientFirstName = patientFirstName;
 		this.patientLastName = patientLastName;
 		this.patientBirthDay = patientBirthDay;
 		this.patientGender = patientGender;
+		this.patientStatus=patientStatus;
 		this.medicalProfile = new MedicalProfile();
 		this.Prescription = new ArrayList<Prescription>();
 		this.appointment = new ArrayList<Appointment>();
@@ -125,8 +129,11 @@ public class Patient extends User{
 		this.appointment = appointment;
 	}
 
-	
+	public String getPatientStatus() {
+		return patientStatus;
+	}
 
-	
-	
+	public void setPatientStatus(String patientStatus) {
+		this.patientStatus = patientStatus;
+	}
 }

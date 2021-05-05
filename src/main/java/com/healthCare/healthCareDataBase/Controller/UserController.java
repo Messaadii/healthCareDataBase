@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.healthCare.healthCareDataBase.Dtos.EmailAndStatusDto;
+import com.healthCare.healthCareDataBase.Dtos.EmailAndVerificationCodeDto;
 import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
 import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
 import com.healthCare.healthCareDataBase.Dtos.UpdatePasswordRequestDto;
+import com.healthCare.healthCareDataBase.Dtos.UserTypeAndUserIdDto;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
 import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
@@ -74,5 +77,39 @@ public class UserController {
 		  return pharmacyRepository.getUserFullNameById(id);
 		else
 		  return null;
+	}
+	
+	@PostMapping(value="checkVerifacationCode")
+	public boolean checkVerifacationCode(@RequestBody final EmailAndVerificationCodeDto data) {
+		String userType = userRepository.getUserTypeByUsername(data.getUserEmail());
+		if("doctor".equals(userType)){
+			if(data.getVerificationCode().equals(doctorRepository.getVerificationCodeByEmail(data.getUserEmail())))
+				return true;
+			else
+				return false;
+		}else if ("patient".equals(userType)){
+			if(data.getVerificationCode().equals(patientRepository.getVerificationCodeByEmail(data.getUserEmail())))
+				return true;
+			else
+				return false;
+				
+		}else {
+			if(data.getVerificationCode().equals(pharmacyRepository.getVerificationCodeByEmail(data.getUserEmail())))
+				return true;
+			else
+				return false;
+		}
+	}
+	
+	@PostMapping(value="updateUserStatusByEmail")
+	public boolean updateUserStatusByEmail(@RequestBody final EmailAndStatusDto data) {
+		UserTypeAndUserIdDto userType = userRepository.getUserTypeAndIdByUsername(data.getEmail());
+		if("doctor".equals(userType.getUser_type()))
+			  doctorRepository.changeDoctorStatusById(userType.getUser_id(),data.getStatus());
+		else if ("patient".equals(userType.getUser_type()))
+			  patientRepository.changePatientStatusById(userType.getUser_id(),data.getStatus());
+		else if ("pharmacist".equals(userType.getUser_type()))
+			  pharmacyRepository.changePharmacyStatusById(userType.getUser_id(),data.getStatus());
+		return true;
 	}
 }

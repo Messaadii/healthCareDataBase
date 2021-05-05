@@ -2,13 +2,13 @@ package com.healthCare.healthCareDataBase.Dtos;
 
 public class IntegerAndString {
 	
-	private Integer integer;
+	private Long integer;
 	private String string;
 	
-	public Integer getInteger() {
+	public Long getInteger() {
 		return integer;
 	}
-	public void setInteger(Integer integer) {
+	public void setInteger(Long integer) {
 		this.integer = integer;
 	}
 	public String getString() {

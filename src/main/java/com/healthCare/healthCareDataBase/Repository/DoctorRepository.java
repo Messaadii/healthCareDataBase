@@ -68,7 +68,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 	@Modifying
     @Transactional
 	@Query(value="update doctors d set d.doctor_status=?2 where d.user_id= ?1",nativeQuery=true)
-	void changeDoctorStatusById(int Integer, String string);
+	void changeDoctorStatusById(Long Integer, String string);
 	
 	@Modifying
     @Transactional
@@ -199,5 +199,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " d.doctor_longitude=?3"
 			+ " where u.user_id = d.user_id and u.user_secure_login= ?1",nativeQuery=true)
 	void updatePositionBySecureLogin(String secureLogin, String latitude, String longitude);
+
+	@Query(value="select d.doctor_status"
+			+ " from doctors d, users u"
+			+ " where u.user_id = d.user_id and u.user_username= ?1",nativeQuery=true)
+	Integer getVerificationCodeByEmail(String userEmail);
 	
 }

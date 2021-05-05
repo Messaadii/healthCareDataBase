@@ -10,9 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.healthCare.healthCareDataBase.Dtos.GetPatientPrescription;
-import com.healthCare.healthCareDataBase.Model.Pharmacy;
 import com.healthCare.healthCareDataBase.Model.Prescription;
-import com.healthCare.healthCareDataBase.Model.User;
 
 public interface PrescriptionRepository extends JpaRepository<Prescription,Long>{
 

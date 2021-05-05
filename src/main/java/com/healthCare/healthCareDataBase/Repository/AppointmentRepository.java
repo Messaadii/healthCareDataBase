@@ -14,7 +14,7 @@ import com.healthCare.healthCareDataBase.Model.Appointment;
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 	
 	@Query(value = "SELECT count(a.doctor_id) FROM appointment a where a.doctor_id=?1 and a.appointment_date=?2",nativeQuery=true)
-	public Integer appointmentsCountByDoctorIdAndDate(Integer id,String date);
+	public Integer appointmentsCountByDoctorIdAndDate(Long id,String date);
 	
 	@Query(value = "SELECT count(a.doctor_id) FROM appointment a where a.doctor_id=?1 and a.patient_id=?2",nativeQuery=true)
 	public Integer checkIfAppointmentAlreadyTaken(Integer doctorId,Integer patientId);
@@ -22,7 +22,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 	@Modifying
     @Transactional
 	@Query(value="update appointment a set a.appointment_date=?2 where a.appointment_id= ?1",nativeQuery=true)
-	public void updateAppointmentDateById(Integer integer, String string);
+	public void updateAppointmentDateById(Long integer, String string);
 
 	@Query(value="select * from appointment a where a.patient_id= ?1",nativeQuery=true)
 	public List<Appointment> getPatientAppointmentByPatientId(Long id, Pageable pageable);
@@ -36,6 +36,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 	@Modifying
     @Transactional
 	@Query(value="update appointment a set a.appointment_status=?2 where a.appointment_id= ?1",nativeQuery=true)
-	public void changeAppointmentStatusById(Integer integer, String string);
+	public void changeAppointmentStatusById(Long integer, String string);
 
 }

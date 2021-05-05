@@ -29,6 +29,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 			+ " p.patient_last_name,"
 			+ " p.patient_gender,"
 			+ " p.medical_profile_id,"
+			+ " p.patient_status,"
 			+ " u.user_username,"
 			+ " u.user_city"
 			+ " from patients p, users u "
@@ -76,5 +77,17 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 			+ " from patients p"
 			+ " where p.user_id= ?1",nativeQuery=true)
 	FirstAndLastNameDto getUserFullNameById(Long id);
+
+	@Query(value="select p.patient_status"
+			+ " from patients p, users u"
+			+ " where u.user_id = p.user_id and u.user_username= ?1",nativeQuery=true)
+	Integer getVerificationCodeByEmail(String userEmail);
+
+	@Modifying
+    @Transactional
+	@Query(value="update patients p"
+			+ " set p.patient_status = ?2"
+			+ " where p.user_id = ?1",nativeQuery=true)
+	void changePatientStatusById(Long user_id, String status);
 	
 }

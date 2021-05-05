@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import com.healthCare.healthCareDataBase.Repository.UserRepository;
 import com.healthCare.healthCareDataBase.Dtos.JwtResponseDto;
 import com.healthCare.healthCareDataBase.Dtos.LoginRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.MessageResponseDto;
+import com.healthCare.healthCareDataBase.Dtos.SendMailDto;
 import com.healthCare.healthCareDataBase.Dtos.SignupRequestDto;
 import com.healthCare.healthCareDataBase.Security.jwt.JwtUtils;
 import com.healthCare.healthCareDataBase.Security.service.UserDetailsImpl;
@@ -74,6 +76,9 @@ public class AuthController {
 	@Autowired
 	PharmacyRepository pharmacyRepository;
 	
+	@Autowired
+	SendEmailController sendEmailController;
+	
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDto loginRequest) {
 
@@ -110,7 +115,7 @@ public class AuthController {
 		   }
 
 	@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequestDto signUpRequest) {
+	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequestDto signUpRequest) throws MessagingException {
 		if (userRepository.existsByUserUsername(signUpRequest.getUsername())) {
 			return ResponseEntity
 					.badRequest()
@@ -126,14 +131,16 @@ public class AuthController {
 			Role userRole = roleRepository.findByName(ERole.PATIENT_ROLE)
 					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 			roles.add(userRole);
-			Patient patient= new Patient(signUpRequest.getUsername(), encoder.encode(signUpRequest.getUserPassword()), signUpRequest.getUserCity(), roles, dateFormat.format(cal.getTime()), signUpRequest.getUserFirstName(), signUpRequest.getUserLastName(), signUpRequest.getUserBirthday(), signUpRequest.getUserGender());
+			SendMailDto mail=new SendMailDto("verification","",signUpRequest.getUsername());
+			Patient patient= new Patient(signUpRequest.getUsername(), encoder.encode(signUpRequest.getUserPassword()), signUpRequest.getUserCity(), roles, dateFormat.format(cal.getTime()), signUpRequest.getUserFirstName(), signUpRequest.getUserLastName(), signUpRequest.getUserBirthday(), signUpRequest.getUserGender(),sendEmailController.sendEmail(mail)+"");
 			patientRepository.save(patient);
 			
 		}else if("DOCTOR_ROLE".equals(signUpRequest.getUserRole())){
 			Role userRole = roleRepository.findByName(ERole.DOCTOR_ROLE)
 					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 			roles.add(userRole);
-			Doctor doctor= new Doctor(signUpRequest.getUsername(), encoder.encode(signUpRequest.getUserPassword()), signUpRequest.getUserCity(), roles, dateFormat.format(cal.getTime()), signUpRequest.getUserFirstName(), signUpRequest.getUserLastName(), signUpRequest.getUserBirthday(), signUpRequest.getUserGender(), "notApproved");
+			SendMailDto mail=new SendMailDto("verification","",signUpRequest.getUsername());
+			Doctor doctor= new Doctor(signUpRequest.getUsername(), encoder.encode(signUpRequest.getUserPassword()), signUpRequest.getUserCity(), roles, dateFormat.format(cal.getTime()), signUpRequest.getUserFirstName(), signUpRequest.getUserLastName(), signUpRequest.getUserBirthday(), signUpRequest.getUserGender(),sendEmailController.sendEmail(mail)+"");
 			doctorRepository.save(doctor);
 		}else if("ADMIN_ROLE".equals(signUpRequest.getUserRole())){
 			Role userRole = roleRepository.findByName(ERole.ADMIN_ROLE)
@@ -145,7 +152,8 @@ public class AuthController {
 			Role userRole = roleRepository.findByName(ERole.PHARMACIST_ROLE)
 					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 			roles.add(userRole);
-			Pharmacy pharmacy= new Pharmacy(signUpRequest.getUsername(), encoder.encode(signUpRequest.getUserPassword()), signUpRequest.getUserCity(), roles, dateFormat.format(cal.getTime()), signUpRequest.getUserFullName(),"notApproved");
+			SendMailDto mail=new SendMailDto("verification","",signUpRequest.getUsername());
+			Pharmacy pharmacy= new Pharmacy(signUpRequest.getUsername(), encoder.encode(signUpRequest.getUserPassword()), signUpRequest.getUserCity(), roles, dateFormat.format(cal.getTime()), signUpRequest.getUserFullName(),sendEmailController.sendEmail(mail)+"");
 			pharmacyRepository.save(pharmacy);
 		}else {
 			return ResponseEntity
