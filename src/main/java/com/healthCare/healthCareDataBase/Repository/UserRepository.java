@@ -46,4 +46,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query(value="select u.user_type,u.user_id from users u where u.user_username= ?1",nativeQuery=true)
 	public UserTypeAndUserIdDto getUserTypeAndIdByUsername(String email);
 	
+	@Modifying
+    @Transactional
+	@Query(value="update users u set u.user_password= ?2 where u.user_username = ?1",nativeQuery=true)
+	void updateUserPasswordByEmail(String email, String password);
+	
 }

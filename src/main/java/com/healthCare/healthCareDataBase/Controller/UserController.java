@@ -15,6 +15,7 @@ import com.healthCare.healthCareDataBase.Dtos.EmailAndVerificationCodeDto;
 import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
 import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
 import com.healthCare.healthCareDataBase.Dtos.UpdatePasswordRequestDto;
+import com.healthCare.healthCareDataBase.Dtos.UpdateUserPasswordByEmailDto;
 import com.healthCare.healthCareDataBase.Dtos.UserTypeAndUserIdDto;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
 import com.healthCare.healthCareDataBase.Repository.PatientRepository;
@@ -54,6 +55,13 @@ public class UserController {
 			return true;
 		}else
 			return false;
+	}
+	
+	@PostMapping(value="/updateUserPasswordByEmail")
+	public boolean updateUserPasswordByEmail(@RequestBody final UpdateUserPasswordByEmailDto doctor) {
+		doctor.setPassword(encoder.encode(doctor.getPassword()));
+		userRepository.updateUserPasswordByEmail(doctor.getEmail(),doctor.getPassword());
+		return true;
 	}
 	
 	@PostMapping(value="/updateUsernameBySecureLogin")
@@ -112,4 +120,5 @@ public class UserController {
 			  pharmacyRepository.changePharmacyStatusById(userType.getUser_id(),data.getStatus());
 		return true;
 	}
+
 }
