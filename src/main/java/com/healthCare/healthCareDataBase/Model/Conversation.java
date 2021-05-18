@@ -33,6 +33,9 @@ public class Conversation {
 	
 	@Column(name="lastUpdateDate")
 	private String lastUpdateDate;
+	
+	@Column(name="isUnread")
+	private boolean isUnread;
 
 	public Long getConversationId() {
 		return conversationId;
@@ -80,6 +83,14 @@ public class Conversation {
 
 	public void setLastUpdateDate(String lastUpdateDate) {
 		this.lastUpdateDate = lastUpdateDate;
+	}
+
+	public boolean isUnread() {
+		return isUnread;
+	}
+
+	public void setUnread(boolean isUnread) {
+		this.isUnread = isUnread;
 	}
 
 }

@@ -79,7 +79,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/api/user/checkVerifacationCode",
                     "/api/user/updateUserStatusByEmail",
                     "/api/user/updateUserPasswordByEmail",
-                    "/api/validation/checkIfUserValidated/**").permitAll()
+                    "/api/validation/checkIfUserValidated/**",
+                    "/api/socket/**").permitAll()
 			.antMatchers("/api/admin/**").hasAuthority("ADMIN_ROLE")
 			.antMatchers("/api/doctor/**").hasAnyAuthority("DOCTOR_ROLE","ADMIN_ROLE")
 			.antMatchers("/api/patient/**").hasAnyAuthority("PATIENT_ROLE","ADMIN_ROLE")
@@ -126,7 +127,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/conversation/updateConversationStatusById").hasAnyAuthority("DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/conversation/getConversationByUserId").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/message/add").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
+			.antMatchers("/api/conversation/getConversationByid/**").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/message/getMessagesByConversationId").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
+			.antMatchers("/api/message/readConversationById/**").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.anyRequest().authenticated();
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}

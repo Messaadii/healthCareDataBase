@@ -1,14 +1,10 @@
 package com.healthCare.healthCareDataBase.Model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -26,8 +22,8 @@ public class Message {
 	@Column(name="conversationId")
 	private Long conversationId;
 	
-	@Column(name="MessageDate")
-	private String MessageDate;
+	@Column(name="messageDate")
+	private String messageDate;
 	
 	@Column(name="senderId")
 	private Long senderId;
@@ -55,11 +51,11 @@ public class Message {
 	}
 
 	public String getMessageDate() {
-		return MessageDate;
+		return messageDate;
 	}
 
 	public void setMessageDate(String messageDate) {
-		MessageDate = messageDate;
+		this.messageDate = messageDate;
 	}
 
 	public String getMessageContent() {
@@ -85,6 +81,17 @@ public class Message {
 	public void setRecipientId(Long recipientId) {
 		this.recipientId = recipientId;
 	}
-	
+
+	public Message() {
+		super();
+	}
+
+	public Message(Long conversationId, String messageDate, Long senderId, Long recipientId, String messageContent) {
+		this.conversationId = conversationId;
+		this.messageDate = messageDate;
+		this.senderId = senderId;
+		this.recipientId = recipientId;
+		this.messageContent = messageContent;
+	}
 	
 }
