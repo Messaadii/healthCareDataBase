@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,9 @@ public class ConversationController {
 	
 	@Autowired
 	MessageController messageController;
+	
+	@Autowired
+    private SimpMessagingTemplate template;
 	
 	@PostMapping(value="/add")
 	public AddConversationReturnDto add(@RequestBody Conversation conversation) {
@@ -81,9 +85,10 @@ public class ConversationController {
 		return true;
 	}
 	
-	@GetMapping(value="/readConversationById/{id}")
-	public boolean readConversationById(@PathVariable("id") final long id) {
+	@GetMapping(value="/readConversationById/{id}/{userId}")
+	public boolean readConversationById(@PathVariable("id") final long id,@PathVariable("userId") final long userId) {
 		conversationRepository.updateIsUnreadByConversationId(id,false);
+		template.convertAndSend("/topic/message/"+userId,id);
 		return true;
 	}
 
