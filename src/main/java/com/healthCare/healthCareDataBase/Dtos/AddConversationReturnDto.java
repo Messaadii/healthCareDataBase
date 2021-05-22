@@ -7,6 +7,7 @@ public class AddConversationReturnDto {
 	private String messageContent;
 	private String conversationStatus;
 	private boolean isUnread;
+	private long statusUpdatedBy;
 	
 	public String getOpenDate() {
 		return openDate;
@@ -37,6 +38,13 @@ public class AddConversationReturnDto {
 	}
 	public void setUnread(boolean isUnread) {
 		this.isUnread = isUnread;
+	}
+	
+	public long getStatusUpdatedBy() {
+		return statusUpdatedBy;
+	}
+	public void setStatusUpdatedBy(long statusUpdatedBy) {
+		this.statusUpdatedBy = statusUpdatedBy;
 	}
 	public AddConversationReturnDto() {
 		super();

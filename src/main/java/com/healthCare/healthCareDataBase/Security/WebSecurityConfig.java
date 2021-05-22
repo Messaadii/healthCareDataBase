@@ -80,7 +80,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/api/user/updateUserStatusByEmail",
                     "/api/user/updateUserPasswordByEmail",
                     "/api/validation/checkIfUserValidated/**",
-                    "/api/socket/**").permitAll()
+                    "/api/socket/**",
+                    "/api/conversation/getConversationByid/**").permitAll()
 			.antMatchers("/api/admin/**").hasAuthority("ADMIN_ROLE")
 			.antMatchers("/api/doctor/**").hasAnyAuthority("DOCTOR_ROLE","ADMIN_ROLE")
 			.antMatchers("/api/patient/**").hasAnyAuthority("PATIENT_ROLE","ADMIN_ROLE")
@@ -123,13 +124,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/notificaiotn/getAll").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/notificaiotn/changeUnreadNotification").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/notificaiotn/deleteNotificationById/**").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
-			.antMatchers("/api/conversation/add").hasAnyAuthority("DOCTOR_ROLE","PHARMACIST_ROLE")
+			.antMatchers("/api/conversation/add").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/conversation/updateConversationStatusById").hasAnyAuthority("DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/conversation/getConversationByUserId").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/message/add").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
-			.antMatchers("/api/conversation/getConversationByid/**").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
+			//.antMatchers("/api/conversation/getConversationByid/**").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/message/getMessagesByConversationId").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/message/readConversationById/**").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
+			.antMatchers("/api/notification/sentOpenConversationRequest").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.anyRequest().authenticated();
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}

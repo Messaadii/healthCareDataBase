@@ -13,5 +13,6 @@ public interface ConversationsGetDto {
 	public String getUser_type();
 	public String getFirst_name();
 	public String getLast_name();
+	public long getStatus_updated_by();
 	
 }

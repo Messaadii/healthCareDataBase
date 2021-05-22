@@ -69,11 +69,11 @@ public class Notification {
 		this.recipientId = recipientId;
 	}
 
-	public boolean isUnread() {
+	public boolean getIsUnread() {
 		return isUnread;
 	}
 
-	public void setUnread(boolean isUnread) {
+	public void setIsUnread(boolean isUnread) {
 		this.isUnread = isUnread;
 	}
 

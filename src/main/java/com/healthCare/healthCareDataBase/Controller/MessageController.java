@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.PageableAndIdDto;
 import com.healthCare.healthCareDataBase.Dtos.StringDto;
+import com.healthCare.healthCareDataBase.Dtos.WebSocketNotificationDto;
 import com.healthCare.healthCareDataBase.Model.Message;
 import com.healthCare.healthCareDataBase.Repository.ConversationRepository;
 import com.healthCare.healthCareDataBase.Repository.MessageRepository;
@@ -43,7 +44,10 @@ public class MessageController {
 		message.setMessageDate(dateFormat.format(cal.getTime()));
 		messageRepository.save(message);
 		messageRepository.updateConversationLastUpdate(message.getMessageDate(),message.getConversationId());
-		template.convertAndSend("/topic/message/"+message.getRecipientId(),message);
+		WebSocketNotificationDto data = new WebSocketNotificationDto();
+		data.setType("message");
+		data.setMessage(message);
+		template.convertAndSend("/topic/notification/"+message.getRecipientId(),data);
 		conversationRepository.updateIsUnreadByConversationId(message.getConversationId(),true);
 		StringDto string = new StringDto(message.getMessageDate());
 		return string;

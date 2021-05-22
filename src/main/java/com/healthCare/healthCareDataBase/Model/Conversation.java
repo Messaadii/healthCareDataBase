@@ -36,6 +36,9 @@ public class Conversation {
 	
 	@Column(name="isUnread")
 	private boolean isUnread;
+	
+	@Column(name="statusUpdatedBy")
+	private long statusUpdatedBy;
 
 	public Long getConversationId() {
 		return conversationId;
@@ -85,12 +88,21 @@ public class Conversation {
 		this.lastUpdateDate = lastUpdateDate;
 	}
 
-	public boolean isUnread() {
+	public boolean getIsUnread() {
 		return isUnread;
 	}
 
-	public void setUnread(boolean isUnread) {
+	public void setIsUnread(boolean isUnread) {
 		this.isUnread = isUnread;
 	}
 
+	public long getStatusUpdatedBy() {
+		return statusUpdatedBy;
+	}
+
+	public void setStatusUpdatedBy(long statusUpdatedBy) {
+		this.statusUpdatedBy = statusUpdatedBy;
+	}
+
+	
 }

@@ -21,6 +21,7 @@ public interface ConversationRepository extends JpaRepository<Conversation,Long>
 			+ " m.message_content,"
 			+ " if(c.is_unread = true,true,false) as is_unread,"
 			+ " m.sender_id as last_message_sender_id,"
+			+ " status_updated_by,"
 			+ " if(c.opened_by=?1, c.opened_to,c.opened_by) as recipient,"
 			+ " u.user_type,"
 			+ " case"
@@ -47,8 +48,8 @@ public interface ConversationRepository extends JpaRepository<Conversation,Long>
 
 	@Transactional
 	@Modifying
-	@Query(value="update conversation c set c.conversation_status=?2 where c.conversation_id=?1",nativeQuery=true)
-	void updateConversationStatusById(Long id, String status);
+	@Query(value="update conversation c set c.conversation_status=?2, c.status_updated_by = ?3 where c.conversation_id=?1",nativeQuery=true)
+	void updateConversationStatusById(Long id, String status,long changedBy);
 
 	@Query(value="select if(count(c.conversation_id)=1,c.conversation_id,0) from conversation c where (c.opened_by=?1 and c.opened_to=?2) or (c.opened_by=?2 and c.opened_to=?1)",nativeQuery=true)
 	long checkIfConversationOpened(Long openedBy, Long openedTo);
@@ -60,19 +61,21 @@ public interface ConversationRepository extends JpaRepository<Conversation,Long>
 			+ " c.conversation_status,"
 			+ " c.last_update_date,"
 			+ " m.message_content,"
-			+ " if(c.is_unread = true,true,false) as is_unread"
+			+ " if(c.is_unread = true,true,false) as is_unread,"
+			+ " c.status_updated_by"
 			+ "	from conversation c, message m"
 			+ "	where c.conversation_id=?1"
 			+ " and c.conversation_id=m.conversation_id"
 			+ " and c.last_update_date=m.message_date"
 			+ " group by c.conversation_id",nativeQuery=true)
-	ConversationsGetDto getConversationByConversationId(Long userId);
+	ConversationsGetDto getConversationByConversationId(Long userId, Long openedBy);
 
 	@Query(value="select c.conversation_id,"
 			+ " c.conversation_status,"
 			+ " c.last_update_date,"
 			+ " m.message_content,"
 			+ " m.sender_id as last_message_sender_id,"
+			+ " c.status_updated_by,"
 			+ " if(c.is_unread = true,true,false) as is_unread,"
 			+ " if(c.opened_by=?2, c.opened_to,c.opened_by) as recipient,"
 			+ " case"
