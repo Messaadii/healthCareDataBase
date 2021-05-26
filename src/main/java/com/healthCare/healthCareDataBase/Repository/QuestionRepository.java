@@ -26,4 +26,7 @@ public interface QuestionRepository extends JpaRepository<Question,Long> {
 	@Query(value="update question q set q.question_points = (q.question_points-1) where q.question_id=?1",nativeQuery=true)
 	void decrementQuestionPointById(Long questionId);
 
+	@Query(value="select * from question q where q.post_by=?1",nativeQuery=true)
+	List<Question> getQuestionsByUserId(Long id, Pageable pageable);
+
 }

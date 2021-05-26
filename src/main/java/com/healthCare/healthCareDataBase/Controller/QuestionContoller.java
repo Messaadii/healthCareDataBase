@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.healthCare.healthCareDataBase.Dtos.PageableAndIdDto;
 import com.healthCare.healthCareDataBase.Dtos.PageableDto;
 import com.healthCare.healthCareDataBase.Model.Question;
 import com.healthCare.healthCareDataBase.Repository.QuestionRepository;
@@ -41,6 +42,12 @@ public class QuestionContoller {
 	public List<Question> getAll (@RequestBody final PageableDto data){
 		Pageable pageable=PageRequest.of(data.getPage(), data.getSize(), Sort.by("question_points").descending());
 		return questionRepository.getAll(pageable);
+	}
+	
+	@PostMapping(value="/getQuestionsByUserId")
+	public List<Question> getQuestionsByUserId(@RequestBody final PageableAndIdDto data){
+		Pageable pageable=PageRequest.of(data.getPage(), data.getSize(), Sort.by("question_points").descending());
+		return questionRepository.getQuestionsByUserId(data.getId(),pageable);
 	}
 
 }

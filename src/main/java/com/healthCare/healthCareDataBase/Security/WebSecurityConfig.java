@@ -80,8 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/api/user/updateUserStatusByEmail",
                     "/api/user/updateUserPasswordByEmail",
                     "/api/validation/checkIfUserValidated/**",
-                    "/api/socket/**",
-                    "/api/conversation/getConversationByid/**").permitAll()
+                    "/api/socket/**").permitAll()
 			.antMatchers("/api/admin/**").hasAuthority("ADMIN_ROLE")
 			.antMatchers("/api/doctor/**").hasAnyAuthority("DOCTOR_ROLE","ADMIN_ROLE")
 			.antMatchers("/api/patient/**").hasAnyAuthority("PATIENT_ROLE","ADMIN_ROLE")
@@ -117,9 +116,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/question/add").hasAuthority("PATIENT_ROLE")
 			.antMatchers("/api/question/getAll").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/comment/getAll").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
-			.antMatchers("/api/comment/add").hasAuthority("DOCTOR_ROLE")
-			.antMatchers("/api/point/add").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE")
-			.antMatchers("/api/point/deleteById/**").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE")
+			.antMatchers("/api/comment/add").hasAnyAuthority("DOCTOR_ROLE","PHARMACIST_ROLE")
+			.antMatchers("/api/point/add").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
+			.antMatchers("/api/point/deleteById/**").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/notificaiotn/add").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/notificaiotn/getAll").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/notificaiotn/changeUnreadNotification").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
@@ -128,10 +127,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/conversation/updateConversationStatusById").hasAnyAuthority("DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/conversation/getConversationByUserId").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/message/add").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
-			//.antMatchers("/api/conversation/getConversationByid/**").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
+			.antMatchers("/api/conversation/getConversationByid/**").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/message/getMessagesByConversationId").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/message/readConversationById/**").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/notification/sentOpenConversationRequest").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
+			.antMatchers("/api/user/searchUsersByName").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE")
+			.antMatchers("/api/appointment/getAppointmentByDoctorIdAndPatientId").hasAuthority("DOCTOR_ROLE")
+			.antMatchers("/api/question/getQuestionsByUserId").hasAuthority("PATIENT_ROLE")
 			.anyRequest().authenticated();
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}

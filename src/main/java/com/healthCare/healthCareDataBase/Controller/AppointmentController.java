@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.IntegerAndString;
 import com.healthCare.healthCareDataBase.Dtos.PageableAndIdDto;
+import com.healthCare.healthCareDataBase.Dtos.PageableUserIdDoctorIdDto;
 import com.healthCare.healthCareDataBase.Model.Appointment;
 import com.healthCare.healthCareDataBase.Repository.AppointmentRepository;
 
@@ -76,5 +77,11 @@ public class AppointmentController {
 	public boolean changeAppointmentStatusById(@RequestBody final IntegerAndString data){
 		appointmentRepository.changeAppointmentStatusById(data.getInteger(),data.getString());
 		return true;
+	}
+	
+	@PostMapping(value="getAppointmentByDoctorIdAndPatientId")
+	public List<Appointment> getAppointmentByDoctorIdAndPatientId(@RequestBody final PageableUserIdDoctorIdDto data) {
+		Pageable pageable= PageRequest.of(data.getPage(), data.getSize(), Sort.by("appointment_date").descending());
+		return appointmentRepository.getAppointmentByDoctorIdAndPatientId(data.getDoctorId(),data.getUserId(),pageable);
 	}
 }

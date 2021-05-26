@@ -38,4 +38,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 	@Query(value="update appointment a set a.appointment_status=?2 where a.appointment_id= ?1",nativeQuery=true)
 	public void changeAppointmentStatusById(Long integer, String string);
 
+	@Query(value="select * from appointment a where a.doctor_id= ?1 and a.patient_id=?2",nativeQuery=true)
+	public List<Appointment> getAppointmentByDoctorIdAndPatientId(long doctorId, long userId, Pageable pageable);
+
 }

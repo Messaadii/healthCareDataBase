@@ -55,13 +55,17 @@ public class ConversationController {
 		long id = conversationRepository.checkIfConversationOpened(conversation.getOpenedBy(),conversation.getOpenedTo());
 		AddConversationReturnDto returnConversation = new AddConversationReturnDto();
 		
-		if("patient".equals(userRepository.getUserTypeByUserId(conversation.getOpenedBy())))
-			conversation.setConversationStatus("closeByDefault");
-		else
-			conversation.setConversationStatus("open");
-		
-		conversation.setIsUnread(false);
 		if(id==0) {
+			if("patient".equals(userRepository.getUserTypeByUserId(conversation.getOpenedBy()))) {
+				if("patient".equals(userRepository.getUserTypeByUserId(conversation.getOpenedTo())))
+					conversation.setConversationStatus("open");
+				else
+					conversation.setConversationStatus("closeByDefault");
+			}
+			else
+				conversation.setConversationStatus("open");
+			conversation.setIsUnread(true);
+			
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
 			conversation.setOpenDate(dateFormat.format(cal.getTime()));
