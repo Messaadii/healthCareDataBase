@@ -1,5 +1,8 @@
 package com.healthCare.healthCareDataBase.Controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -8,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.healthCare.healthCareDataBase.Dtos.AppUsersInfoDto;
 import com.healthCare.healthCareDataBase.Dtos.AppointmentDocInfo;
 import com.healthCare.healthCareDataBase.Dtos.AppointmentPatientInfo;
 import com.healthCare.healthCareDataBase.Dtos.CurrentPatientInfo;
@@ -33,9 +38,11 @@ import com.healthCare.healthCareDataBase.Dtos.SecureLoginAndPatientTurnDto;
 import com.healthCare.healthCareDataBase.Dtos.TopRatedDoctorsDto;
 import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
 import com.healthCare.healthCareDataBase.Dtos.UpdatePositionDto;
+import com.healthCare.healthCareDataBase.Dtos.WebSocketNotificationDto;
 import com.healthCare.healthCareDataBase.Model.Doctor;
 import com.healthCare.healthCareDataBase.Model.Notification;
 import com.healthCare.healthCareDataBase.Repository.AdminRepository;
+import com.healthCare.healthCareDataBase.Repository.AppointmentRepository;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
 import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
@@ -59,9 +66,12 @@ public class DoctorController {
 	UserRepository userRepository;
 	@Autowired
 	NotificationController notificationController;
-	
+	@Autowired
+    private SimpMessagingTemplate template;
 	@Autowired
 	AdminRepository adminRepository;
+	@Autowired
+	AppointmentRepository appointmentRepository;
 	
 	
 	@GetMapping(value="/all")
@@ -179,7 +189,38 @@ public class DoctorController {
 
 	@PostMapping(value="changeCurrentPatientBySecureLogin")
 	public boolean changeCurrentPatientBySecureLogin(@RequestBody final SecureLoginAndPatientTurnDto data) {
+		
 		doctorRepository.changeCurrentPatientBySecureLogin(data.getSecureLogin(),data.getPatientTurn());
+		
+		if(data.getPatientTurn() != 0) {
+			for (int i=data.getPatientTurn(); i <= (data.getAllPatientNumber() +4);i++) {
+				if(i<=data.getAllPatientNumber()) {
+					DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+					Calendar cal = Calendar.getInstance();
+					
+					AppUsersInfoDto usersInfo = appointmentRepository.getUsersInfoByAppDayAndTurnAndDocSecureLogin(dateFormat.format(cal.getTime()),i,data.getSecureLogin());
+				
+					if(usersInfo != null) {
+						Notification not = new Notification();
+						not.setIsUnread(true);
+						not.setNotificationType("patientTurnClose");
+						not.setRecipientId(usersInfo.getPatientId());
+						not.setSenderId(usersInfo.getDoctorId());
+						not.setNotificationParameter(data.getPatientTurn()+"");
+						notificationController.add(not);
+						
+						WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
+						webSocketNot.setData(usersInfo.getDoctorFirstName()+" "+usersInfo.getDoctorLastName());
+						webSocketNot.setType("notification");
+						webSocketNot.setNotification(not);
+
+						template.convertAndSend("/topic/notification/"+usersInfo.getPatientId(),webSocketNot);
+					}
+				}else
+					break;
+			}
+		}
+		
 		return true;
 	}
 	
