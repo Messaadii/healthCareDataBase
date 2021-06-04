@@ -21,24 +21,44 @@ public interface NotificationRepository extends JpaRepository<Notification,Long>
 			+ " n.recipient_id,"
 			+ " n.sender_id,"
 			+ " n.time_sent,"
-			+ " if(n.sender_id != 0,"
+			+ " if(n.sender_id != -1,"
 			+ " case"
 			+ " when u.user_type = 'doctor' then concat('Dr. ',d.doctor_first_name,' ',d.doctor_last_name)"
 			+ " when u.user_type = 'pharmacist' then concat('Ph. ',ph.pharmacy_full_name)"
 			+ " when u.user_type = 'patient' then concat(p.patient_first_name,' ',p.patient_last_name)"
 			+ " end,'') as name"
 			+ " from notification n, users u ,patients p,pharmacies ph, doctors d"
-			+ " where n.recipient_id=?1 and if(n.sender_id != 0,n.sender_id=u.user_id,n.recipient_id=?1) and"
+			+ " where n.recipient_id=?1 and if(n.sender_id != -1,n.sender_id=u.user_id,n.recipient_id=?1) and"
+			+ " if(n.sender_id != -1,"
 			+ " case"
 			+ " when u.user_type = 'doctor' then d.user_id=u.user_id"
 			+ " when u.user_type = 'pharmacist' then ph.user_id=u.user_id"
 			+ " when u.user_type = 'patient' then p.user_id=u.user_id"
-			+ " end group by n.notification_id",nativeQuery=true)
+			+ " end"
+			+ " ,n.recipient_id=?1)"
+			+ " group by n.notification_id",nativeQuery=true)
 	List<NotificationGetDto> getAllById(Long id, Pageable pageable);
 
 	@Modifying
     @Transactional
 	@Query(value="update notification n set n.is_unread=?2 where n.notification_id = ?1",nativeQuery=true)
 	void changeUnreadNotification(Long id, boolean unread);
+
+	@Query(value="select if(count(n.sender_id) = 1, n.recipient_id, 0)"
+			+ " from notification n"
+			+ " where n.sender_id = ?1"
+			+ " and n.notification_parameter = ?2"
+			+ " and n.notification_type = ?3",nativeQuery=true)
+	long checkIfNotificationExistByIdsAndStatus(long senderId, String notificationParameter, String notificationType);
+
+	@Modifying
+    @Transactional
+	@Query(value="update notification n"
+			+ " set n.recipient_id=?2"
+			+ " where n.sender_id = ?1"
+			+ " and n.notification_parameter = ?3"
+			+ " and n.notification_type = ?4",nativeQuery=true)
+	void updateNotificationBySenderIdParameterAndType(long senderId, long recipientId,
+			String notificationParameter, String notificationType);
 
 }

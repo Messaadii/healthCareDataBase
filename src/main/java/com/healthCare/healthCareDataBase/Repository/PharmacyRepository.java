@@ -13,6 +13,7 @@ import com.healthCare.healthCareDataBase.Dtos.FindPharmacyGet;
 import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
 import com.healthCare.healthCareDataBase.Dtos.PendingPharmcyGetDto;
 import com.healthCare.healthCareDataBase.Dtos.PharmacyGetDto;
+import com.healthCare.healthCareDataBase.Dtos.PrescriptionForPharmacyDto;
 import com.healthCare.healthCareDataBase.Model.Pharmacy;
 
 public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
@@ -119,5 +120,40 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 			+ " from pharmacies p, users u"
 			+ " where u.user_id = p.user_id and u.user_username= ?1",nativeQuery=true)
 	Integer getVerificationCodeByEmail(String userEmail);
+	
+	@Query(value="select ph.user_id,"
+			+ " ph.pharmacy_status,"
+			+ " ph.pharmacy_full_name,"
+			+ " ph.pharmacy_longitude,"
+			+ " ph.pharmacy_latitude,"
+			+ " u.user_city,"
+			+ " u.user_username"
+			+ " from pharmacies ph, users u"
+			+ " where u.user_id = ph.user_id and u.user_id= ?1",nativeQuery=true)
+	PharmacyGetDto getPharmacyInfoById(long pharmacyId);
+
+	@Query(value="select count(n.notification_id)"
+			+ " from notification n"
+			+ " where n.notification_type='userSelectYouForPres'"
+			+ " and n.recipient_id=?1"
+			+ " and n.time_sent like ?2",nativeQuery=true)
+	long getTodayPrescriptionNumberById(long id, String format);
+
+	@Query(value="select pr.prescription_id as prescriptionId,"
+			+ " pr.doctor_id as doctorId"
+			+ " pr.patient_id as patientId"
+			+ " p.patient_first_name as patientFirstName"
+			+ " p.patient_last_name as patientLastName"
+			+ " d.doctor_first_name as doctorFirstName"
+			+ " d.doctor_last_name ad doctorLastName"
+			+ " n.time_sent"
+			+ " from prescription pr, notification n, patients p, doctors d"
+			+ " where n.notification_type='userSelectYouForPres'"
+			+ " and n.recipient_id=?1"
+			+ " and n.notification_parameter = pr.prescription_id"
+			+ " and pr.doctor_id=d.user_id"
+			+ " and pr.patient_id=p.user_id"
+			+ " and pr.prescription_status='pending'",nativeQuery=true)
+	List<PrescriptionForPharmacyDto> getPharmacyPrescriptionsById(Long id, Pageable pageable);
 	
 }

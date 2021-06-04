@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.ChangeUnreadDto;
 import com.healthCare.healthCareDataBase.Dtos.NotificationGetDto;
-import com.healthCare.healthCareDataBase.Dtos.OpenConversationRequestDto;
+import com.healthCare.healthCareDataBase.Dtos.SendNotificationWithSocketRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.PageableAndIdDto;
 import com.healthCare.healthCareDataBase.Dtos.WebSocketNotificationDto;
 import com.healthCare.healthCareDataBase.Model.Notification;
@@ -72,24 +72,44 @@ public class NotificationController {
 		return true;
 	}
 	
-	@PostMapping(value="/sentOpenConversationRequest")
-	public boolean sentOpenConversationRequest(@RequestBody final OpenConversationRequestDto data) {
-		WebSocketNotificationDto webSocketData = new WebSocketNotificationDto();
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Calendar cal = Calendar.getInstance();
-		Notification notification=new Notification();
-		notification.setTimeSent(dateFormat.format(cal.getTime()));
-		notification.setIsUnread(true);
-		notification.setNotificationType("openConversationRequest");
-		notification.setSenderId(data.getSenderId());
-		notification.setRecipientId(data.getRecipientId());
-		notification.setNotificationParameter(data.getConversationId()+"");
-		notificationRepository.save(notification);
-		webSocketData.setType("notification");
-		webSocketData.setNotification(notification);
-		webSocketData.setData(userRepository.getUsernameByUserid(data.getSenderId()));
-		template.convertAndSend("/topic/notification/"+data.getRecipientId(),webSocketData);
-		return true;
+	@PostMapping(value="/sendNotificationWithSocket")
+	public long sentOpenConversationRequest(@RequestBody final SendNotificationWithSocketRequestDto data) {
+		long recId = 0;
+		if("userSelectYouForPres".equals(data.getNotificationType()) && data.getForce() == false)
+			recId = notificationRepository.checkIfNotificationExistByIdsAndStatus(data.getSenderId(),data.getNotificationParameter(),data.getNotificationType());
+		if (recId == 0 || !"userSelectYouForPres".equals(data.getNotificationType()) || data.getForce() == true) {
+			WebSocketNotificationDto webSocketData = new WebSocketNotificationDto();
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			Calendar cal = Calendar.getInstance();
+			Notification notification=new Notification();
+			notification.setTimeSent(dateFormat.format(cal.getTime()));
+			if("userSelectYouForPres".equals(data.getNotificationType()))
+				notification.setIsUnread(false);
+			else
+				notification.setIsUnread(true);
+			notification.setNotificationType(data.getNotificationType());
+			notification.setSenderId(data.getSenderId());
+			notification.setRecipientId(data.getRecipientId());
+			notification.setNotificationParameter(data.getNotificationParameter());
+			
+			if(data.getForce() == false)
+				notificationRepository.save(notification);
+			else
+				notificationRepository.updateNotificationBySenderIdParameterAndType(data.getSenderId(),data.getRecipientId(),data.getNotificationParameter(),data.getNotificationType());
+			
+			webSocketData.setType("notification");
+			webSocketData.setNotification(notification);
+			webSocketData.setData(userRepository.getUsernameByUserid(data.getSenderId()));
+			template.convertAndSend("/topic/notification/"+data.getRecipientId(),webSocketData);
+			
+			return 0;
+		}else {
+			if(recId == data.getRecipientId())
+				return -1;
+			else
+				return recId;
+		}
+		
 	}
 
 }

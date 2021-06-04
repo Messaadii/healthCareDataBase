@@ -14,7 +14,7 @@
 	<name>healthCareDataBase</name>
 	<description>healthCare datbase</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>11</java.version>    	
 	</properties>
 	
 	<dependencies>
@@ -89,6 +89,15 @@
 		    <artifactId>spring-boot-starter-websocket</artifactId>
 	    </dependency>
 	    <!-- websocket -->
+	    
+	    <!-- search -->
+	    <dependency>
+		   <groupId>io.quarkus</groupId>
+   		   <artifactId>quarkus-hibernate-search-orm-elasticsearch</artifactId>
+   		   <version>1.10.2.Final</version>
+		</dependency>
+		<!-- search -->
+		
 	</dependencies>
 
 	<build>

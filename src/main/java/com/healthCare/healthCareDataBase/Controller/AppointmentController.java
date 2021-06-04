@@ -72,7 +72,7 @@ public class AppointmentController {
 	
 	@PostMapping(value="getPatientAppointmentByPatientId")
 	public List<Appointment> getPatientAppointmentByPatientId(@RequestBody final PageableAndIdDto pageableAndIdDto) {
-		Pageable pageable= PageRequest.of(pageableAndIdDto.getPage(), pageableAndIdDto.getSize(), Sort.by("appointment_date").ascending());
+		Pageable pageable= PageRequest.of(pageableAndIdDto.getPage(), pageableAndIdDto.getSize(), Sort.by("appointment_date").descending());
 		return appointmentRepository.getPatientAppointmentByPatientId(pageableAndIdDto.getId(), pageable);
 	}
 	

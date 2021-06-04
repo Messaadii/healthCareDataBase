@@ -114,13 +114,21 @@ public interface UserRepository extends JpaRepository<User, Long> {
 			+ "   when u.user_type = 'patient' then u.user_id=p.user_id"
 			+ "   when u.user_type = 'pharmacist' then u.user_id=ph.user_id"
 			+ " end and case"
-			+ "   when u.user_type = 'doctor' then concat(d.doctor_first_name,' ',d.doctor_last_name) like ?1 or"
-			+ "   concat(d.doctor_last_name,' ',d.doctor_first_name) like ?1"
+			+ "   when u.user_type = 'doctor' then concat(d.doctor_first_name,' ',d.doctor_last_name) like ?1"
+			+ "   or concat(d.doctor_last_name,' ',d.doctor_first_name) like ?1"
 			+ "   and d.doctor_status='approved'"
-			+ "   when u.user_type = 'patient' then concat(p.patient_first_name,' ',p.patient_last_name) like ?1 or concat(p.patient_last_name,' ',p.patient_first_name) like ?1"
+			+ "   when u.user_type = 'patient' then concat(p.patient_first_name,' ',p.patient_last_name) like ?1"
+			+ "   or concat(p.patient_last_name,' ',p.patient_first_name) like ?1"
 			+ "   when u.user_type = 'pharmacist' then  ph.pharmacy_full_name like ?1 and ph.pharmacy_status = 'approved'"
 			+ " end"
-			+ " group by u.user_id",nativeQuery=true)
+			+ " group by u.user_id"
+			+ " order by case"
+			+ "   when u.user_type = 'doctor' then concat(d.doctor_first_name,' ',d.doctor_last_name) like ?1"
+			+ "	  or concat(d.doctor_last_name,' ',d.doctor_first_name) like ?1"
+			+ "   when u.user_type = 'patient' then concat(p.patient_first_name,' ',p.patient_last_name) like ?1"
+			+ "   or concat(p.patient_last_name,' ',p.patient_first_name) like ?1"
+			+ "   when u.user_type = 'pharmacist' then ph.pharmacy_full_name like ?1"
+			+ " end desc",nativeQuery=true)
 	List<SearchUserGet> searchUsersByName(String string, Pageable pageable);
 	
 }

@@ -124,11 +124,20 @@ public class DoctorController {
 	@PostMapping(value="changeDoctorStatusBySecureLogin")
 	public boolean changeDoctorStatusBySecureLogin(@RequestBody final TwoStrings twoStrings) {
 		if("approved".equals(twoStrings.getStringTwo())) {
+			
+			long userId = doctorRepository.getDoctorIdFromSecureLogin(twoStrings.getStringOne());
+			
 			Notification notification = new Notification();
 			notification.setNotificationType("setYourGeoLocation");
 			notification.setSenderId(-1);
-			notification.setRecipientId(doctorRepository.getDoctorIdFromSecureLogin(twoStrings.getStringOne()));
+			notification.setRecipientId(userId);
 			notificationController.add(notification);
+			
+			WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
+			webSocketNot.setType("notification");
+			webSocketNot.setData("");
+			webSocketNot.setNotification(notification);
+			template.convertAndSend("/topic/notification/"+userId,webSocketNot);
 		}
 		doctorRepository.changeDoctorStatusBySecureLogin(twoStrings.getStringOne(),twoStrings.getStringTwo());
 		return true;
@@ -136,6 +145,12 @@ public class DoctorController {
 	
 	@PostMapping(value="changeDoctorStatusById")
 	public boolean changeDoctorStatusById(@RequestBody final IntegerAndString integerAndString) {
+		if("approvedByAdmin".equals(integerAndString.getString()) || "disapprovedByAdmin".equals(integerAndString.getString()) || "disapprovedPermanently".equals(integerAndString.getString())) {
+			WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
+			webSocketNot.setType("info");
+			webSocketNot.setData(integerAndString.getString());
+			template.convertAndSend("/topic/notification/"+integerAndString.getInteger(),webSocketNot);
+		}
 		doctorRepository.changeDoctorStatusById(integerAndString.getInteger() ,integerAndString.getString());
 		return true;
 	}

@@ -1,11 +1,15 @@
 package com.healthCare.healthCareDataBase.Controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,11 +22,14 @@ import com.healthCare.healthCareDataBase.Dtos.FindPharmacyGet;
 import com.healthCare.healthCareDataBase.Dtos.FindPresDto;
 import com.healthCare.healthCareDataBase.Dtos.IntegerAndString;
 import com.healthCare.healthCareDataBase.Dtos.OneString;
+import com.healthCare.healthCareDataBase.Dtos.PageableAndIdDto;
 import com.healthCare.healthCareDataBase.Dtos.PageableDto;
 import com.healthCare.healthCareDataBase.Dtos.PendingPharmcyGetDto;
 import com.healthCare.healthCareDataBase.Dtos.PharmacyGetDto;
 import com.healthCare.healthCareDataBase.Dtos.PharmacySettingsDto;
+import com.healthCare.healthCareDataBase.Dtos.PrescriptionForPharmacyDto;
 import com.healthCare.healthCareDataBase.Dtos.UpdatePositionDto;
+import com.healthCare.healthCareDataBase.Dtos.WebSocketNotificationDto;
 import com.healthCare.healthCareDataBase.Model.Notification;
 import com.healthCare.healthCareDataBase.Model.Pharmacy;
 import com.healthCare.healthCareDataBase.Repository.AdminRepository;
@@ -48,6 +55,8 @@ public class PharmacyController {
 	UserRepository userRepository;
 	@Autowired
 	NotificationController notificationController;
+	@Autowired
+    private SimpMessagingTemplate template;
 	
 	@GetMapping(value="/all")
 	public List<Pharmacy>getAll(){
@@ -85,12 +94,25 @@ public class PharmacyController {
 	@PostMapping(value="changePharmacyStatusById")
 	public boolean changePharmacyStatusById (@RequestBody final IntegerAndString data) {
 		pharmacyRepository.changePharmacyStatusById(data.getInteger(),data.getString());
-		if("approved".equals(data.getString())) {
-			Notification notification = new Notification();
-			notification.setNotificationType("setYourGeoLocation");
-			notification.setSenderId(-1);
-			notification.setRecipientId(data.getInteger());
-			notificationController.add(notification);
+		if("approvedByAdmin".equals(data.getString()) || "disapprovedByAdmin".equals(data.getString()) || "disapprovedPermanently".equals(data.getString())) {
+			if("approved".equals(data.getString())) {
+				Notification notification = new Notification();
+				notification.setNotificationType("setYourGeoLocation");
+				notification.setSenderId(-1);
+				notification.setRecipientId(data.getInteger());
+				notificationController.add(notification);
+				
+				WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
+				webSocketNot.setType("notification");
+				webSocketNot.setData("");
+				webSocketNot.setNotification(notification);
+				template.convertAndSend("/topic/notification/"+data.getInteger(),webSocketNot);
+			}else {
+				WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
+				webSocketNot.setType("info");
+				webSocketNot.setData(data.getString());
+				template.convertAndSend("/topic/notification/"+data.getInteger(),webSocketNot);
+			}
 		}
 		return true;
 	}
@@ -113,6 +135,24 @@ public class PharmacyController {
 		if(data.getSearchRaduis()==0)
 			data.setSearchRaduis(5000);
 		return pharmacyRepository.findPharmacyByPrescriptonMedicamentAndGeoLocation(data.getMedicamentsName(),data.getUserLatitude(),data.getUserLongitude(),data.getSearchRaduis(),data.getMedicamentsName().length,pageable);
+	}
+	
+	@GetMapping(value="getPharmacyInfoById/{id}")
+	public PharmacyGetDto getPharmacyInfoById(@PathVariable final long id) {
+		return pharmacyRepository.getPharmacyInfoById(id);
+	}
+	
+	@GetMapping(value="getTodayPrescriptionNumberById/{id}")
+	public long getTodayPrescriptionNumberById(@PathVariable final long id) {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Calendar cal = Calendar.getInstance();
+		return pharmacyRepository.getTodayPrescriptionNumberById(id,"%"+dateFormat.format(cal.getTime())+"%");
+	}
+	
+	@PostMapping(value="getPharmacyPrescriptionsById")
+	public List<PrescriptionForPharmacyDto> getPharmacyPrescription(@RequestBody final PageableAndIdDto data) {
+		Pageable pageable = PageRequest.of(data.getPage(), data.getSize(),Sort.by("time_sent").descending());
+		return pharmacyRepository.getPharmacyPrescriptionsById(data.getId(),pageable);
 	}
 	
 }
