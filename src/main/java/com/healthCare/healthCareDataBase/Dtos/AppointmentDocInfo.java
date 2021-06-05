@@ -16,4 +16,6 @@ public interface AppointmentDocInfo {
 	String getAppointmentPrice();
 	@Value("#{target.start_time}")
 	String getStartTime();
+	float getDoctorLatitude();
+	float getDoctorLongitude();
 }

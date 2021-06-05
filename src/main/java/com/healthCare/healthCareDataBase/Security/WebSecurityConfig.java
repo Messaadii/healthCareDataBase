@@ -108,7 +108,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/medicalProfileDisease/deleteDiagnoseByMedicalProfileIdDoctorIdAndDate").hasAuthority("DOCTOR_ROLE")
 			.antMatchers("/api/appointment/changeAppointmentStatusById").hasAuthority("DOCTOR_ROLE")
 			.antMatchers("/api/prescriptionMedicament/getPrescriptionsByPatientIdAndPrescriptionStatus").hasAuthority("PATIENT_ROLE")
-			.antMatchers("/api/prescriptionMedicament/getMedicamentsByPrescriptionId/**").hasAuthority("PATIENT_ROLE")
+			.antMatchers("/api/prescriptionMedicament/getMedicamentsByPrescriptionId/**").hasAnyAuthority("PATIENT_ROLE","PHARMACIST_ROLE")
 			.antMatchers("/api/pharmacy/getPharmacyInfoFromSecureLogin").hasAuthority("PHARMACIST_ROLE")
 			.antMatchers("/api/medicamentstock/getStockNumberByPharmacyId/**").hasAuthority("PHARMACIST_ROLE")
 			.antMatchers("/api/medicamentstock/deleteByPharmacyId/**").hasAuthority("PHARMACIST_ROLE")

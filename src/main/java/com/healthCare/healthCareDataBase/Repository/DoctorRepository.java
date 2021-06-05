@@ -135,8 +135,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ "d.start_time, "
 			+ "d.exact_address, "
 			+ "d.work_days, "
-			+ "d.max_patient_per_day "
-			+ "from doctors d where d.user_id = ?1",nativeQuery=true)
+			+ "d.max_patient_per_day, "
+			+ "d.doctor_latitude as doctorLatitude, "
+			+ "d.doctor_longitude as doctorLongitude"
+			+ " from doctors d where d.user_id = ?1",nativeQuery=true)
 	AppointmentDocInfo getDoctorAppointmentInfoByDoctorId(Integer id);
 
 	@Query(value="select d.doctor_first_name, "
