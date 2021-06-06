@@ -72,4 +72,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 	public void decrementAppointmentsByDoctorIdAndDate(long doctorId, Integer patientTurn, String format,
 			long appointmentId);
 
+	@Query(value="select count(*)"
+			+ " from appointment a"
+			+ " where a.doctor_id = ?1"
+			+ " and a.patient_id = ?2"
+			+ " and a.appointment_date > ?3",nativeQuery=true) 
+	public int checkIfAppointmentAlreadyTaken(Integer doctorId, Integer patientId, String format);
+
 }

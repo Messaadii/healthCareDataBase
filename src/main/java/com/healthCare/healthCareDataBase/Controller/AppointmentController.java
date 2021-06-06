@@ -44,7 +44,9 @@ public class AppointmentController {
 	
 	@PostMapping(value="/add") 
 	public boolean add(@RequestBody final Appointment appointment) {
-		if(appointmentRepository.checkIfAppointmentAlreadyTaken(appointment.getDoctorId(), appointment.getPatientId()) > 0)
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Calendar cal = Calendar.getInstance();
+		if(appointmentRepository.checkIfAppointmentAlreadyTaken(appointment.getDoctorId(), appointment.getPatientId(),dateFormat.format(cal.getTime())) > 0)
 			return false;
 		else {
 			appointment.setAppointmentStatus("pending");

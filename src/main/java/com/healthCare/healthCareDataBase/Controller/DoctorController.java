@@ -208,15 +208,37 @@ public class DoctorController {
 		doctorRepository.changeCurrentPatientBySecureLogin(data.getSecureLogin(),data.getPatientTurn());
 		
 		if(data.getPatientTurn() != 0) {
+			
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+			Calendar cal = Calendar.getInstance();
+			Notification not = new Notification();
+			WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
+			
+			if(data.getAllPatientNumber() == 1) {
+				for(int i = 1;i <= data.getAllPatientNumber() ;i++) {
+					AppUsersInfoDto usersInfo = appointmentRepository.getUsersInfoByAppDayAndTurnAndDocSecureLogin(dateFormat.format(cal.getTime()),i,data.getSecureLogin());
+					
+					if(usersInfo != null) {
+						not.setIsUnread(true);
+						not.setNotificationType("doctorStartSession");
+						not.setRecipientId(usersInfo.getPatientId());
+						not.setSenderId(usersInfo.getDoctorId());
+						notificationController.add(not);
+						
+						webSocketNot.setData(usersInfo.getDoctorFirstName()+" "+usersInfo.getDoctorLastName());
+						webSocketNot.setType("notification");
+						webSocketNot.setNotification(not);
+
+						template.convertAndSend("/topic/notification/"+usersInfo.getPatientId(),webSocketNot);
+					}
+				}
+			}
 			for (int i=data.getPatientTurn(); i <= (data.getAllPatientNumber() +4);i++) {
 				if(i<=data.getAllPatientNumber()) {
-					DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-					Calendar cal = Calendar.getInstance();
 					
 					AppUsersInfoDto usersInfo = appointmentRepository.getUsersInfoByAppDayAndTurnAndDocSecureLogin(dateFormat.format(cal.getTime()),i,data.getSecureLogin());
 				
 					if(usersInfo != null) {
-						Notification not = new Notification();
 						not.setIsUnread(true);
 						not.setNotificationType("patientTurnClose");
 						not.setRecipientId(usersInfo.getPatientId());
@@ -224,7 +246,6 @@ public class DoctorController {
 						not.setNotificationParameter(data.getPatientTurn()+"");
 						notificationController.add(not);
 						
-						WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
 						webSocketNot.setData(usersInfo.getDoctorFirstName()+" "+usersInfo.getDoctorLastName());
 						webSocketNot.setType("notification");
 						webSocketNot.setNotification(not);

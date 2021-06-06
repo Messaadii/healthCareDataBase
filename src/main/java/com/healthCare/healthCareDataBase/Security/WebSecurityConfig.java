@@ -81,8 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/api/user/updateUserPasswordByEmail",
                     "/api/validation/checkIfUserValidated/**",
                     "/api/socket/**",
-                    "/api/pharmacy/getPharmacyInfoById/**",
-                    "/api/prescription/confirmPrescriptionById").permitAll()
+                    "/api/pharmacy/getPharmacyInfoById/**").permitAll()
 			.antMatchers("/api/admin/**").hasAuthority("ADMIN_ROLE")
 			.antMatchers("/api/doctor/**").hasAnyAuthority("DOCTOR_ROLE","ADMIN_ROLE")
 			.antMatchers("/api/patient/**").hasAnyAuthority("PATIENT_ROLE","ADMIN_ROLE")
@@ -139,6 +138,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/appointment/delayAppointmentByAppId").hasAuthority("DOCTOR_ROLE")
 			.antMatchers("/api/pharmacy/getTodayPrescriptionNumberById/**").hasAuthority("PHARMACIST_ROLE")
 			.antMatchers("/api/pharmacy/getPharmacyPrescriptionsById").hasAuthority("PHARMACIST_ROLE")
+			.antMatchers("/api/prescription/confirmPrescriptionById").hasAuthority("PHARMACIST_ROLE")
 			.anyRequest().authenticated();
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
