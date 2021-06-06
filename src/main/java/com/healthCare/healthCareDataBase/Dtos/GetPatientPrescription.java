@@ -11,5 +11,6 @@ public interface GetPatientPrescription {
 	@Value("#{target.doctor_id}")
 	Long getDoctorId();
 	int getPrescriptionCode();
+	String getPrescriptionStatus();
 
 }

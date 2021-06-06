@@ -4,6 +4,7 @@ public class IdAndCodeDto {
 
 	private long id;
 	private int code;
+	private long patientId;
 	public long getId() {
 		return id;
 	}
@@ -16,4 +17,11 @@ public class IdAndCodeDto {
 	public void setCode(int code) {
 		this.code = code;
 	}
+	public long getPatientId() {
+		return patientId;
+	}
+	public void setPatientId(long patientId) {
+		this.patientId = patientId;
+	}
+	
 }

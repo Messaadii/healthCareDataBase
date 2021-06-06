@@ -25,7 +25,12 @@ public interface PrescriptionRepository extends JpaRepository<Prescription,Long>
 	@Query(value="select * from prescription p where p.doctor_id=?1 and p.patient_id=?2 and p.prescription_date like ?3% and p.prescription_status='pending'",nativeQuery=true)
 	Prescription getPrescriptionByDoctorIdPatientIdAndDate(Long doctorId, Long patientId, String prescriptionDate);
 
-	@Query(value="select p.prescription_code as prescriptionCode,p.prescription_id, p.prescription_date, p.doctor_id from prescription p where p.patient_id=?1 and p.prescription_status=?2",nativeQuery=true)
+	@Query(value="select p.prescription_code as prescriptionCode,"
+			+ " p.prescription_id,"
+			+ " p.prescription_date,"
+			+ " p.doctor_id,"
+			+ " p.prescription_status as prescriptionStatus"
+			+ " from prescription p where p.patient_id=?1 and p.prescription_status like ?2",nativeQuery=true)
 	List<GetPatientPrescription> getPrescriptionsByPatientIdAndPrescriptionStatus(Long patientId, String prescriptionStatus, Pageable pageable);
 
 	@Modifying

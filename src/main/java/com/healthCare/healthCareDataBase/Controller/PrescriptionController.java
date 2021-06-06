@@ -117,8 +117,13 @@ public class PrescriptionController {
 	public boolean confirmPrescriptionById(@RequestBody final IdAndCodeDto data) {
 		int numberOfUpdatedRow = prescriptionRepository.confirmPrescriptionById(data.getId(),data.getCode());
 		
-		if(numberOfUpdatedRow==1)
+		if(numberOfUpdatedRow==1) {
+			WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
+			webSocketNot.setType("confirmPrescription");
+			webSocketNot.setData(data.getId()+"");
+			template.convertAndSend("/topic/notification/"+data.getPatientId(),webSocketNot);
 			return true;
+		}
 		else
 			return false;
 	}
@@ -126,6 +131,7 @@ public class PrescriptionController {
 	@PostMapping(value="/getPrescriptionsByPatientIdAndPrescriptionStatus")
 	public List<GetPatientPrescription> getPrescriptionsByPatientIdAndPrescriptionStatus(@RequestBody final PrescriptionByIdAndStatus data) {
 		Pageable pageable = PageRequest.of(data.getPage(), data.getSize(), Sort.by("prescription_id").descending());
+		
 		return prescriptionRepository.getPrescriptionsByPatientIdAndPrescriptionStatus(data.getPatientId(),data.getPrescriptionStatus(),pageable);
 	}
 	
