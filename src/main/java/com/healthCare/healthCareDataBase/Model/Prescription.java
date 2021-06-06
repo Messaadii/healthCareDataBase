@@ -36,6 +36,9 @@ public class Prescription {
 	@Column(name="prescriptionStatus")
 	private String prescriptionStatus;
 	
+	@Column(name="prescriptionCode")
+	private int prescriptionCode;
+	
 	@OneToMany(targetEntity=PrescriptionMedicament.class, mappedBy="prescriptionId",cascade=CascadeType.ALL, fetch = FetchType.LAZY)
 	private  List<PrescriptionMedicament> medicament;
 	
@@ -85,6 +88,14 @@ public class Prescription {
 
 	public void setPrescriptionStatus(String prescriptionStatus) {
 		this.prescriptionStatus = prescriptionStatus;
+	}
+
+	public int getPrescriptionCode() {
+		return prescriptionCode;
+	}
+
+	public void setPrescriptionCode(int prescriptionCode) {
+		this.prescriptionCode = prescriptionCode;
 	}
 	
 }

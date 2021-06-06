@@ -81,7 +81,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/api/user/updateUserPasswordByEmail",
                     "/api/validation/checkIfUserValidated/**",
                     "/api/socket/**",
-                    "/api/pharmacy/getPharmacyInfoById/**").permitAll()
+                    "/api/pharmacy/getPharmacyInfoById/**",
+                    "/api/prescription/confirmPrescriptionById").permitAll()
 			.antMatchers("/api/admin/**").hasAuthority("ADMIN_ROLE")
 			.antMatchers("/api/doctor/**").hasAnyAuthority("DOCTOR_ROLE","ADMIN_ROLE")
 			.antMatchers("/api/patient/**").hasAnyAuthority("PATIENT_ROLE","ADMIN_ROLE")

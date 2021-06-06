@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.GetPatientPrescription;
+import com.healthCare.healthCareDataBase.Dtos.IdAndCodeDto;
 import com.healthCare.healthCareDataBase.Dtos.PrescriptionByIdAndStatus;
 import com.healthCare.healthCareDataBase.Model.Prescription;
 import com.healthCare.healthCareDataBase.Repository.PrescriptionRepository;
@@ -42,6 +43,7 @@ public class PrescriptionController {
 		Calendar cal = Calendar.getInstance();
 		prescription.setPrescriptionDate(dateFormat.format(cal.getTime()));
 		prescription.setPrescriptionStatus("pending");
+		prescription.setPrescriptionCode((int)Math.floor(Math.random()*(9999-1000+1)+1000));
 		prescriptionRepository.save(prescription);
 		return prescription.getPrescriptionId();
 	}
@@ -67,10 +69,20 @@ public class PrescriptionController {
 		return prescriptionRepository.getPrescriptionByDoctorIdPatientIdAndDate(prescription.getDoctorId(),prescription.getPatientId(),prescription.getPrescriptionDate());
 	}
 	
+	@PostMapping(value="/confirmPrescriptionById")
+	public boolean confirmPrescriptionById(@RequestBody final IdAndCodeDto data) {
+		int numberOfUpdatedRow = prescriptionRepository.confirmPrescriptionById(data.getId(),data.getCode());
+		
+		if(numberOfUpdatedRow==1)
+			return true;
+		else
+			return false;
+	}
+	
 	@PostMapping(value="/getPrescriptionsByPatientIdAndPrescriptionStatus")
 	public List<GetPatientPrescription> getPrescriptionsByPatientIdAndPrescriptionStatus(@RequestBody final PrescriptionByIdAndStatus data) {
 		Pageable pageable = PageRequest.of(data.getPage(), data.getSize(), Sort.by("prescription_id").descending());
 		return prescriptionRepository.getPrescriptionsByPatientIdAndPrescriptionStatus(data.getPatientId(),data.getPrescriptionStatus(),pageable);
-	}	
+	}
 	
 }
