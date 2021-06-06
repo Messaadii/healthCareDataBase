@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -155,5 +156,43 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 			+ " and pr.patient_id=p.user_id"
 			+ " and pr.prescription_status='pending'",nativeQuery=true)
 	List<PrescriptionForPharmacyDto> getPharmacyPrescriptionsById(Long id, Pageable pageable);
+	
+	@Query(value="select count(*)"
+			+ " from notification n, prescription pr"
+			+ " where n.notification_type='userSelectYouForPres'"
+			+ " and n.recipient_id=?1"
+			+ " and n.notification_parameter = pr.prescription_id"
+			+ " and pr.prescription_status='pending'",nativeQuery=true)
+	int countGetPharmacyPrescriptionsById(Long id);
+
+	@Query(value="select pr.prescription_id as prescriptionId,"
+			+ " pr.doctor_id as doctorId,"
+			+ " pr.patient_id as patientId,"
+			+ " p.patient_first_name as patientFirstName,"
+			+ " p.patient_last_name as patientLastName,"
+			+ " d.doctor_first_name as doctorFirstName,"
+			+ " d.doctor_last_name as doctorLastName,"
+			+ " n.time_sent"
+			+ " from notification n, prescription pr, patients p, doctors d"
+			+ " where n.notification_type='userSelectYouForPres'"
+			+ " and n.recipient_id=?2"
+			+ " and n.notification_parameter = pr.prescription_id"
+			+ " and pr.doctor_id=d.user_id"
+			+ " and pr.patient_id=p.user_id"
+			+ " and pr.prescription_status='pending'"
+			+ " and (concat(p.patient_first_name,p.patient_last_name) like ?1"
+			+ " or concat(p.patient_last_name,p.patient_first_name) like ?1)",nativeQuery=true)
+	List<PrescriptionForPharmacyDto> searchPharamacyPrescriptionsByPatientName(String string, int id, PageRequest of);
+	
+	@Query(value="select count(*)"
+			+ " from notification n, prescription pr, patients p"
+			+ " where n.notification_type='userSelectYouForPres'"
+			+ " and n.recipient_id=?2"
+			+ " and n.notification_parameter = pr.prescription_id"
+			+ " and pr.prescription_status='pending'"
+			+ " and pr.patient_id=p.user_id"
+			+ " and (concat(p.patient_first_name,p.patient_last_name) like ?1"
+			+ " or concat(p.patient_last_name,p.patient_first_name) like ?1)",nativeQuery=true)
+	int countSearchPharamacyPrescriptionsByPatientName(String string, int id);
 	
 }

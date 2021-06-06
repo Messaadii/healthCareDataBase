@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,9 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.GetPatientPrescription;
 import com.healthCare.healthCareDataBase.Dtos.IdAndCodeDto;
+import com.healthCare.healthCareDataBase.Dtos.IdPatientIdAndDoctorIdDto;
 import com.healthCare.healthCareDataBase.Dtos.PrescriptionByIdAndStatus;
+import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
+import com.healthCare.healthCareDataBase.Dtos.WebSocketNotificationDto;
+import com.healthCare.healthCareDataBase.Model.Notification;
 import com.healthCare.healthCareDataBase.Model.Prescription;
 import com.healthCare.healthCareDataBase.Repository.PrescriptionRepository;
+import com.healthCare.healthCareDataBase.Repository.UserRepository;
 
 @CrossOrigin
 @RestController
@@ -31,6 +36,12 @@ public class PrescriptionController {
 
 	@Autowired
 	PrescriptionRepository prescriptionRepository;
+	@Autowired
+	NotificationController notificationController;
+	@Autowired
+    private SimpMessagingTemplate template;
+	@Autowired
+	private UserRepository userRepository;
 	
 	@GetMapping(value="/all")
 	public List<Prescription>getAll(){
@@ -39,12 +50,28 @@ public class PrescriptionController {
 	
 	@PostMapping(value="/add") 
 	public Long add(@RequestBody final Prescription prescription) {
+		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
+		
 		prescription.setPrescriptionDate(dateFormat.format(cal.getTime()));
 		prescription.setPrescriptionStatus("pending");
 		prescription.setPrescriptionCode((int)Math.floor(Math.random()*(9999-1000+1)+1000));
 		prescriptionRepository.save(prescription);
+		
+		Notification notification = new Notification();
+		notification.setNotificationType("doctorAddPrescription");
+		notification.setSenderId(prescription.getDoctorId());
+		notification.setNotificationParameter(prescription.getPrescriptionId()+"");
+		notification.setRecipientId(prescription.getPatientId());
+		notificationController.add(notification);
+		
+		WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
+		webSocketNot.setType("notification");
+		webSocketNot.setData(userRepository.getUsernameByUserid(prescription.getDoctorId()));
+		webSocketNot.setNotification(notification);
+		template.convertAndSend("/topic/notification/"+prescription.getPatientId(),webSocketNot);
+		
 		return prescription.getPrescriptionId();
 	}
 	
@@ -58,9 +85,26 @@ public class PrescriptionController {
 		}
 	}
 	
-	@DeleteMapping(value="/deleteById/{id}")
-	public boolean deleteById(@PathVariable("id") Long id) {
-		prescriptionRepository.deleteById(id);
+	@PostMapping(value="/deleteById")
+	public boolean deleteById(@RequestBody final IdPatientIdAndDoctorIdDto requestData) {
+		
+		TwoStrings data = new TwoStrings();
+		data.setStringOne(requestData.getId()+"");
+		data.setStringTwo("doctorAddPrescription");
+		notificationController.deleteNotificationByPamareterAndType(data);
+		
+		WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
+		webSocketNot.setType("notification");
+		webSocketNot.setData(userRepository.getUsernameByUserid(requestData.getDoctorId()));
+		
+		Notification notification = new Notification();
+		notification.setNotificationType("doctorDeletePrescription");
+		notification.setNotificationParameter(requestData.getId()+"");
+		webSocketNot.setNotification(notification);
+		
+		template.convertAndSend("/topic/notification/"+requestData.getPatientId(),webSocketNot);
+		
+		prescriptionRepository.deleteById(requestData.getId());
 		return true;
 	}
 	

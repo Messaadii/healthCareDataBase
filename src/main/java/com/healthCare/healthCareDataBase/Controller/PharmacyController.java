@@ -28,6 +28,8 @@ import com.healthCare.healthCareDataBase.Dtos.PendingPharmcyGetDto;
 import com.healthCare.healthCareDataBase.Dtos.PharmacyGetDto;
 import com.healthCare.healthCareDataBase.Dtos.PharmacySettingsDto;
 import com.healthCare.healthCareDataBase.Dtos.PrescriptionForPharmacyDto;
+import com.healthCare.healthCareDataBase.Dtos.PrescriptionForPharmacyWithPageableDto;
+import com.healthCare.healthCareDataBase.Dtos.SearchPhPresByIdAndNameDto;
 import com.healthCare.healthCareDataBase.Dtos.UpdatePositionDto;
 import com.healthCare.healthCareDataBase.Dtos.WebSocketNotificationDto;
 import com.healthCare.healthCareDataBase.Model.Notification;
@@ -150,9 +152,29 @@ public class PharmacyController {
 	}
 	
 	@PostMapping(value="getPharmacyPrescriptionsById")
-	public List<PrescriptionForPharmacyDto> getPharmacyPrescription(@RequestBody final PageableAndIdDto data) {
-		Pageable pageable = PageRequest.of(data.getPage(), data.getSize(),Sort.by("time_sent").descending());
-		return pharmacyRepository.getPharmacyPrescriptionsById(data.getId(),pageable);
+	public PrescriptionForPharmacyWithPageableDto getPharmacyPrescription(@RequestBody final PageableAndIdDto data) {
+		
+		List<PrescriptionForPharmacyDto> list = pharmacyRepository.getPharmacyPrescriptionsById(data.getId(),
+				PageRequest.of(data.getPage(), data.getSize(), Sort.by("time_sent").descending()));
+		
+		PrescriptionForPharmacyWithPageableDto returnObject = new PrescriptionForPharmacyWithPageableDto(
+				data.getPage() == 0 ? pharmacyRepository.countGetPharmacyPrescriptionsById(data.getId()) : 0,
+				list);
+		
+		return returnObject;
+	}
+	
+	@PostMapping(value="searchPharamacyPrescriptionByPatientName")
+	public PrescriptionForPharmacyWithPageableDto searchPharamacyPrescriptionByPatientName(@RequestBody final SearchPhPresByIdAndNameDto data) {
+		
+		List<PrescriptionForPharmacyDto> list = pharmacyRepository.searchPharamacyPrescriptionsByPatientName(data.getName(),data.getId(),
+				PageRequest.of(data.getPage(), data.getSize(), Sort.by("time_sent").descending()));
+		
+		PrescriptionForPharmacyWithPageableDto returnObject = new PrescriptionForPharmacyWithPageableDto(
+				data.getPage() == 0 ? pharmacyRepository.countSearchPharamacyPrescriptionsByPatientName(data.getName(),
+						data.getId()) : 0,list);
+		
+		return returnObject;
 	}
 	
 }

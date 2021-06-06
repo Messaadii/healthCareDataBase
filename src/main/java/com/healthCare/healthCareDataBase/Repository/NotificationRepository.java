@@ -61,4 +61,17 @@ public interface NotificationRepository extends JpaRepository<Notification,Long>
 	void updateNotificationBySenderIdParameterAndType(long senderId, long recipientId,
 			String notificationParameter, String notificationType);
 
+	@Modifying
+    @Transactional
+	@Query(value="insert into notification"
+			+ " (notification_id, notification_parameter,is_unread, notification_type, recipient_id, sender_id, time_sent)"
+			+ " values (?1,?2,?3,?4,?5,?6,?7)",nativeQuery=true)
+	void saveNotification(Long notificationId, String notificationParameter, boolean isUnread, String notificationType,
+			long recipientId, long senderId, String timeSent);
+
+	@Modifying
+    @Transactional
+	@Query(value="delete from notification n where n.notification_parameter = ?1 and n.notification_type = ?2",nativeQuery=true)
+	void deleteNotificationByPamareterAndType(String stringOne, String stringTwo);
+
 }

@@ -211,47 +211,53 @@ public class DoctorController {
 			
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 			Calendar cal = Calendar.getInstance();
-			Notification not = new Notification();
-			WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
 			
-			if(data.getAllPatientNumber() == 1) {
-				for(int i = 1;i <= data.getAllPatientNumber() ;i++) {
-					AppUsersInfoDto usersInfo = appointmentRepository.getUsersInfoByAppDayAndTurnAndDocSecureLogin(dateFormat.format(cal.getTime()),i,data.getSecureLogin());
+			if(data.getPatientTurn() == 1) {
+				
+				Notification notStartSession = new Notification();
+				WebSocketNotificationDto webSocketNotStartSession = new WebSocketNotificationDto();
+				
+				
+				for(int p = 1;p <= data.getAllPatientNumber() ;p++) {
 					
-					if(usersInfo != null) {
-						not.setIsUnread(true);
-						not.setNotificationType("doctorStartSession");
-						not.setRecipientId(usersInfo.getPatientId());
-						not.setSenderId(usersInfo.getDoctorId());
-						notificationController.add(not);
-						
-						webSocketNot.setData(usersInfo.getDoctorFirstName()+" "+usersInfo.getDoctorLastName());
-						webSocketNot.setType("notification");
-						webSocketNot.setNotification(not);
+					AppUsersInfoDto usersInfo = appointmentRepository.getUsersInfoByAppDayAndTurnAndDocSecureLogin(dateFormat.format(cal.getTime()),p,data.getSecureLogin());
 
-						template.convertAndSend("/topic/notification/"+usersInfo.getPatientId(),webSocketNot);
-					}
+					notStartSession.setIsUnread(true);
+					notStartSession.setNotificationType("doctorStartSession");
+					notStartSession.setRecipientId(usersInfo.getPatientId());
+					notStartSession.setSenderId(usersInfo.getDoctorId());
+					notificationController.add(notStartSession);
+						
+					webSocketNotStartSession.setData(usersInfo.getDoctorFirstName()+" "+usersInfo.getDoctorLastName());
+					webSocketNotStartSession.setType("notification");
+					webSocketNotStartSession.setNotification(notStartSession);
+
+					template.convertAndSend("/topic/notification/"+usersInfo.getPatientId(),webSocketNotStartSession);
 				}
 			}
-			for (int i=data.getPatientTurn(); i <= (data.getAllPatientNumber() +4);i++) {
+			
+			for (int i=data.getPatientTurn(); i <= (data.getPatientTurn() +4);i++) {
+				
+				Notification notTurnClose = new Notification();
+				WebSocketNotificationDto webSocketNotTurnClose = new WebSocketNotificationDto();
+				
+				
 				if(i<=data.getAllPatientNumber()) {
 					
 					AppUsersInfoDto usersInfo = appointmentRepository.getUsersInfoByAppDayAndTurnAndDocSecureLogin(dateFormat.format(cal.getTime()),i,data.getSecureLogin());
 				
-					if(usersInfo != null) {
-						not.setIsUnread(true);
-						not.setNotificationType("patientTurnClose");
-						not.setRecipientId(usersInfo.getPatientId());
-						not.setSenderId(usersInfo.getDoctorId());
-						not.setNotificationParameter(data.getPatientTurn()+"");
-						notificationController.add(not);
+					notTurnClose.setIsUnread(true);
+					notTurnClose.setNotificationType("patientTurnClose");
+					notTurnClose.setRecipientId(usersInfo.getPatientId());
+					notTurnClose.setSenderId(usersInfo.getDoctorId());
+					notTurnClose.setNotificationParameter(data.getPatientTurn()+"");
+					notificationController.add(notTurnClose);
 						
-						webSocketNot.setData(usersInfo.getDoctorFirstName()+" "+usersInfo.getDoctorLastName());
-						webSocketNot.setType("notification");
-						webSocketNot.setNotification(not);
+					webSocketNotTurnClose.setData(usersInfo.getDoctorFirstName()+" "+usersInfo.getDoctorLastName());
+					webSocketNotTurnClose.setType("notification");
+					webSocketNotTurnClose.setNotification(notTurnClose);
 
-						template.convertAndSend("/topic/notification/"+usersInfo.getPatientId(),webSocketNot);
-					}
+					template.convertAndSend("/topic/notification/"+usersInfo.getPatientId(),webSocketNotTurnClose);
 				}else
 					break;
 			}

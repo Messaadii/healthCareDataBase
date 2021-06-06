@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.healthCare.healthCareDataBase.Dtos.ChangeUnreadDto;
 import com.healthCare.healthCareDataBase.Dtos.NotificationGetDto;
 import com.healthCare.healthCareDataBase.Dtos.SendNotificationWithSocketRequestDto;
+import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
 import com.healthCare.healthCareDataBase.Dtos.PageableAndIdDto;
 import com.healthCare.healthCareDataBase.Dtos.WebSocketNotificationDto;
 import com.healthCare.healthCareDataBase.Model.Notification;
@@ -49,7 +50,13 @@ public class NotificationController {
 		Calendar cal = Calendar.getInstance();
 		notification.setTimeSent(dateFormat.format(cal.getTime()));
 		notification.setIsUnread(true);
-		notificationRepository.save(notification);
+		notificationRepository.saveNotification(notification.getNotificationId(),
+				notification.getNotificationParameter(),
+				notification.getIsUnread(),
+				notification.getNotificationType(),
+				notification.getRecipientId(),
+				notification.getSenderId(),
+				notification.getTimeSent());;
 		return true;
 	}
 	
@@ -69,6 +76,12 @@ public class NotificationController {
 	@DeleteMapping(value="/deleteNotificationById/{id}")
 	public boolean deleteNotificationById(@PathVariable("id") final Long id) {
 		notificationRepository.deleteById(id);
+		return true;
+	}
+	
+	@PostMapping(value="/deleteNotificationByPamareterAndType")
+	public boolean deleteNotificationByPamareterAndType(@RequestBody final TwoStrings data) {
+		notificationRepository.deleteNotificationByPamareterAndType(data.getStringOne(),data.getStringTwo());
 		return true;
 	}
 	
