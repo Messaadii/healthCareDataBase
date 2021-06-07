@@ -18,5 +18,8 @@ public interface NotificationGetDto {
 	long getSenderId();
 	@Value("#{target.name}")
 	String getName();
+	@Value("#{target.time_sent}")
+	String getTimeSent();
+
 
 }
