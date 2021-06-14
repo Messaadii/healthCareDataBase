@@ -1,13 +1,18 @@
 package com.healthCare.healthCareDataBase.Controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.healthCare.healthCareDataBase.Dtos.GetSecretaryWorkDto;
 import com.healthCare.healthCareDataBase.Dtos.SecretaryInfoDto;
 import com.healthCare.healthCareDataBase.Dtos.SecureLoginRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.UpdatePasswordDto;
@@ -40,6 +45,11 @@ public class SecretaryController {
 	public boolean updatePasswordBySecureLogin(@RequestBody final UpdatePasswordDto data) {
 		secretaryRepository.updatePasswordBySecureLogin(encoder.encode(data.getPassword()),data.getSecureLogin());
 		return true;
+	}
+	
+	@GetMapping(value="getSecretaryWorkById/{id}")
+	public List<GetSecretaryWorkDto> getSecretaryWorkById(@PathVariable final long id){
+		return secretaryRepository.getSecretaryWorkById(id);
 	}
 	
 }

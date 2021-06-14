@@ -1,11 +1,14 @@
 package com.healthCare.healthCareDataBase.Repository;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import com.healthCare.healthCareDataBase.Dtos.GetSecretaryWorkDto;
 import com.healthCare.healthCareDataBase.Dtos.SecretaryInfoDto;
 import com.healthCare.healthCareDataBase.Model.Secretary;
 
@@ -58,5 +61,15 @@ public interface SecretaryRepository extends JpaRepository<Secretary,Long>{
 			+ " set u.user_password = ?1"
 			+ " where u.user_secure_login = ?2",nativeQuery=true)
 	void updatePasswordBySecureLogin(String password, String secureLogin);
+
+	@Query(value="select sw.start_time as startTime,"
+			+ " sw.end_time as endTime,"
+			+ " concat(d.doctor_first_name,' ',d.doctor_last_name) as doctorName,"
+			+ " sw.doctor_id as doctorId"
+			+ " from secretary_work sw, doctors d"
+			+ " where sw.secretary_id=?1"
+			+ " and sw.doctor_id = d.user_id"
+			+ " order by sw.start_time desc",nativeQuery=true)
+	List<GetSecretaryWorkDto> getSecretaryWorkById(long id);
 
 }
