@@ -39,6 +39,8 @@ public class SignupRequestDto {
     @NotBlank
     @Size(min = 10, max = 20)
     private String userBirthday;
+    
+    private long doctorId;
 
 	public String getUsername() {
 		return username;
@@ -111,5 +113,15 @@ public class SignupRequestDto {
 	public void setUserBirthday(String userBirthday) {
 		this.userBirthday = userBirthday;
 	}
+
+	public long getDoctorId() {
+		return doctorId;
+	}
+
+	public void setDoctorId(long doctorId) {
+		this.doctorId = doctorId;
+	}
+	
+	
     
 }

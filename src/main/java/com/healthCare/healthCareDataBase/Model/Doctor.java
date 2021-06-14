@@ -17,8 +17,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
-
 @Entity
 @Table(name="doctors")
 @DiscriminatorValue("doctor")
@@ -39,7 +37,6 @@ public class Doctor extends User{
 		this.appointment = new ArrayList<Appointment>();
 	}
 
-	@FullTextField
 	@Column(name="doctorFirstName")
 	private String doctorFirstName;
 	

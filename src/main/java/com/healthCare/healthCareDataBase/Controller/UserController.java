@@ -26,6 +26,7 @@ import com.healthCare.healthCareDataBase.Dtos.UserTypeAndUserIdDto;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
 import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
+import com.healthCare.healthCareDataBase.Repository.SecretaryRepository;
 import com.healthCare.healthCareDataBase.Repository.UserRepository;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -47,6 +48,9 @@ public class UserController {
 	
 	@Autowired
 	PharmacyRepository pharmacyRepository;
+	
+	@Autowired
+	SecretaryRepository secretaryRepository;
 	
 	@GetMapping(value="/existsByUsername/{username}")
 	public boolean existsByUsername(@PathVariable("username") final String username) {
@@ -107,7 +111,12 @@ public class UserController {
 			else
 				return false;
 				
-		}else {
+		}else if ("secretary".equals(userType)){
+			if(data.getVerificationCode().equals(secretaryRepository.getVerificationCodeByEmail(data.getUserEmail())))
+				return true;
+			else
+				return false;
+		} else {
 			if(data.getVerificationCode().equals(pharmacyRepository.getVerificationCodeByEmail(data.getUserEmail())))
 				return true;
 			else
@@ -124,6 +133,8 @@ public class UserController {
 			  patientRepository.changePatientStatusById(userType.getUser_id(),data.getStatus());
 		else if ("pharmacist".equals(userType.getUser_type()))
 			  pharmacyRepository.changePharmacyStatusById(userType.getUser_id(),data.getStatus());
+		else if ("secretary".equals(userType.getUser_type()))
+			secretaryRepository.changePharmacyStatusById(userType.getUser_id(),data.getStatus());
 		return true;
 	}
 

@@ -206,5 +206,11 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " from doctors d, users u"
 			+ " where u.user_id = d.user_id and u.user_username= ?1",nativeQuery=true)
 	Integer getVerificationCodeByEmail(String userEmail);
+
+	@Query(value="select if(count(u.user_id),u.user_id,0)"
+			+ " from users u"
+			+ " where u.user_username = ?1"
+			+ " and u.user_type = 'secretary'",nativeQuery=true)
+	long getSecretaryIdByEmail(String email);
 	
 }

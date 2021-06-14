@@ -43,7 +43,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query(value="select u.user_type from users u where u.user_id= ?1",nativeQuery=true)
 	public String getUserTypeByUserId(Long id);
 	
-	@Query(value="select u.user_type from users u where u.user_username= ?1",nativeQuery=true)
+	@Query(value="select if(count(u.user_type),u.user_type,'') from users u where u.user_username= ?1",nativeQuery=true)
 	public String getUserTypeByUsername(String email);
 	
 	@Query(value="select u.user_type,u.user_id from users u where u.user_username= ?1",nativeQuery=true)

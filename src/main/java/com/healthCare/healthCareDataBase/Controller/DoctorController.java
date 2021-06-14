@@ -3,15 +3,21 @@ package com.healthCare.healthCareDataBase.Controller;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.healthCare.healthCareDataBase.Dtos.AddSecretaryRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.AppUsersInfoDto;
 import com.healthCare.healthCareDataBase.Dtos.AppointmentDocInfo;
 import com.healthCare.healthCareDataBase.Dtos.AppointmentPatientInfo;
@@ -35,17 +42,26 @@ import com.healthCare.healthCareDataBase.Dtos.PendingDoctorGetDto;
 import com.healthCare.healthCareDataBase.Dtos.SearchedDocDto;
 import com.healthCare.healthCareDataBase.Dtos.SearchedDoctorDto;
 import com.healthCare.healthCareDataBase.Dtos.SecureLoginAndPatientTurnDto;
+import com.healthCare.healthCareDataBase.Dtos.SendMailDto;
+import com.healthCare.healthCareDataBase.Dtos.SignupRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.TopRatedDoctorsDto;
 import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
 import com.healthCare.healthCareDataBase.Dtos.UpdatePositionDto;
 import com.healthCare.healthCareDataBase.Dtos.WebSocketNotificationDto;
 import com.healthCare.healthCareDataBase.Model.Doctor;
+import com.healthCare.healthCareDataBase.Model.ERole;
 import com.healthCare.healthCareDataBase.Model.Notification;
+import com.healthCare.healthCareDataBase.Model.Role;
+import com.healthCare.healthCareDataBase.Model.Secretary;
+import com.healthCare.healthCareDataBase.Model.SecretaryWork;
 import com.healthCare.healthCareDataBase.Repository.AdminRepository;
 import com.healthCare.healthCareDataBase.Repository.AppointmentRepository;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
 import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
+import com.healthCare.healthCareDataBase.Repository.RoleRepository;
+import com.healthCare.healthCareDataBase.Repository.SecretaryRepository;
+import com.healthCare.healthCareDataBase.Repository.SecretaryWorkRepository;
 import com.healthCare.healthCareDataBase.Repository.SpecialityRepository;
 import com.healthCare.healthCareDataBase.Repository.UserRepository;
 
@@ -56,23 +72,49 @@ public class DoctorController {
 	
 	@Autowired
 	DoctorRepository doctorRepository;
+	
 	@Autowired
 	PatientRepository patientRepository;
+	
 	@Autowired
 	PharmacyRepository pharmacyRepository;
+	
 	@Autowired
 	SpecialityRepository specialityRepository;
+	
 	@Autowired
 	UserRepository userRepository;
+	
 	@Autowired
 	NotificationController notificationController;
+	
 	@Autowired
     private SimpMessagingTemplate template;
+	
 	@Autowired
 	AdminRepository adminRepository;
+	
 	@Autowired
 	AppointmentRepository appointmentRepository;
 	
+	@Autowired
+	RoleRepository roleRepository;
+	
+	@Autowired
+	SecretaryRepository secretaryRepository;
+	
+	@Autowired
+	SecretaryWorkRepository secretaryWorkRepository;
+	
+	@Autowired
+	SecretaryWorkController secretaryWorkController;
+	
+	@Autowired
+	SendEmailController sendEmailController;
+	
+	@Autowired
+	PasswordEncoder encoder;
+
 	
 	@GetMapping(value="/all")
 	public List<Doctor>getAll(){
@@ -283,6 +325,65 @@ public class DoctorController {
 		return true;
 	}
 	
+	@PostMapping(value="/addSecretary")
+	public boolean addSecretary(@RequestBody final AddSecretaryRequestDto data) {
+		
+		long secretaryId = doctorRepository.getSecretaryIdByEmail(data.getEmail());
+		
+		if(secretaryId == 0)
+			return false;
+		else {
+			Notification not = new Notification();
+			WebSocketNotificationDto webSocketNotTurnClose = new WebSocketNotificationDto();
+			
+			not.setIsUnread(true);
+			not.setNotificationType("patientTurnClose");
+			not.setRecipientId(secretaryId);
+			not.setSenderId(data.getDoctorId());
+			notificationController.add(not);
+				
+			webSocketNotTurnClose.setData(userRepository.getUsernameByUserid(data.getDoctorId()));
+			webSocketNotTurnClose.setType("notification");
+			webSocketNotTurnClose.setNotification(not);
+			
+			template.convertAndSend("/topic/notification/"+secretaryId,webSocketNotTurnClose);
+			return true;
+		}
+	}
+	
+	@PostMapping(value="/createSecretaryAccount")
+	public boolean createSecretaryAccount(@RequestBody SignupRequestDto data) throws MessagingException {
+		
+		 String userType = userRepository.getUserTypeByUsername(data.getUsername());
+		
+		if(userType.length() != 0)
+			return false;
+		else {
+			Set<Role> roles = new HashSet<>();
+			Role userRole = roleRepository.findByName(ERole.SECRETARY_ROLE)
+					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+			roles.add(userRole);
+			
+			SendMailDto mail=new SendMailDto("verification","",data.getUsername());
+			
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			Calendar cal = Calendar.getInstance();
+			
+			SendMailDto mailInfo=new SendMailDto("verification","",data.getUsername());
+			
+			Secretary secretary = new Secretary(data.getUsername(),encoder.encode(data.getUserPassword()),data.getUserCity(),
+					roles,dateFormat.format(cal.getTime()),data.getUserFirstName(),data.getUserLastName(),
+					data.getUserBirthday(),data.getUserGender(),0,data.getDoctorId(),sendEmailController.sendEmail(mailInfo)+"");
+			
+			secretaryRepository.save(secretary);
+			
+			SecretaryWork secretaryWork = new SecretaryWork(secretary.getUserId(),secretary.getDoctorId(),dateFormat.format(cal.getTime()),null);
+			
+			secretaryWorkController.add(secretaryWork);
+			
+			return true;
+		}
+	}
 	
 }
 
