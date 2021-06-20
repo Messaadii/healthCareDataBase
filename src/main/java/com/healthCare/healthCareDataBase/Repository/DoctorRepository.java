@@ -16,6 +16,9 @@ import com.healthCare.healthCareDataBase.Dtos.DoctorGetDto;
 import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
 import com.healthCare.healthCareDataBase.Dtos.PendingDoctorGetDto;
 import com.healthCare.healthCareDataBase.Dtos.SearchedDoctorDto;
+import com.healthCare.healthCareDataBase.Dtos.SecretaryInfoForDoctorDto;
+import com.healthCare.healthCareDataBase.Dtos.SecretaryPublicInfoDto;
+import com.healthCare.healthCareDataBase.Dtos.SecretaryWorkDto;
 import com.healthCare.healthCareDataBase.Dtos.TopRatedDoctorsDto;
 import com.healthCare.healthCareDataBase.Model.Doctor;
 
@@ -40,7 +43,8 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " d.doctor_latitude,"
 			+ " d.doctor_longitude,"
 			+ " u.user_username,"
-			+ " u.user_city"
+			+ " u.user_city,"
+			+ " u.user_secure_login as secureLogin"
 			+ " from doctors d, users u "
 			+ " where u.user_id = d.user_id and u.user_secure_login= ?1",nativeQuery=true)
 	DoctorGetDto getDoctorInfoFromSecureLogin(String one);
@@ -212,5 +216,86 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " where u.user_username = ?1"
 			+ " and u.user_type = 'secretary'",nativeQuery=true)
 	long getSecretaryIdByEmail(String email);
+
+	@Query(value="select s.secretary_first_name as secretaryFirstName,"
+			+ " s.secretary_last_name as secretaryLastName,"
+			+ " s.secretary_gender as secretaryGender,"
+			+ " s.secretary_rate as secretaryRate,"
+			+ " s.secretary_birth_day as secretaryBirthDay,"
+			+ " s.user_id as userId"
+			+ " from secretaries s, users u"
+			+ " where u.user_secure_login = ?2"
+			+ " and u.user_id = ?1"
+			+ " and u.user_id = s.doctor_id",nativeQuery=true)
+	List<SecretaryPublicInfoDto> getMySecretaries(long doctorId, String secureLogin);
+
+	@Query(value="select sw.start_time as startTime,"
+			+ " sw.end_time as endTime,"
+			+ " concat(d.doctor_first_name,' ',doctor_last_name) as doctorName,"
+			+ " d.user_id as doctorId"
+			+ " from secretary_work sw, doctors d, users u, secretaries s"
+			+ " where sw.doctor_id = d.user_id"
+			+ " and sw.secretary_id = ?1"
+			+ " and s.user_id = ?1"
+			+ " and s.doctor_id = u.user_id"
+			+ " and u.user_secure_login = ?2"
+			+ " order by sw.start_time desc",nativeQuery=true)
+	List<SecretaryWorkDto> getSecretaryWorkById(long secretaryId, String secureLogin);
+
+	@Query(value="select if(count(n.notification_id) = 1,n.notification_id,0)"
+			+ " from notification n"
+			+ " where n.sender_id = ?1"
+			+ " and n.recipient_id = ?2"
+			+ " and n.notification_type = ?3",nativeQuery=true)
+	long checkIfNotificationAlreadyAdded(long doctorId, long secretaryId, String string);
+
+	@Transactional
+	@Modifying
+	@Query(value="update notification n set"
+			+ " n.sender_id = ?1,"
+			+ " n.notification_parameter = ?2,"
+			+ " n.time_sent = ?3"
+			+ " where n.notification_id = ?4",nativeQuery=true)
+	void updateNotificationById(long doctorId, int verifCode, String format, long notificationId);
+
+	@Query(value="select s.secretary_first_name as secretaryFirstName,"
+			+ " s.secretary_last_name as secretaryLastName,"
+			+ " s.secretary_gender as secretaryGender,"
+			+ " s.secretary_rate as secretaryRate,"
+			+ " s.secretary_birth_day as secretaryBirthDay,"
+			+ " u.user_city as userCity,"
+			+ " u.user_id as userId"
+			+ " from notification n,users u, secretaries s"
+			+ " where n.sender_id = ?1 and"
+			+ " u.user_username = ?2 and"
+			+ " n.recipient_id = u.user_id and"
+			+ " n.notification_type = 'seeSecretaryWorkRequest' and"
+			+ " n.notification_parameter = ?3"
+			+ " and s.user_id = u.user_id",nativeQuery=true)
+	SecretaryInfoForDoctorDto checkSecretaryCode(long doctorId, String string, int code);
+
+	@Query(value="select sw.start_time as startTime,"
+			+ " sw.end_time as endTime,"
+			+ " concat(d.doctor_first_name,' ',doctor_last_name) as doctorName,"
+			+ " d.user_id as doctorId"
+			+ " from secretary_work sw, doctors d"
+			+ " where sw.doctor_id = d.user_id"
+			+ " and sw.secretary_id = ?1"
+			+ " order by sw.start_time desc",nativeQuery=true)
+	List<SecretaryWorkDto> getSecretaryWorkForDocById(long userId);
+
+	@Transactional
+	@Modifying
+	@Query(value="update notification n set"
+			+ " n.notification_parameter = 'pending',"
+			+ " n.time_sent = ?1"
+			+ " where n.notification_id = ?2",nativeQuery=true)
+	void updateDoctorAddedYouNotificationById(String format, long notificationId);
+
+	@Query(value="select s.doctor_id"
+			+ " from secretaries s"
+			+ " where s.user_id = ?1",nativeQuery=true)
+	long getSecretaryDoctor(long secretaryId);
+	
 	
 }

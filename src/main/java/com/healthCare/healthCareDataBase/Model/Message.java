@@ -86,9 +86,8 @@ public class Message {
 		super();
 	}
 
-	public Message(Long conversationId, String messageDate, Long senderId, Long recipientId, String messageContent) {
+	public Message(Long conversationId, Long senderId, Long recipientId, String messageContent) {
 		this.conversationId = conversationId;
-		this.messageDate = messageDate;
 		this.senderId = senderId;
 		this.recipientId = recipientId;
 		this.messageContent = messageContent;

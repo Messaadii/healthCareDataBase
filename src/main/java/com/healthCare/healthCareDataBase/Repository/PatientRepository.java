@@ -31,7 +31,8 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 			+ " p.medical_profile_id,"
 			+ " p.patient_status,"
 			+ " u.user_username,"
-			+ " u.user_city"
+			+ " u.user_city,"
+			+ " u.user_secure_login as secureLogin"
 			+ " from patients p, users u "
 			+ " where u.user_id = p.user_id and u.user_secure_login= ?1",nativeQuery=true)
 	PatientGetDto getPatientInfoFromSecureLogin(String secureLogin);

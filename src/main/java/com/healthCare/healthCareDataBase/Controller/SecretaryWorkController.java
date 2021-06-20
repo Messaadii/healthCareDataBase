@@ -25,4 +25,5 @@ public class SecretaryWorkController {
 		
 		return true;
 	}
+
 }

@@ -12,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.AddConversationReturnDto;
 import com.healthCare.healthCareDataBase.Dtos.ConversationsGetDto;
+import com.healthCare.healthCareDataBase.Dtos.GetConversationByIdDto;
 import com.healthCare.healthCareDataBase.Dtos.GetConversationsDto;
+import com.healthCare.healthCareDataBase.Dtos.MessageDto;
+import com.healthCare.healthCareDataBase.Dtos.ReadConversationDto;
 import com.healthCare.healthCareDataBase.Dtos.StatusAndIdDto;
 import com.healthCare.healthCareDataBase.Dtos.WebSocketNotificationDto;
 import com.healthCare.healthCareDataBase.Model.Conversation;
-import com.healthCare.healthCareDataBase.Model.Message;
 import com.healthCare.healthCareDataBase.Model.Notification;
 import com.healthCare.healthCareDataBase.Repository.ConversationRepository;
 import com.healthCare.healthCareDataBase.Repository.NotificationRepository;
@@ -71,8 +72,8 @@ public class ConversationController {
 			conversation.setOpenDate(dateFormat.format(cal.getTime()));
 			conversation.setStatusUpdatedBy(0);
 			conversationRepository.save(conversation);
-			Message message = new Message(conversation.getConversationId(),conversation.getOpenDate(),conversation.getOpenedBy(),conversation.getOpenedTo(),"");
-			messageController.add(message);
+			MessageDto messageRequest = new MessageDto(conversation.getConversationId(),conversation.getOpenedBy(),conversation.getOpenedTo(),"",null,conversation.getOpenDate());
+			messageController.add(messageRequest);
 			returnConversation.setConversationId(conversation.getConversationId());
 			returnConversation.setConversationStatus(conversation.getConversationStatus());
 			returnConversation.setOpenDate(conversation.getOpenDate());
@@ -90,15 +91,15 @@ public class ConversationController {
 		return returnConversation;
 	}
 	
-	@GetMapping(value="getConversationByid/{id}/{userId}")
-	public ConversationsGetDto getConversationByid(@PathVariable("id") final long id,@PathVariable("userId") final long userId) {
-		return conversationRepository.getFullConversationInfoByConversationId(id,userId);
+	@GetMapping(value="getConversationByid")
+	public ConversationsGetDto getConversationByid(@RequestBody final GetConversationByIdDto data) {
+		return conversationRepository.getFullConversationInfoByConversationId(data.getId(),data.getSecureLogin());
 	}
 	
 	@PostMapping(value="/getConversationByUserId")
 	public List<ConversationsGetDto> getConversationByUserId(@RequestBody final GetConversationsDto data) {
 		Pageable pageable = PageRequest.of(data.getPage(), data.getSize(), Sort.by("last_update_date").descending());
-		return conversationRepository.getConversationByUserId(data.getUserId(),pageable);
+		return conversationRepository.getConversationByUserId(data.getSecureLogin(),data.getUserId(),pageable);
 	}
 	
 	@PostMapping(value="/updateConversationStatusById")
@@ -106,33 +107,39 @@ public class ConversationController {
 		long chnagedBy=0;
 		if("close".equals(data.getStatus()))
 			chnagedBy=data.getChangedBy();
-		conversationRepository.updateConversationStatusById(data.getId(),data.getStatus(),chnagedBy);
-		WebSocketNotificationDto webSocketData = new WebSocketNotificationDto();
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Calendar cal = Calendar.getInstance();
-		Notification notification=new Notification();
-		notification.setTimeSent(dateFormat.format(cal.getTime()));
-		notification.setIsUnread(true);
-		notification.setNotificationType("conversation"+data.getStatus());
-		notification.setSenderId(data.getChangedBy());
-		notification.setRecipientId(data.getChangedTo());
-		notification.setNotificationParameter(data.getId()+"");
-		notificationRepository.save(notification);
-		webSocketData.setType("notification");
-		webSocketData.setNotification(notification);
-		webSocketData.setData(userRepository.getUsernameByUserid(data.getChangedBy()));
-		template.convertAndSend("/topic/notification/"+data.getChangedTo(),webSocketData);
-		return true;
+		if(conversationRepository.updateConversationStatusById(data.getId(),data.getStatus(),chnagedBy,data.getSecureLogin()) == 1) {
+			WebSocketNotificationDto webSocketData = new WebSocketNotificationDto();
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			Calendar cal = Calendar.getInstance();
+			Notification notification=new Notification();
+			notification.setTimeSent(dateFormat.format(cal.getTime()));
+			notification.setIsUnread(true);
+			notification.setNotificationType("conversation"+data.getStatus());
+			notification.setSenderId(data.getChangedBy());
+			notification.setRecipientId(data.getChangedTo());
+			notification.setNotificationParameter(data.getId()+"");
+			notificationRepository.save(notification);
+			webSocketData.setType("notification");
+			webSocketData.setNotification(notification);
+			webSocketData.setData(userRepository.getUsernameByUserid(data.getChangedBy()));
+			template.convertAndSend("/topic/notification/"+data.getChangedTo(),webSocketData);
+			return true;
+		}else
+			return false;
+		
 	}
 	
-	@GetMapping(value="/readConversationById/{id}/{userId}")
-	public boolean readConversationById(@PathVariable("id") final long id,@PathVariable("userId") final long userId) {
-		conversationRepository.updateIsUnreadByConversationId(id,false);
-		WebSocketNotificationDto data = new WebSocketNotificationDto();
-		data.setType("seen");
-		data.setData(id+"");
-		template.convertAndSend("/topic/notification/"+userId,data);
-		return true;
+	@PostMapping(value="/readConversationById")
+	public boolean readConversationById(@RequestBody final ReadConversationDto data) {
+		if(conversationRepository.updateIsUnreadByConversationId(data.getId(),data.getSecureLogin(),false) == 1) {
+			WebSocketNotificationDto websocket = new WebSocketNotificationDto();
+			websocket.setType("seen");
+			websocket.setData(data.getId()+"");
+			template.convertAndSend("/topic/notification/"+data.getUserId(),websocket);
+			return true;
+		}else
+			return false;
+		
 	}
 
 }

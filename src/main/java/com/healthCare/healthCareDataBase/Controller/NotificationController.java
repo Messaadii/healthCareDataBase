@@ -5,22 +5,19 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.ChangeUnreadDto;
+import com.healthCare.healthCareDataBase.Dtos.DeleteNotificationDto;
 import com.healthCare.healthCareDataBase.Dtos.NotificationGetDto;
 import com.healthCare.healthCareDataBase.Dtos.SendNotificationWithSocketRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
@@ -72,11 +69,13 @@ public class NotificationController {
 		return true;
 	}
 	
-	@Transactional
-	@DeleteMapping(value="/deleteNotificationById/{id}")
-	public boolean deleteNotificationById(@PathVariable("id") final Long id) {
-		notificationRepository.deleteById(id);
-		return true;
+	@PostMapping(value="/deleteNotificationById")
+	public boolean deleteNotificationById(@RequestBody final DeleteNotificationDto data) {
+		int deletedCount = notificationRepository.deleteNotificationById(data.getId(),data.getSecureLogin());
+		if(deletedCount!=0)
+			return true;
+		else
+			return false;
 	}
 	
 	@PostMapping(value="/deleteNotificationByPamareterAndType")

@@ -6,6 +6,7 @@ public class StatusAndIdDto {
 	private String status;
 	private Long changedBy;
 	private Long changedTo;
+	private String secureLogin;
 	public Long getId() {
 		return id;
 	}
@@ -30,4 +31,11 @@ public class StatusAndIdDto {
 	public void setChangedTo(Long changedTo) {
 		this.changedTo = changedTo;
 	}
+	public String getSecureLogin() {
+		return secureLogin;
+	}
+	public void setSecureLogin(String secureLogin) {
+		this.secureLogin = secureLogin;
+	}
+	
 }

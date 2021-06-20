@@ -58,13 +58,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 			+ " when u.user_type = 'doctor' then concat('Dr. ' , d.doctor_first_name,' ',d.doctor_last_name)"
 			+ " when u.user_type = 'pharmacist' then concat('Ph. ', ph.pharmacy_full_name)"
 			+ " when u.user_type = 'patient' then concat(p.patient_first_name,' ',p.patient_last_name)"
+			+ " when u.user_type = 'secretary' then concat(s.secretary_first_name,' ',s.secretary_last_name)"
 			+ " end as name"
-			+ " from users u, doctors d, pharmacies ph, patients p"
+			+ " from users u, doctors d, pharmacies ph, patients p,secretaries s"
 			+ " where u.user_id=?1 and"
 			+ " case"
 			+ " when u.user_type = 'doctor' then d.user_id=u.user_id"
 			+ " when u.user_type = 'pharmacist' then ph.user_id=u.user_id"
 			+ " when u.user_type = 'patient' then p.user_id=u.user_id"
+			+ " when u.user_type = 'secretary' then s.user_id=u.user_id"
 			+ " end group by u.user_id",nativeQuery=true)
 	String getUsernameByUserid(Long changedBy);
 	

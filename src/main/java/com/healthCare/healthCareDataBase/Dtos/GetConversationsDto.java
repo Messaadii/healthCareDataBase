@@ -2,13 +2,15 @@ package com.healthCare.healthCareDataBase.Dtos;
 
 public class GetConversationsDto {
 	
-	private Long userId;
+	private String secureLogin;
+	private long userId;
 	private Integer page,size;
-	public Long getUserId() {
-		return userId;
+	
+	public String getSecureLogin() {
+		return secureLogin;
 	}
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setSecureLogin(String secureLogin) {
+		this.secureLogin = secureLogin;
 	}
 	public Integer getPage() {
 		return page;
@@ -22,7 +24,11 @@ public class GetConversationsDto {
 	public void setSize(Integer size) {
 		this.size = size;
 	}
+	public long getUserId() {
+		return userId;
+	}
+	public void setUserId(long userId) {
+		this.userId = userId;
+	}
 	
-	
-
 }

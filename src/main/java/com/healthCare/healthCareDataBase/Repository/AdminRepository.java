@@ -19,7 +19,12 @@ public interface AdminRepository extends JpaRepository<Admin, Long>{
 	@Query(value="update admins a set a.admin_secure_login= ?2 where a.admin_id = ?1",nativeQuery=true)
 	void getAdminSecureLoginFromId(Integer patientId, String secureLogin);
 	
-	@Query(value="select a.user_id, a.admin_full_name, u.user_city, u.user_username from admins a, users u where u.user_id = a.user_id and u.user_secure_login= ?1",nativeQuery=true)
+	@Query(value="select a.user_id,"
+			+ " a.admin_full_name,"
+			+ " u.user_city,"
+			+ " u.user_username,"
+			+ " u.user_secure_login as secureLogin"
+			+ " from admins a, users u where u.user_id = a.user_id and u.user_secure_login= ?1",nativeQuery=true)
 	AdminGetDto getAdminInfoFromSecureLogin(String one);
 
 }

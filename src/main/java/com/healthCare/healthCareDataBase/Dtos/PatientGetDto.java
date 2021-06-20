@@ -22,4 +22,5 @@ public interface PatientGetDto {
 	String getPatientBirthDay();
 	@Value("#{target.patient_status}")
 	String getPatientStatus();
+	String getSecureLogin();
 }

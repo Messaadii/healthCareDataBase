@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.healthCare.healthCareDataBase.Dtos.MessageDto;
 import com.healthCare.healthCareDataBase.Dtos.PageableAndIdDto;
 import com.healthCare.healthCareDataBase.Dtos.StringDto;
 import com.healthCare.healthCareDataBase.Dtos.WebSocketNotificationDto;
@@ -38,17 +39,22 @@ public class MessageController {
     private SimpMessagingTemplate template;
 	
 	@PostMapping(value="/add")
-	public StringDto add(@RequestBody final Message message) {
+	public StringDto add(@RequestBody final MessageDto dataRequest) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
-		message.setMessageDate(dateFormat.format(cal.getTime()));
+		Message message = new Message(dataRequest.getConversationId(),dataRequest.getSenderId(),dataRequest.getRecipientId(),dataRequest.getMessageContent());
+		if(dataRequest.getMessageDate() == null)
+			message.setMessageDate(dateFormat.format(cal.getTime()));
+		else
+			message.setMessageDate(dataRequest.getMessageDate());
 		messageRepository.save(message);
 		messageRepository.updateConversationLastUpdate(message.getMessageDate(),message.getConversationId());
 		WebSocketNotificationDto data = new WebSocketNotificationDto();
 		data.setType("message");
 		data.setMessage(message);
 		template.convertAndSend("/topic/notification/"+message.getRecipientId(),data);
-		conversationRepository.updateIsUnreadByConversationId(message.getConversationId(),true);
+		if(dataRequest.getSecureLogin() != null)
+			conversationRepository.updateIsUnreadByConversationId(message.getConversationId(),dataRequest.getSecureLogin(),true);
 		StringDto string = new StringDto(message.getMessageDate());
 		return string;
 	}

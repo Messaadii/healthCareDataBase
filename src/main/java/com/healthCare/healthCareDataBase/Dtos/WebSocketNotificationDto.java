@@ -4,10 +4,9 @@ import com.healthCare.healthCareDataBase.Model.Message;
 import com.healthCare.healthCareDataBase.Model.Notification;
 
 public class WebSocketNotificationDto {
-	private String type;
+	private String type, data, extraData;
 	private Message message;
 	private Notification notification;
-	private String data;
 	public String getType() {
 		return type;
 	}
@@ -35,6 +34,11 @@ public class WebSocketNotificationDto {
 	public WebSocketNotificationDto() {
 		super();
 	}
-	
+	public String getExtraData() {
+		return extraData;
+	}
+	public void setExtraData(String extraData) {
+		this.extraData = extraData;
+	}
 	
 }

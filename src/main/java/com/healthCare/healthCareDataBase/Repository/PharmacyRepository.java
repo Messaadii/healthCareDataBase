@@ -27,7 +27,8 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 			+ " ph.pharmacy_longitude,"
 			+ " ph.pharmacy_latitude,"
 			+ " u.user_city,"
-			+ " u.user_username"
+			+ " u.user_username,"
+			+ " u.user_secure_login as secureLogin"
 			+ " from pharmacies ph, users u"
 			+ " where u.user_id = ph.user_id and u.user_secure_login= ?1",nativeQuery=true)
 	PharmacyGetDto getPharmacyInfoFromSecureLogin(String secureLogin);

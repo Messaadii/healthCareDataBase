@@ -9,8 +9,6 @@ import java.util.Set;
 
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -31,9 +29,12 @@ import com.healthCare.healthCareDataBase.Dtos.AddSecretaryRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.AppUsersInfoDto;
 import com.healthCare.healthCareDataBase.Dtos.AppointmentDocInfo;
 import com.healthCare.healthCareDataBase.Dtos.AppointmentPatientInfo;
+import com.healthCare.healthCareDataBase.Dtos.CheckSecretaryCodeRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.CurrentPatientInfo;
 import com.healthCare.healthCareDataBase.Dtos.DoctorGetDto;
 import com.healthCare.healthCareDataBase.Dtos.DoctorSettingsDto;
+import com.healthCare.healthCareDataBase.Dtos.GetMySecretariesDto;
+import com.healthCare.healthCareDataBase.Dtos.GetSecretaryWorkRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.IdTurnAndDate;
 import com.healthCare.healthCareDataBase.Dtos.IntegerAndString;
 import com.healthCare.healthCareDataBase.Dtos.OneString;
@@ -41,6 +42,10 @@ import com.healthCare.healthCareDataBase.Dtos.PageableDto;
 import com.healthCare.healthCareDataBase.Dtos.PendingDoctorGetDto;
 import com.healthCare.healthCareDataBase.Dtos.SearchedDocDto;
 import com.healthCare.healthCareDataBase.Dtos.SearchedDoctorDto;
+import com.healthCare.healthCareDataBase.Dtos.SecretaryAllInfoDto;
+import com.healthCare.healthCareDataBase.Dtos.SecretaryInfoForDoctorDto;
+import com.healthCare.healthCareDataBase.Dtos.SecretaryPublicInfoDto;
+import com.healthCare.healthCareDataBase.Dtos.SecretaryWorkDto;
 import com.healthCare.healthCareDataBase.Dtos.SecureLoginAndPatientTurnDto;
 import com.healthCare.healthCareDataBase.Dtos.SendMailDto;
 import com.healthCare.healthCareDataBase.Dtos.SignupRequestDto;
@@ -325,30 +330,77 @@ public class DoctorController {
 		return true;
 	}
 	
-	@PostMapping(value="/addSecretary")
-	public boolean addSecretary(@RequestBody final AddSecretaryRequestDto data) {
+	@PostMapping(value="/sendSeeSecretaryWorkRequest")
+	public String sendSeeSecretaryWorkRequest(@RequestBody final AddSecretaryRequestDto data) {
 		
 		long secretaryId = doctorRepository.getSecretaryIdByEmail(data.getEmail());
 		
 		if(secretaryId == 0)
-			return false;
+			return "notFound";
 		else {
-			Notification not = new Notification();
-			WebSocketNotificationDto webSocketNotTurnClose = new WebSocketNotificationDto();
-			
-			not.setIsUnread(true);
-			not.setNotificationType("patientTurnClose");
-			not.setRecipientId(secretaryId);
-			not.setSenderId(data.getDoctorId());
-			notificationController.add(not);
+			if(doctorRepository.getSecretaryDoctor(secretaryId) == data.getDoctorId())
+				return "alreadyWithYou";
+			else {
+				long notificationId = doctorRepository.checkIfNotificationAlreadyAdded(data.getDoctorId(),secretaryId,"seeSecretaryWorkRequest");
+				Notification not = new Notification();
+				WebSocketNotificationDto webSocket = new WebSocketNotificationDto();
 				
-			webSocketNotTurnClose.setData(userRepository.getUsernameByUserid(data.getDoctorId()));
-			webSocketNotTurnClose.setType("notification");
-			webSocketNotTurnClose.setNotification(not);
-			
-			template.convertAndSend("/topic/notification/"+secretaryId,webSocketNotTurnClose);
-			return true;
+				int verifCode = (int)Math.floor(Math.random()*(9999-1000+1)+1000);
+				not.setIsUnread(true);
+				not.setNotificationType("seeSecretaryWorkRequest");
+				not.setRecipientId(secretaryId);
+				not.setSenderId(data.getDoctorId());
+				not.setNotificationParameter(verifCode+"");
+				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				Calendar cal = Calendar.getInstance();
+				not.setTimeSent(dateFormat.format(cal.getTime()));
+				
+				if(notificationId == 0)
+					notificationController.add(not);
+				else 
+					doctorRepository.updateNotificationById(data.getDoctorId(),verifCode,dateFormat.format(cal.getTime()),notificationId);
+				
+					
+				webSocket.setData(userRepository.getUsernameByUserid(data.getDoctorId()));
+				webSocket.setType("notification");
+				webSocket.setNotification(not);
+				
+				template.convertAndSend("/topic/notification/"+secretaryId,webSocket);
+				
+				return "found";
+			}
 		}
+	}
+	
+	@PostMapping(value="/addSecretary")
+	public boolean addSecretary(@RequestBody final AddSecretaryRequestDto data) {
+		long secretaryId = doctorRepository.getSecretaryIdByEmail(data.getEmail());
+		
+		Notification not = new Notification();
+		WebSocketNotificationDto webSocket = new WebSocketNotificationDto();
+		
+		not.setIsUnread(true);
+		not.setNotificationType("doctorAddedYou");
+		not.setRecipientId(secretaryId);
+		not.setSenderId(data.getDoctorId());
+		not.setNotificationParameter("pending");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		not.setTimeSent(dateFormat.format(cal.getTime()));
+		
+		long notificationId = doctorRepository.checkIfNotificationAlreadyAdded(data.getDoctorId(),secretaryId,"doctorAddedYou");
+		
+		if(notificationId == 0)
+			notificationController.add(not);
+		else 
+			doctorRepository.updateDoctorAddedYouNotificationById(dateFormat.format(cal.getTime()),notificationId);
+			
+		webSocket.setData(userRepository.getUsernameByUserid(data.getDoctorId()));
+		webSocket.setType("notification");
+		webSocket.setNotification(not);
+		
+		template.convertAndSend("/topic/notification/"+secretaryId,webSocket);
+		return true;
 	}
 	
 	@PostMapping(value="/createSecretaryAccount")
@@ -385,5 +437,28 @@ public class DoctorController {
 		}
 	}
 	
+	@PostMapping(value="getMySecretaries")
+	public List<SecretaryPublicInfoDto> getMySecretaries(@RequestBody final GetMySecretariesDto data){
+		return doctorRepository.getMySecretaries(data.getDoctorId(),data.getSecureLogin());
+	}
+	
+	@PostMapping(value="getSecretaryWorkById")
+	public List<SecretaryWorkDto> getSecretaryWorkById(@RequestBody final GetSecretaryWorkRequestDto data){
+		return doctorRepository.getSecretaryWorkById(data.getSecretaryId(),data.getSecureLogin());
+	}
+	
+	@PostMapping(value="checkSecretaryCode")
+	public SecretaryAllInfoDto checkSecretaryCode(@RequestBody final CheckSecretaryCodeRequestDto data) {
+		
+		SecretaryInfoForDoctorDto secretary = doctorRepository.checkSecretaryCode(data.getDoctorId(),data.getEmail(),data.getCode());
+		
+		if(secretary != null)
+			return new SecretaryAllInfoDto(secretary.getSecretaryFirstName(),secretary.getSecretaryLastName(),
+				secretary.getSecretaryGender(),secretary.getSecretaryRate(),secretary.getSecretaryBirthDay(),secretary.getUserCity(),
+				secretary.getUserId(),doctorRepository.getSecretaryWorkForDocById(secretary.getUserId()));
+		else
+			return null;
+		
+	}
 }
 

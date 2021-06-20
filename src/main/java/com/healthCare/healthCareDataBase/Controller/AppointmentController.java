@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +23,7 @@ import com.healthCare.healthCareDataBase.Dtos.DelayAppointmentRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.IntegerAndString;
 import com.healthCare.healthCareDataBase.Dtos.PageableAndIdDto;
 import com.healthCare.healthCareDataBase.Dtos.PageableUserIdDoctorIdDto;
+import com.healthCare.healthCareDataBase.Dtos.UpdateAppointmentDateByIdDto;
 import com.healthCare.healthCareDataBase.Dtos.WebSocketNotificationDto;
 import com.healthCare.healthCareDataBase.Model.Appointment;
 import com.healthCare.healthCareDataBase.Model.Notification;
@@ -49,8 +51,35 @@ public class AppointmentController {
 		if(appointmentRepository.checkIfAppointmentAlreadyTaken(appointment.getDoctorId(), appointment.getPatientId(),dateFormat.format(cal.getTime())) > 0)
 			return false;
 		else {
-			appointment.setAppointmentStatus("pending");
+			List<Long> secretaries = appointmentRepository.getDoctorSecretariesById(appointment.getDoctorId());
+			
+			if(secretaries.size() == 0)
+				appointment.setAppointmentStatus("pending");
+			else
+				appointment.setAppointmentStatus("unconfirmed");
+			
 			appointmentRepository.save(appointment);
+			
+			Notification not = new Notification();
+			not.setIsUnread(true);
+			not.setNotificationType("newAppointment");
+			not.setSenderId(appointment.getPatientId());
+			not.setTimeSent(dateFormat.format(cal.getTime()));
+			not.setNotificationParameter(appointment.getAppointmentId()+"");
+			
+			WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
+			webSocketNot.setType("notification");
+			
+			for(int i =0;i<secretaries.size();i++) {
+				
+				not.setRecipientId(secretaries.get(i));
+				
+				webSocketNot.setData(userRepository.getUsernameByUserid((long)appointment.getPatientId()));
+				webSocketNot.setNotification(not);
+
+				template.convertAndSend("/topic/notification/"+secretaries.get(i),webSocketNot);
+			}
+			
 			return true;
 		}
 	}
@@ -67,9 +96,45 @@ public class AppointmentController {
 	}
 	
 	@PostMapping(value="updateAppointmentDateById")
-	public boolean updateAppointmentDateById(@RequestBody final IntegerAndString integerAndString ) {
-		appointmentRepository.updateAppointmentDateById(integerAndString.getInteger(), integerAndString.getString());
-		return true;
+	public boolean updateAppointmentDateById(@RequestBody final UpdateAppointmentDateByIdDto data ) {
+		
+		List<Long> secretaries = appointmentRepository.getDoctorSecretariesById((int)data.getDoctorId());
+		
+		if(secretaries.size() == 0) {
+			appointmentRepository.updateAppointmentDateById(data.getAppointmentId(), data.getDate(),"pending");
+			return false;
+		}
+		else {
+			Notification not = new Notification();
+			
+			not.setNotificationParameter(appointmentRepository.getAppointmentDateById(data.getAppointmentId()));
+			appointmentRepository.updateAppointmentDateById(data.getAppointmentId(), data.getDate(),"changeDateRequest");
+			
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+			Calendar cal = Calendar.getInstance();
+			
+			not.setIsUnread(true);
+			not.setNotificationType("changeAppDateReq");
+			not.setSenderId(data.getPatientId());
+			not.setTimeSent(dateFormat.format(cal.getTime()));
+			
+			WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
+			webSocketNot.setData(data.getAppointmentId()+"");
+			webSocketNot.setExtraData(userRepository.getUsernameByUserid(data.getPatientId()));
+			webSocketNot.setType("notification");
+
+			for(int i =0;i<secretaries.size();i++) {
+				
+				not.setRecipientId(secretaries.get(i));
+				notificationController.add(not);
+				
+				webSocketNot.setNotification(not);
+
+				template.convertAndSend("/topic/notification/"+secretaries.get(i),webSocketNot);
+			}
+			
+			return true;
+		}
 	}
 	
 	@PostMapping(value="getPatientAppointmentByPatientId")
@@ -108,22 +173,26 @@ public class AppointmentController {
 		Calendar cal = Calendar.getInstance();
 		appointmentRepository.decrementAppointmentsByDoctorIdAndDate(data.getDoctorId(),data.getPatientTurn(),dateFormat.format(cal.getTime()),data.getAppointmentId());
 		
-		String doctorName =userRepository.getUsernameByUserid(data.getDoctorId());
-		
 		Notification not = new Notification();
 		not.setIsUnread(true);
 		not.setNotificationType("delayPatientTurn");
 		not.setRecipientId(data.getUserId());
 		not.setSenderId(data.getDoctorId());
 		not.setNotificationParameter(data.getAllPatientNumber()+"");
+		not.setTimeSent(dateFormat.format(cal.getTime()));
 		notificationController.add(not);
 		
 		WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
-		webSocketNot.setData(doctorName);
+		webSocketNot.setData(userRepository.getUsernameByUserid(data.getDoctorId()));
 		webSocketNot.setType("notification");
 		webSocketNot.setNotification(not);
 
 		template.convertAndSend("/topic/notification/"+data.getUserId(),webSocketNot);
 		return true;
+	}
+	
+	@GetMapping(value="getAppointmentById/{id}")
+	public Appointment getAppointmentById(@PathVariable final long id) {
+		return appointmentRepository.getAppointmentById(id);
 	}
 }
