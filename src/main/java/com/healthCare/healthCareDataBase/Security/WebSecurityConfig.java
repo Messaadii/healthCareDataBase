@@ -156,6 +156,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/secretary/getAppointmentInfoById").hasAuthority("SECRETARY_ROLE")
 			.antMatchers("/api/secretary/confirmAppointmentById").hasAuthority("SECRETARY_ROLE")
 			.antMatchers("/api/secretary/refuseAppointmentById").hasAuthority("SECRETARY_ROLE")
+			.antMatchers("/api/secretary/getNextRequestByAppId").hasAuthority("SECRETARY_ROLE")
 			.anyRequest().authenticated();
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}

@@ -26,6 +26,7 @@ import com.healthCare.healthCareDataBase.Dtos.GetSecretaryWorkDto;
 import com.healthCare.healthCareDataBase.Dtos.GetUncofirmedAppDto;
 import com.healthCare.healthCareDataBase.Dtos.GetUncofirmedAppReturnDto;
 import com.healthCare.healthCareDataBase.Dtos.GetUncofirmedAppWithPagReturnDto;
+import com.healthCare.healthCareDataBase.Dtos.PatientIdAndAppDateDto;
 import com.healthCare.healthCareDataBase.Dtos.SecretaryInfoDto;
 import com.healthCare.healthCareDataBase.Dtos.SecureLoginRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.UpdatePasswordDto;
@@ -139,7 +140,7 @@ public class SecretaryController {
 	
 	@PostMapping(value="getUncofirmedApp")
 	public GetUncofirmedAppWithPagReturnDto getUncofirmedApp(@RequestBody final GetUncofirmedAppDto data) {
-		Pageable pageable = PageRequest.of(data.getPage(), data.getSize(), Sort.by("appointment_date").descending());
+		Pageable pageable = PageRequest.of(data.getPage(), data.getSize(), Sort.by("appointment_id").ascending());
 		
 		return new GetUncofirmedAppWithPagReturnDto(secretaryRepository.getUncofirmedApp(data.getSecretaryId(),data.getSecureLogin(),pageable),
 				data.getPage() == 0 ? secretaryRepository.getUncofirmedAppCount(data.getSecretaryId(),data.getSecureLogin()) : 0);
@@ -150,8 +151,18 @@ public class SecretaryController {
 		return secretaryRepository.getAppointmentInfoById(data.getAppointmentId(),data.getSecretaryId(),data.getSecureLogin());
 	}
 	
+	@PostMapping(value="getNextRequestByAppId")
+	public GetUncofirmedAppReturnDto getNextRequestByAppId (@RequestBody final GetAppointmentInfoByIdDto data) {
+		return secretaryRepository.getNextRequestByAppId(data.getAppointmentId(),data.getSecretaryId(),data.getSecureLogin());
+	}
+	
 	@PostMapping(value="confirmAppointmentById")
 	public boolean confirmAppointmentById(@RequestBody final ConfirmAppointmentByIdDto data) {
+		
+		int appTurn = 0;
+		
+		if(!"unconfirmed".equals(data.getAppointmentStatus()))
+			appTurn = secretaryRepository.getOlderTurnByAppId(data.getAppointmentId());
 		secretaryRepository.updateAppointmentStatusById(data.getAppointmentId(),data.getSecretaryId(),data.getSecureLogin(),"pending");
 		secretaryRepository.updateAppointmentTurnById(data.getAppointmentId(),secretaryRepository.patientNewTurn(data.getAppointmentId()));
 		
@@ -161,8 +172,32 @@ public class SecretaryController {
 		Notification notification = new Notification();
 		if("unconfirmed".equals(data.getAppointmentStatus()))
 			notification.setNotificationType("secretaryConfirmAppointment");
-		else
+		else {
 			notification.setNotificationType("secretaryConfirmAppDateChange");
+			secretaryRepository.confirmAppointmentChangeDateRequest(data.getDoctorId(),data.getSecretaryId(),data.getPatientId(),appTurn);
+			
+			List<PatientIdAndAppDateDto> patientsInfo =  secretaryRepository.getDecrementedPatientsInfo(data.getDoctorId(),data.getSecretaryId(),data.getPatientId(),appTurn);
+			
+			Notification notDec = new Notification();
+			notDec.setSenderId(data.getDoctorId());
+			notDec.setNotificationParameter(data.getAppointmentId()+"");
+			notDec.setTimeSent(dateFormat.format(cal.getTime()));
+			notDec.setNotificationType("appointmentTurnDecremented");
+			
+			WebSocketNotificationDto webSocketDec = new WebSocketNotificationDto();
+			webSocketDec.setType("notification");
+			webSocketDec.setData(userRepository.getUsernameByUserid(data.getDoctorId()));
+			
+			for(int i =0;i<patientsInfo.size();i++) {
+				notDec.setRecipientId(patientsInfo.get(i).getPatientId());
+				notDec.setNotificationParameter(patientsInfo.get(i).getAppointmentDate() + "|" + patientsInfo.get(i).getPatientTurn());
+				notificationController.add(notDec);
+				
+				webSocketDec.setNotification(notDec);
+				
+				template.convertAndSend("/topic/notification/"+patientsInfo.get(i).getPatientId(),webSocketDec);
+			}
+		}
 		notification.setSenderId(data.getDoctorId());
 		notification.setRecipientId(data.getPatientId());
 		notification.setNotificationParameter(data.getAppointmentId()+"");

@@ -75,8 +75,9 @@ public class AppointmentController {
 				not.setRecipientId(secretaries.get(i));
 				
 				webSocketNot.setData(userRepository.getUsernameByUserid((long)appointment.getPatientId()));
-				webSocketNot.setNotification(not);
 
+				webSocketNot.setNotification(not);
+				
 				template.convertAndSend("/topic/notification/"+secretaries.get(i),webSocketNot);
 			}
 			

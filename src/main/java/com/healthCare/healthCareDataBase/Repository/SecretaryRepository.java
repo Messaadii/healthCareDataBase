@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.healthCare.healthCareDataBase.Dtos.GetSecretaryWorkDto;
 import com.healthCare.healthCareDataBase.Dtos.GetUncofirmedAppReturnDto;
+import com.healthCare.healthCareDataBase.Dtos.PatientIdAndAppDateDto;
 import com.healthCare.healthCareDataBase.Dtos.SecretaryInfoDto;
 import com.healthCare.healthCareDataBase.Model.Secretary;
 
@@ -190,12 +191,67 @@ public interface SecretaryRepository extends JpaRepository<Secretary,Long>{
 
 	@Modifying
     @Transactional
-	@Query(value="update appointment a, notification n"
-			+ " set a.appointment_date = n.notification_parameter"
-			+ " where a.appointment_id = ?1"
-			+ " and n.sender_id = ?3"
-			+ " and n.recipient_id = ?2"
-			+ " and n.notification_type='changeAppDateReq'",nativeQuery=true)
+	@Query(value="update appointment a"
+			+ " set a.appointment_date = (select n.notification_parameter"
+			+ "	from notification n where"
+			+ "	n.sender_id = ?3"
+			+ "	and n.recipient_id = ?2"
+			+ "	and n.notification_type='changeAppDateReq'"
+			+ "	order by n.notification_id DESC LIMIT 1)"
+			+ " where a.appointment_id = ?1",nativeQuery=true)
 	void cancelAppointmentChangeDateRequest(long appointmentId, long secretaryId, long patientId);
+
+	@Modifying
+    @Transactional
+	@Query(value="update appointment a, notification n"
+			+ " set a.patient_turn = (a.patient_turn - 1)"
+			+ " where a.appointment_date = n.notification_parameter"
+			+ " and n.notification_id = (select n1.notification_id "
+			+ " from notification n1 where"
+			+ " n1.sender_id = ?3"
+			+ " and n1.recipient_id = ?2"
+			+ " and n1.notification_type='changeAppDateReq'"
+			+ " order by n1.notification_id DESC LIMIT 1)"
+			+ " and a.doctor_id = ?1"
+			+ " and a.patient_turn > ?4",nativeQuery=true)
+	void confirmAppointmentChangeDateRequest(long doctorId, long secretaryId, long patientId, int turn);
+
+	@Query(value="select a.patient_turn"
+			+ " from appointment a"
+			+ " where a.appointment_id=?1",nativeQuery=true)
+	int getOlderTurnByAppId(long appointmentId);
+
+	@Query(value="select p.user_id as userId,"
+			+ " p.patient_first_name as patientFirstName,"
+			+ " p.patient_last_name as patientLastName,"
+			+ " u.user_city as userCity,"
+			+ " p.patient_birth_day as patientBirthDay,"
+			+ " p.patient_gender as patientGender,"
+			+ " p.medical_profile_id as medicalProfileId,"
+			+ " a.appointment_id as appointmentId,"
+			+ " a.appointment_date as appointmentDate,"
+			+ " a.appointment_status as appointmentStatus"
+			+ " from appointment a, users u, patients p, secretaries s"
+			+ " where s.user_id = u.user_id and u.user_id = ?2 and u.user_secure_login = ?3"
+			+ " and a.doctor_id = s.doctor_id"
+			+ " and a.appointment_id > ?1"
+			+ " and (a.appointment_status ='unconfirmed' or a.appointment_status = 'changeDateRequest') "
+			+ " and p.user_id = a.patient_id"
+			+ " order by a.appointment_id asc limit 1",nativeQuery=true)
+	GetUncofirmedAppReturnDto getNextRequestByAppId(long appointmentId, long secretaryId, String secureLogin);
+
+	@Query(value="select a.patient_id as patientId,"
+			+ " a.appointment_date as appointmentDate,"
+			+ " a.patient_turn as patientTurn"
+			+ " from appointment a"
+			+ " where a.appointment_date = (select n.notification_parameter"
+			+ " from notification n where"
+			+ " n.sender_id = ?3"
+			+ " and n.recipient_id = ?2"
+			+ " and n.notification_type='changeAppDateReq'"
+			+ " order by n.notification_id DESC LIMIT 1)"
+			+ " and a.doctor_id = ?1"
+			+ " and a.patient_turn > ?4",nativeQuery=true)
+	List<PatientIdAndAppDateDto> getDecrementedPatientsInfo(long doctorId, long secretaryId, long patientId, int appTurn);
 
 }
