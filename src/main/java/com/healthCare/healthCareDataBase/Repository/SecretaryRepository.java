@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import com.healthCare.healthCareDataBase.Dtos.AppointmentForSecDto;
 import com.healthCare.healthCareDataBase.Dtos.GetSecretaryWorkDto;
 import com.healthCare.healthCareDataBase.Dtos.GetUncofirmedAppReturnDto;
 import com.healthCare.healthCareDataBase.Dtos.PatientIdAndAppDateDto;
@@ -253,5 +254,22 @@ public interface SecretaryRepository extends JpaRepository<Secretary,Long>{
 			+ " and a.doctor_id = ?1"
 			+ " and a.patient_turn > ?4",nativeQuery=true)
 	List<PatientIdAndAppDateDto> getDecrementedPatientsInfo(long doctorId, long secretaryId, long patientId, int appTurn);
+
+	@Query(value="select p.user_id as userId,"
+			+ " p.patient_first_name as patientFirstName,"
+			+ " p.patient_last_name as patientLastName,"
+			+ " u.user_city as userCity,"
+			+ " p.patient_birth_day as patientBirthDay,"
+			+ " p.patient_gender as patientGender,"
+			+ " a.patient_turn as patientTurn,"
+			+ " a.appointment_id as appointmentId"
+			+ " from appointment a, patients p, users u, doctors d"
+			+ " where d.user_id = ?1"
+			+ " and a.patient_turn = d.current_patient"
+			+ " and a.doctor_id = ?1"
+			+ " and p.user_id = a.patient_id"
+			+ " and p.user_id = u.user_id"
+			+ " and a.appointment_date = ?2",nativeQuery=true)
+	AppointmentForSecDto getDoctorCurrentPatient(long id, String date);
 
 }

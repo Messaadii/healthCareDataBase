@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.healthCare.healthCareDataBase.Dtos.AppointmentForSecDto;
 import com.healthCare.healthCareDataBase.Dtos.DelayAppointmentRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.IntegerAndString;
 import com.healthCare.healthCareDataBase.Dtos.PageableAndIdDto;
@@ -150,6 +151,12 @@ public class AppointmentController {
 		return appointmentRepository.getAppointmentByDoctorIdAndDate(pageableAndIdDto.getId(),pageableAndIdDto.getDate(), pageable);
 	}
 	
+	@PostMapping(value="getAppointmentByDoctorIdAndDateForSec")
+	public List<AppointmentForSecDto> getAppointmentByDoctorIdAndDateForSec(@RequestBody final PageableAndIdDto pageableAndIdDto) {
+		Pageable pageable= PageRequest.of(pageableAndIdDto.getPage(), pageableAndIdDto.getSize(), Sort.by("patient_turn").ascending());
+		return appointmentRepository.getAppointmentByDoctorIdAndDateForSec(pageableAndIdDto.getId(),pageableAndIdDto.getDate(), pageable);
+	}
+	
 	@PostMapping(value="getAppointmentNumberByDoctorIdAndDate")
 	public Integer getAppointmentNumberByDoctorIdAndDate(@RequestBody final PageableAndIdDto pageableAndIdDto) {
 		return appointmentRepository.getAppointmentNumberByDoctorIdAndDate(pageableAndIdDto.getId(),pageableAndIdDto.getDate());
@@ -189,6 +196,24 @@ public class AppointmentController {
 		webSocketNot.setNotification(not);
 
 		template.convertAndSend("/topic/notification/"+data.getUserId(),webSocketNot);
+		
+		if("doctor".equals(data.getPostponeBy())) {			
+			WebSocketNotificationDto webSocketNotPos = new WebSocketNotificationDto();
+			webSocketNotPos.setData(userRepository.getUsernameByUserid(data.getDoctorId()));
+			webSocketNotPos.setType("delayPatientTurn");
+			
+			List<Long> secretaries = appointmentRepository.getDoctorSecretariesById((int)data.getDoctorId());
+			for(int i =0;i<secretaries.size();i++) {
+				template.convertAndSend("/topic/notification/"+secretaries.get(i),webSocketNotPos);
+			}
+			
+		}else {
+			WebSocketNotificationDto webSocketNotPos = new WebSocketNotificationDto();
+			webSocketNotPos.setData(userRepository.getUsernameByUserid(data.getSecretaryId()));
+			webSocketNotPos.setType("delayPatientTurn");
+
+			template.convertAndSend("/topic/notification/"+data.getDoctorId(),webSocketNotPos);
+		}
 		return true;
 	}
 	

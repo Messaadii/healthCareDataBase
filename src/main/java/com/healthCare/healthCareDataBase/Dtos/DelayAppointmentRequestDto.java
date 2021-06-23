@@ -7,6 +7,8 @@ public class DelayAppointmentRequestDto {
 	private long appointmentId;
 	private Integer allPatientNumber;
 	private Integer patientTurn;
+	private String postponeBy;
+	private long secretaryId;
 	public long getDoctorId() {
 		return doctorId;
 	}
@@ -37,5 +39,17 @@ public class DelayAppointmentRequestDto {
 	public void setPatientTurn(Integer patientTurn) {
 		this.patientTurn = patientTurn;
 	}
-
+	public String getPostponeBy() {
+		return postponeBy;
+	}
+	public void setPostponeBy(String postponeBy) {
+		this.postponeBy = postponeBy;
+	}
+	public long getSecretaryId() {
+		return secretaryId;
+	}
+	public void setSecretaryId(long secretaryId) {
+		this.secretaryId = secretaryId;
+	}
+	
 }

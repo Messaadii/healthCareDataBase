@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.AcceptDoctorAddRequestDto;
+import com.healthCare.healthCareDataBase.Dtos.AppointmentForSecDto;
 import com.healthCare.healthCareDataBase.Dtos.ConfirmAppointmentByIdDto;
 import com.healthCare.healthCareDataBase.Dtos.GetAppointmentInfoByIdDto;
+import com.healthCare.healthCareDataBase.Dtos.GetDoctorCurrentPatientForSecDto;
 import com.healthCare.healthCareDataBase.Dtos.GetSecretaryWorkDto;
 import com.healthCare.healthCareDataBase.Dtos.GetUncofirmedAppDto;
 import com.healthCare.healthCareDataBase.Dtos.GetUncofirmedAppReturnDto;
@@ -243,5 +245,10 @@ public class SecretaryController {
 		template.convertAndSend("/topic/notification/"+data.getPatientId(),webSocketNot);
 		
 		return true;
+	}
+	
+	@PostMapping(value="getDoctorCurrentPatient")
+	public AppointmentForSecDto getDoctorCurrentPatient(@RequestBody final GetDoctorCurrentPatientForSecDto data) {
+		return secretaryRepository.getDoctorCurrentPatient(data.getDoctorId(),data.getDate());
 	}
 }

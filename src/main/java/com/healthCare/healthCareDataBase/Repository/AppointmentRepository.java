@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.healthCare.healthCareDataBase.Dtos.AppUsersInfoDto;
+import com.healthCare.healthCareDataBase.Dtos.AppointmentForSecDto;
 import com.healthCare.healthCareDataBase.Model.Appointment;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
@@ -101,5 +102,20 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 			+ " from appointment a"
 			+ " where a.appointment_id = ?1",nativeQuery=true) 
 	public Appointment getAppointmentById(long id);
+
+	@Query(value="select p.user_id as userId,"
+			+ " p.patient_first_name as patientFirstName,"
+			+ " p.patient_last_name as patientLastName,"
+			+ " u.user_city as userCity,"
+			+ " p.patient_birth_day as patientBirthDay,"
+			+ " p.patient_gender as patientGender,"
+			+ " a.patient_turn as patientTurn,"
+			+ " a.appointment_id as appointmentId"
+			+ " from appointment a, patients p, users u"
+			+ " where a.doctor_id= ?1"
+			+ " and a.appointment_date=?2"
+			+ " and a.patient_id = p.user_id"
+			+ " and u.user_id = p.user_id",nativeQuery=true)
+	public List<AppointmentForSecDto> getAppointmentByDoctorIdAndDateForSec(Long id, String date, Pageable pageable);
 
 }

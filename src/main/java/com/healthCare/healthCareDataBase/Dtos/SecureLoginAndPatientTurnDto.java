@@ -5,6 +5,7 @@ public class SecureLoginAndPatientTurnDto {
 	private String secureLogin;
 	private Integer patientTurn;
 	private Integer allPatientNumber;
+	private long doctorId;
 	
 	public String getSecureLogin() {
 		return secureLogin;
@@ -24,6 +25,11 @@ public class SecureLoginAndPatientTurnDto {
 	public void setAllPatientNumber(Integer allPatientNumber) {
 		this.allPatientNumber = allPatientNumber;
 	}
-	
+	public long getDoctorId() {
+		return doctorId;
+	}
+	public void setDoctorId(long doctorId) {
+		this.doctorId = doctorId;
+	}
 	
 }

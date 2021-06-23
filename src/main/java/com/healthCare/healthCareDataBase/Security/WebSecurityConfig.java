@@ -95,7 +95,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/medicalProfile/getPatientMedicalProfileByMedicalProfileId/**").hasAnyAuthority("DOCTOR_ROLE","PATIENT_ROLE")
 			.antMatchers("/api/appointment/add").hasAuthority("PATIENT_ROLE")
 			.antMatchers("/api/appointment/getPatientAppointmentByPatientId").hasAuthority("PATIENT_ROLE")
-			.antMatchers("/api/appointment/getAppointmentByDoctorIdAndDate").hasAuthority("DOCTOR_ROLE")
+			.antMatchers("/api/appointment/getAppointmentByDoctorIdAndDate").hasAnyAuthority("DOCTOR_ROLE","SECRETARY_ROLE")
 			.antMatchers("/api/appointment/updateAppointmentDateById").hasAuthority("PATIENT_ROLE")
 			.antMatchers("/api/appointment/deleteAppointmentById/**").hasAuthority("PATIENT_ROLE")
 			.antMatchers("/api/prescription/add").hasAuthority("DOCTOR_ROLE")
@@ -134,8 +134,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/notification/sendNotificationWithSocket").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE","SECRETARY_ROLE")
 			.antMatchers("/api/user/searchUsersByName").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE","SECRETARY_ROLE")
 			.antMatchers("/api/appointment/getAppointmentByDoctorIdAndPatientId").hasAuthority("DOCTOR_ROLE")
-			.antMatchers("/api/question/getQuestionsByUserId").hasAuthority("PATIENT_ROLE")
-			.antMatchers("/api/appointment/delayAppointmentByAppId").hasAuthority("DOCTOR_ROLE")
+			.antMatchers("/api/question/getQuestionsByUserId").hasAnyAuthority("PATIENT_ROLE","SECRETARY_ROLE")
+			.antMatchers("/api/appointment/delayAppointmentByAppId").hasAnyAuthority("DOCTOR_ROLE","SECRETARY_ROLE")
 			.antMatchers("/api/pharmacy/getTodayPrescriptionNumberById/**").hasAuthority("PHARMACIST_ROLE")
 			.antMatchers("/api/pharmacy/getPharmacyPrescriptionsById").hasAuthority("PHARMACIST_ROLE")
 			.antMatchers("/api/pharmacy/searchPharamacyPrescriptionByPatientName").hasAuthority("PHARMACIST_ROLE")
@@ -157,6 +157,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/secretary/confirmAppointmentById").hasAuthority("SECRETARY_ROLE")
 			.antMatchers("/api/secretary/refuseAppointmentById").hasAuthority("SECRETARY_ROLE")
 			.antMatchers("/api/secretary/getNextRequestByAppId").hasAuthority("SECRETARY_ROLE")
+			.antMatchers("/api/appointment/getAppointmentByDoctorIdAndDateForSec").hasAuthority("SECRETARY_ROLE")
+			.antMatchers("/api/appointment/getDoctorCurrentPatient").hasAuthority("SECRETARY_ROLE")
 			.anyRequest().authenticated();
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}

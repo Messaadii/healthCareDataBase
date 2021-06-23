@@ -254,6 +254,16 @@ public class DoctorController {
 		
 		doctorRepository.changeCurrentPatientBySecureLogin(data.getSecureLogin(),data.getPatientTurn());
 		
+		WebSocketNotificationDto webSocketNotPos = new WebSocketNotificationDto();
+		webSocketNotPos.setData(userRepository.getUsernameByUserid(data.getDoctorId()));
+		webSocketNotPos.setType("nextPatient");
+		webSocketNotPos.setExtraData(data.getPatientTurn()+"");
+		
+		List<Long> secretaries = appointmentRepository.getDoctorSecretariesById((int)data.getDoctorId());
+		for(int i =0;i<secretaries.size();i++) {
+			template.convertAndSend("/topic/notification/"+secretaries.get(i),webSocketNotPos);
+		}
+		
 		if(data.getPatientTurn() != 0) {
 			
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
