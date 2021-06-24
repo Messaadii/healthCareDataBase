@@ -19,6 +19,7 @@ public class Pharmacy extends User{
 		super(username, password, city, roles, creationDate);
 		this.pharmacyFullName=pharmacyFullName;
 		this.pharmacyStatus = pharmacyStatus;
+		this.pharmacyRate = 0;
 	}
 	
 	@Column(name="pharmacyFullName")
@@ -38,6 +39,9 @@ public class Pharmacy extends User{
 	
 	@Column(name="pharmacyLongitude")
 	private String pharmacyLongitude;
+	
+	@Column(name="pharmacyRate")
+	private double pharmacyRate;
 	
 	public String getPharmacyFullName() {
 		return pharmacyFullName;
@@ -85,6 +89,14 @@ public class Pharmacy extends User{
 
 	public void setPharmacyLongitude(String pharmacyLongitude) {
 		this.pharmacyLongitude = pharmacyLongitude;
+	}
+
+	public double getPharmacyRate() {
+		return pharmacyRate;
+	}
+
+	public void setPharmacyRate(double pharmacyRate) {
+		this.pharmacyRate = pharmacyRate;
 	}
 
 	public Pharmacy() {

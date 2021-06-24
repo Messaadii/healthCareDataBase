@@ -1,7 +1,10 @@
 package com.healthCare.healthCareDataBase.Repository;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.healthCare.healthCareDataBase.Dtos.AppointmentPatientInfo;
 import com.healthCare.healthCareDataBase.Dtos.CurrentPatientInfo;
 import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
+import com.healthCare.healthCareDataBase.Dtos.GetMyDoctorsDto;
 import com.healthCare.healthCareDataBase.Dtos.PatientGetDto;
 import com.healthCare.healthCareDataBase.Model.Patient;
 
@@ -90,5 +94,18 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 			+ " set p.patient_status = ?2"
 			+ " where p.user_id = ?1",nativeQuery=true)
 	void changePatientStatusById(Long user_id, String status);
+
+	@Query(value="select d.user_id as userId,"
+			+ " d.doctor_first_name as doctorFirstName,"
+			+ " d.doctor_last_name as doctorLastName,"
+			+ " d.doctor_rate as doctorRate,"
+			+ " (select if(count(r.rate)=1,r.rate,0) from rate r where r.rated_by = a.patient_id and r.rate_to = a.doctor_id) as rate"
+			+ " from appointment a, doctors d, users u"
+			+ " where u.user_secure_login = ?1"
+			+ " and u.user_id = a.patient_id"
+			+ " and a.doctor_id = d.user_id"
+			+ " and a.appointment_status = 'completed'"
+			+ " order by a.appointment_date desc",nativeQuery=true)
+	List<GetMyDoctorsDto> getMyDoctors(String secureLogin, Pageable pageable);
 	
 }

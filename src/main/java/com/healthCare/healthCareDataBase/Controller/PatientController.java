@@ -3,6 +3,9 @@ package com.healthCare.healthCareDataBase.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.AppointmentInfoForPatient;
 import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
+import com.healthCare.healthCareDataBase.Dtos.GetMyDoctorsDto;
+import com.healthCare.healthCareDataBase.Dtos.GetMyDoctorsRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.OneString;
 import com.healthCare.healthCareDataBase.Dtos.PatientGetDto;
 import com.healthCare.healthCareDataBase.Dtos.UpdateMedicalProfileIdRequest;
@@ -82,5 +87,9 @@ public class PatientController {
 		return patientRepository.getUserFullNameById(id);
 	}
 
-	
+	@PostMapping(value="getMyDoctors")
+	public List<GetMyDoctorsDto> getMyDoctors(@RequestBody final GetMyDoctorsRequestDto data){
+		Pageable pageable = PageRequest.of(data.getPage(), data.getSize());
+		return patientRepository.getMyDoctors(data.getSecureLogin(),pageable);
+	}
 }
