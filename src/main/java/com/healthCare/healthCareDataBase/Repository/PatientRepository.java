@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.healthCare.healthCareDataBase.Dtos.AppointmentPatientInfo;
 import com.healthCare.healthCareDataBase.Dtos.CurrentPatientInfo;
 import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
-import com.healthCare.healthCareDataBase.Dtos.GetMyDoctorsDto;
+import com.healthCare.healthCareDataBase.Dtos.GetMyUsersDto;
 import com.healthCare.healthCareDataBase.Dtos.PatientGetDto;
 import com.healthCare.healthCareDataBase.Model.Patient;
 
@@ -96,16 +96,76 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 	void changePatientStatusById(Long user_id, String status);
 
 	@Query(value="select d.user_id as userId,"
-			+ " d.doctor_first_name as doctorFirstName,"
-			+ " d.doctor_last_name as doctorLastName,"
-			+ " d.doctor_rate as doctorRate,"
+			+ " d.doctor_first_name as firstName,"
+			+ " d.doctor_last_name as lastName,"
+			+ " d.doctor_rate as userRate,"
 			+ " (select if(count(r.rate)=1,r.rate,0) from rate r where r.rated_by = a.patient_id and r.rate_to = a.doctor_id) as rate"
 			+ " from appointment a, doctors d, users u"
 			+ " where u.user_secure_login = ?1"
 			+ " and u.user_id = a.patient_id"
 			+ " and a.doctor_id = d.user_id"
 			+ " and a.appointment_status = 'completed'"
+			+ " group by d.user_id"
 			+ " order by a.appointment_date desc",nativeQuery=true)
-	List<GetMyDoctorsDto> getMyDoctors(String secureLogin, Pageable pageable);
+	List<GetMyUsersDto> getMyDoctors(String secureLogin, Pageable pageable);
+
+	@Query(value="select count(*)"
+			+ " from appointment a, users u, doctors d"
+			+ " where u.user_secure_login = ?1"
+			+ " and u.user_id = a.patient_id"
+			+ " and a.doctor_id = d.user_id"
+			+ " and a.appointment_status = 'completed'"
+			+ " group by d.user_id",nativeQuery=true)
+	long getMyDoctorsNumber(String secureLogin);
+
+	@Query(value="select s.user_id as userId,"
+			+ " s.secretary_first_name as firstName,"
+			+ " s.secretary_last_name as lastName,"
+			+ " s.secretary_rate as userRate,"
+			+ " (select if(count(r.rate)=1,r.rate,0) from rate r where r.rated_by = a.patient_id and r.rate_to = s.user_id) as rate"
+			+ " from users u, appointment a, secretaries s"
+			+ " where u.user_secure_login = ?1"
+			+ " and a.patient_id = u.user_id"
+			+ " and a.appointment_status = 'completed'"
+			+ " and s.doctor_id = a.doctor_id"
+			+ " group by s.user_id"
+			+ " order by a.appointment_date desc",nativeQuery=true)
+	List<GetMyUsersDto> getMySecretaries(String secureLogin, Pageable pageable);
+	
+	@Query(value="select count(*)"
+			+ " from appointment a, users u, secretaries s"
+			+ " where u.user_secure_login = ?1"
+			+ " and u.user_id = a.patient_id"
+			+ " and a.appointment_status = 'completed'"
+			+ " and s.doctor_id = a.doctor_id"
+			+ " group by s.user_id",nativeQuery=true)
+	long getMySecretariesNumber(String secureLogin);
+
+	@Query(value="select ph.user_id as userId,"
+			+ " ph.pharmacy_full_name as firstName,"
+			+ " '' as lastName,"
+			+ " ph.pharmacy_rate as userRate,"
+			+ " (select if(count(r.rate)=1,r.rate,0) from rate r where r.rated_by = u.user_id and r.rate_to = ph.user_id) as rate"
+			+ " from users u, pharmacies ph, notification n, prescription p"
+			+ " where u.user_secure_login = ?1"
+			+ " and p.patient_id = u.user_id"
+			+ " and p.prescription_status = 'used'"
+			+ " and n.notification_type = 'userSelectYouForPres'"
+			+ " and n.notification_parameter = p.prescription_id"
+			+ " and ph.user_id = n.recipient_id"
+			+ " group by ph.user_id"
+			+ " order by n.time_sent desc",nativeQuery=true)
+	List<GetMyUsersDto> getMyPharmacies(String secureLogin, Pageable pageable);
+	
+	@Query(value="select count(*)"
+			+ " from users u, pharmacies ph, notification n, prescription p"
+			+ " where u.user_secure_login = ?1"
+			+ " and p.patient_id = u.user_id"
+			+ " and p.prescription_status = 'used'"
+			+ " and n.notification_type = 'userSelectYouForPres'"
+			+ " and n.notification_parameter = p.prescription_id"
+			+ " and ph.user_id = n.recipient_id"
+			+ " group by ph.user_id",nativeQuery=true)
+	long getMyPharmaciesNumber(String secureLogin);
 	
 }

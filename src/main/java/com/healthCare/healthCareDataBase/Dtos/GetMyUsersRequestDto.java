@@ -1,6 +1,6 @@
 package com.healthCare.healthCareDataBase.Dtos;
 
-public class GetMyDoctorsRequestDto {
+public class GetMyUsersRequestDto {
 
 	private String secureLogin;
 	private int page,size;

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.AppointmentInfoForPatient;
 import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
-import com.healthCare.healthCareDataBase.Dtos.GetMyDoctorsDto;
-import com.healthCare.healthCareDataBase.Dtos.GetMyDoctorsRequestDto;
+import com.healthCare.healthCareDataBase.Dtos.GetMyUsersRequestDto;
+import com.healthCare.healthCareDataBase.Dtos.GetMyUsersWithPag;
 import com.healthCare.healthCareDataBase.Dtos.OneString;
 import com.healthCare.healthCareDataBase.Dtos.PatientGetDto;
 import com.healthCare.healthCareDataBase.Dtos.UpdateMedicalProfileIdRequest;
@@ -88,8 +87,23 @@ public class PatientController {
 	}
 
 	@PostMapping(value="getMyDoctors")
-	public List<GetMyDoctorsDto> getMyDoctors(@RequestBody final GetMyDoctorsRequestDto data){
+	public GetMyUsersWithPag getMyDoctors(@RequestBody final GetMyUsersRequestDto data){
 		Pageable pageable = PageRequest.of(data.getPage(), data.getSize());
-		return patientRepository.getMyDoctors(data.getSecureLogin(),pageable);
+		return new GetMyUsersWithPag (patientRepository.getMyDoctors(data.getSecureLogin(),pageable),
+				data.getPage() == 0 ? patientRepository.getMyDoctorsNumber(data.getSecureLogin()) : 0);
+	}
+	
+	@PostMapping(value="getMySecretaries")
+	public GetMyUsersWithPag getMySecretaries(@RequestBody final GetMyUsersRequestDto data){
+		Pageable pageable = PageRequest.of(data.getPage(), data.getSize());
+		return new GetMyUsersWithPag (patientRepository.getMySecretaries(data.getSecureLogin(),pageable),
+				data.getPage() == 0 ? patientRepository.getMySecretariesNumber(data.getSecureLogin()) : 0);
+	}
+	
+	@PostMapping(value="getMyPharmacies")
+	public GetMyUsersWithPag getMyPharmacies(@RequestBody final GetMyUsersRequestDto data){
+		Pageable pageable = PageRequest.of(data.getPage(), data.getSize());
+		return new GetMyUsersWithPag (patientRepository.getMyPharmacies(data.getSecureLogin(),pageable),
+				data.getPage() == 0 ? patientRepository.getMyPharmaciesNumber(data.getSecureLogin()) : 0);
 	}
 }
