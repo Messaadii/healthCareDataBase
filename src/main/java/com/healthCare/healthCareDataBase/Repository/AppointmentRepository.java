@@ -39,7 +39,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 	@Query(value="select * from appointment a where a.doctor_id= ?1 and a.appointment_date=?2",nativeQuery=true)
 	public List<Appointment> getAppointmentByDoctorIdAndDate(Long id, String date, Pageable pageable);
 
-	@Query(value="select count(a.doctor_id) from appointment a where a.doctor_id= ?1 and a.appointment_date=?2",nativeQuery=true)
+	@Query(value="select count(a.doctor_id) from appointment a where a.doctor_id= ?1 and a.appointment_date=?2 and a.appointment_status ='pending'",nativeQuery=true)
 	public Integer getAppointmentNumberByDoctorIdAndDate(Long id, String date);
 
 	@Modifying
@@ -115,6 +115,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 			+ " where a.doctor_id= ?1"
 			+ " and a.appointment_date=?2"
 			+ " and a.patient_id = p.user_id"
+			+ " and a.appointment_status ='pending'"
 			+ " and u.user_id = p.user_id",nativeQuery=true)
 	public List<AppointmentForSecDto> getAppointmentByDoctorIdAndDateForSec(Long id, String date, Pageable pageable);
 
