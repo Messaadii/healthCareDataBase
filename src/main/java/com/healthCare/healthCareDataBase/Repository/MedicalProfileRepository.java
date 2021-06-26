@@ -19,4 +19,17 @@ public interface MedicalProfileRepository extends JpaRepository<MedicalProfile, 
 	@Query(value="select m.weight, m.height from medical_profile m where m.medical_profile_id=?1",nativeQuery=true)
 	MedicalProfileGetDto getPatientMedicalProfileByMedicalProfileId(Long id);
 
+	@Query(value="select m.height from medical_profile m where m.medical_profile_id=?1",nativeQuery=true)
+	double getHeight(Long id);
+	
+	@Query(value="select m.weight from medical_profile m where m.medical_profile_id=?1",nativeQuery=true)
+	double getWeight(Long id);
+
+	@Query(value="select od.update_date"
+			+ " from old_data od"
+			+ " where od.referenced_id=?1"
+			+ " and (old_data_type = 'height' or old_data_type = 'weight')"
+			+ " order by od.old_data_id desc limit 1",nativeQuery=true)
+	String getLastUpdate(Long id);
+
 }

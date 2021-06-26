@@ -12,7 +12,9 @@ import org.springframework.data.jpa.repository.Query;
 import com.healthCare.healthCareDataBase.Dtos.AppointmentPatientInfo;
 import com.healthCare.healthCareDataBase.Dtos.CurrentPatientInfo;
 import com.healthCare.healthCareDataBase.Dtos.FirstAndLastNameDto;
+import com.healthCare.healthCareDataBase.Dtos.GetHeightValuesDto;
 import com.healthCare.healthCareDataBase.Dtos.GetMyUsersDto;
+import com.healthCare.healthCareDataBase.Dtos.GetWeightValuesDto;
 import com.healthCare.healthCareDataBase.Dtos.PatientGetDto;
 import com.healthCare.healthCareDataBase.Model.Patient;
 
@@ -116,7 +118,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 			+ " and a.doctor_id = d.user_id"
 			+ " and a.appointment_status = 'completed'"
 			+ " group by d.user_id",nativeQuery=true)
-	long getMyDoctorsNumber(String secureLogin);
+	Long getMyDoctorsNumber(String secureLogin);
 
 	@Query(value="select s.user_id as userId,"
 			+ " s.secretary_first_name as firstName,"
@@ -139,7 +141,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 			+ " and a.appointment_status = 'completed'"
 			+ " and s.doctor_id = a.doctor_id"
 			+ " group by s.user_id",nativeQuery=true)
-	long getMySecretariesNumber(String secureLogin);
+	Long getMySecretariesNumber(String secureLogin);
 
 	@Query(value="select ph.user_id as userId,"
 			+ " ph.pharmacy_full_name as firstName,"
@@ -157,7 +159,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 			+ " order by n.time_sent desc",nativeQuery=true)
 	List<GetMyUsersDto> getMyPharmacies(String secureLogin, Pageable pageable);
 	
-	@Query(value="select count(*)"
+	@Query(value="select count(ph.user_id)"
 			+ " from users u, pharmacies ph, notification n, prescription p"
 			+ " where u.user_secure_login = ?1"
 			+ " and p.patient_id = u.user_id"
@@ -166,6 +168,42 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 			+ " and n.notification_parameter = p.prescription_id"
 			+ " and ph.user_id = n.recipient_id"
 			+ " group by ph.user_id",nativeQuery=true)
-	long getMyPharmaciesNumber(String secureLogin);
+	Long getMyPharmaciesNumber(String secureLogin);
+
+	@Query(value="select od.old_data_value as height,"
+			+ " od.update_date as time"
+			+ " from old_data od, users u, patients p"
+			+ " where u.user_secure_login = ?1"
+			+ " and p.user_id = u.user_id"
+			+ " and od.referenced_id = p.medical_profile_id"
+			+ " and od.old_data_type = 'height'"
+			+ " order by od.old_data_id asc",nativeQuery=true)
+	List<GetHeightValuesDto> getHeightValues(String secureLogin);
+
+	@Query(value="select md.height as height,"
+			+ " '' as time"
+			+ " from medical_profile md, users u, patients p"
+			+ " where u.user_secure_login = ?1"
+			+ " and p.user_id = u.user_id"
+			+ " and md.medical_profile_id = p.medical_profile_id",nativeQuery=true)
+	GetHeightValuesDto getCurrentHeight(String secureLogin);
+
+	@Query(value="select od.old_data_value as weight,"
+			+ " od.update_date as time"
+			+ " from old_data od, users u, patients p"
+			+ " where u.user_secure_login = ?1"
+			+ " and p.user_id = u.user_id"
+			+ " and od.referenced_id = p.medical_profile_id"
+			+ " and od.old_data_type = 'weight'"
+			+ " order by od.old_data_id asc",nativeQuery=true)
+	List<GetWeightValuesDto> getWeightValues(String secureLogin);
+
+	@Query(value="select md.weight as weight,"
+			+ " '' as time"
+			+ " from medical_profile md, users u, patients p"
+			+ " where u.user_secure_login = ?1"
+			+ " and p.user_id = u.user_id"
+			+ " and md.medical_profile_id = p.medical_profile_id",nativeQuery=true)
+	GetWeightValuesDto getCurrentWeight(String secureLogin);
 	
 }

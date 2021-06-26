@@ -5,9 +5,9 @@ import java.util.List;
 public class GetMyUsersWithPag {
 	
 	private List<GetMyUsersDto> list;
-	private long count;
+	private Long count;
 	
-	public GetMyUsersWithPag(List<GetMyUsersDto> list, long count) {
+	public GetMyUsersWithPag(List<GetMyUsersDto> list, Long count) {
 		super();
 		this.list = list;
 		this.count = count;
@@ -18,10 +18,10 @@ public class GetMyUsersWithPag {
 	public void setList(List<GetMyUsersDto> list) {
 		this.list = list;
 	}
-	public long getCount() {
+	public Long getCount() {
 		return count;
 	}
-	public void setCount(long count) {
+	public void setCount(Long count) {
 		this.count = count;
 	}
 	
