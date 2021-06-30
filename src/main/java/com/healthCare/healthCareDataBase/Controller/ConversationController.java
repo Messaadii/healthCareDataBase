@@ -107,7 +107,7 @@ public class ConversationController {
 		long chnagedBy=0;
 		if("close".equals(data.getStatus()))
 			chnagedBy=data.getChangedBy();
-		if(conversationRepository.updateConversationStatusById(data.getId(),data.getStatus(),chnagedBy,data.getSecureLogin()) == 1) {
+		if(conversationRepository.updateConversationStatusById(data.getId(),data.getStatus(),chnagedBy) == 1) {
 			WebSocketNotificationDto webSocketData = new WebSocketNotificationDto();
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			Calendar cal = Calendar.getInstance();

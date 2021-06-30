@@ -57,10 +57,8 @@ public interface ConversationRepository extends JpaRepository<Conversation,Long>
 	@Query(value="update conversation c, users u"
 			+ " set c.conversation_status=?2,"
 			+ " c.status_updated_by = ?3"
-			+ " where c.conversation_id=?1"
-			+ " and u.user_id = ?3"
-			+ " and u.user_secure_login=?4",nativeQuery=true)
-	Integer updateConversationStatusById(Long id, String status,long changedBy,String secureLogib);
+			+ " where c.conversation_id=?1",nativeQuery=true)
+	Integer updateConversationStatusById(Long id, String status,long changedBy);
 
 	@Query(value="select if(count(c.conversation_id)=1,c.conversation_id,0) from conversation c where (c.opened_by=?1 and c.opened_to=?2) or (c.opened_by=?2 and c.opened_to=?1)",nativeQuery=true)
 	long checkIfConversationOpened(Long openedBy, Long openedTo);
