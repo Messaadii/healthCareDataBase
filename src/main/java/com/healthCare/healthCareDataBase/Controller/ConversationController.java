@@ -72,7 +72,7 @@ public class ConversationController {
 			conversation.setOpenDate(dateFormat.format(cal.getTime()));
 			conversation.setStatusUpdatedBy(0);
 			conversationRepository.save(conversation);
-			MessageDto messageRequest = new MessageDto(conversation.getConversationId(),conversation.getOpenedBy(),conversation.getOpenedTo(),"",null,conversation.getOpenDate());
+			MessageDto messageRequest = new MessageDto(conversation.getConversationId(),conversation.getOpenedBy(),conversation.getOpenedTo(),"",null,conversation.getOpenDate(),true);
 			messageController.add(messageRequest);
 			returnConversation.setConversationId(conversation.getConversationId());
 			returnConversation.setConversationStatus(conversation.getConversationStatus());
@@ -91,15 +91,15 @@ public class ConversationController {
 		return returnConversation;
 	}
 	
-	@GetMapping(value="getConversationByid")
+	@PostMapping(value="getConversationByid")
 	public ConversationsGetDto getConversationByid(@RequestBody final GetConversationByIdDto data) {
-		return conversationRepository.getFullConversationInfoByConversationId(data.getId(),data.getSecureLogin());
+		return conversationRepository.getFullConversationInfoByConversationId(data.getUserId(),data.getConvId());
 	}
 	
 	@PostMapping(value="/getConversationByUserId")
 	public List<ConversationsGetDto> getConversationByUserId(@RequestBody final GetConversationsDto data) {
 		Pageable pageable = PageRequest.of(data.getPage(), data.getSize(), Sort.by("last_update_date").descending());
-		return conversationRepository.getConversationByUserId(data.getSecureLogin(),data.getUserId(),pageable);
+		return conversationRepository.getConversationByUserId(data.getUserId(),pageable);
 	}
 	
 	@PostMapping(value="/updateConversationStatusById")
@@ -131,7 +131,7 @@ public class ConversationController {
 	
 	@PostMapping(value="/readConversationById")
 	public boolean readConversationById(@RequestBody final ReadConversationDto data) {
-		if(conversationRepository.updateIsUnreadByConversationId(data.getId(),data.getSecureLogin(),false) == 1) {
+		if(conversationRepository.updateIsUnreadByConversationId(data.getId(),data.getUserId(),false) == 1) {
 			WebSocketNotificationDto websocket = new WebSocketNotificationDto();
 			websocket.setType("seen");
 			websocket.setData(data.getId()+"");

@@ -6,8 +6,8 @@ public class MessageDto {
 	private Long senderId;
 	private Long recipientId;
 	private String messageContent;
-	private String secureLogin;
 	private String messageDate;
+	private boolean read;
 	public String getMessageDate() {
 		return messageDate;
 	}
@@ -38,19 +38,20 @@ public class MessageDto {
 	public void setMessageContent(String messageContent) {
 		this.messageContent = messageContent;
 	}
-	public String getSecureLogin() {
-		return secureLogin;
+	
+	public boolean getRead() {
+		return read;
 	}
-	public void setSecureLogin(String secureLogin) {
-		this.secureLogin = secureLogin;
+	public void setRead(boolean read) {
+		this.read = read;
 	}
 	public MessageDto(Long conversationId, Long senderId, Long recipientId, String messageContent, String secureLogin,
-			String messageDate) {
+			String messageDate,boolean read) {
 		this.conversationId = conversationId;
 		this.senderId = senderId;
 		this.recipientId = recipientId;
 		this.messageContent = messageContent;
-		this.secureLogin = secureLogin;
 		this.messageDate = messageDate;
+		this.read = read;
 	}
 }

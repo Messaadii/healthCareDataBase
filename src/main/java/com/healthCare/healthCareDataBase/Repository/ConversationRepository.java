@@ -22,7 +22,7 @@ public interface ConversationRepository extends JpaRepository<Conversation,Long>
 			+ " if(c.is_unread = true,true,false) as is_unread,"
 			+ " m.sender_id as last_message_sender_id,"
 			+ " status_updated_by,"
-			+ " if(c.opened_by=?2, c.opened_to,c.opened_by) as recipient,"
+			+ " if(c.opened_by=?1, c.opened_to,c.opened_by) as recipient,"
 			+ " u.user_type,"
 			+ " case"
 			+ "		  when u.user_type = 'doctor' then d.doctor_first_name"
@@ -35,12 +35,9 @@ public interface ConversationRepository extends JpaRepository<Conversation,Long>
 			+ "		  when u.user_type = 'patient' then p.patient_last_name"
 			+ "		  when u.user_type = 'secretary' then s.secretary_last_name"
 		    + " end as last_name"
-			+ "	from conversation c, users u, patients p, doctors d, pharmacies ph, message m, secretaries s,users u1"
-			+ "	where u1.user_secure_login = ?1 and"
-			+ " u1.user_id = ?2 and"
-			+ " (c.opened_by=u1.user_id or c.opened_to=u1.user_id) and"
-			+ " u.user_id=if(c.opened_by=?2, c.opened_to,c.opened_by) and"
-			+ " (c.opened_by=u.user_id or c.opened_to=u.user_id) and"
+			+ "	from conversation c, users u, patients p, doctors d, pharmacies ph, message m, secretaries s"
+			+ "	where u.user_id = if(c.opened_by=?1, c.opened_to, c.opened_by)"
+			+ " and (c.opened_by=?1 or c.opened_to=?1) and"
 			+ " m.message_date=c.last_update_date"
 			+ " and ((m.sender_id=c.opened_by and m.recipient_id=c.opened_to) or (m.sender_id=c.opened_to and m.recipient_id=c.opened_by))"
 			+ " and case "
@@ -50,7 +47,7 @@ public interface ConversationRepository extends JpaRepository<Conversation,Long>
 			+ "		  when u.user_type = 'secretary' then s.user_id = u.user_id"
 			+ "		end"
 			+ " group by c.conversation_id",nativeQuery=true)
-	List<ConversationsGetDto> getConversationByUserId(String secureLogin, long userId, Pageable pageable);
+	List<ConversationsGetDto> getConversationByUserId(long userId, Pageable pageable);
 
 	@Transactional
 	@Modifying
@@ -86,7 +83,7 @@ public interface ConversationRepository extends JpaRepository<Conversation,Long>
 			+ " m.sender_id as last_message_sender_id,"
 			+ " c.status_updated_by,"
 			+ " if(c.is_unread = true,true,false) as is_unread,"
-			+ " if(c.opened_by=u.user_id, c.opened_to,c.opened_by) as recipient,"
+			+ " if(c.opened_by=?1, c.opened_to,c.opened_by) as recipient,"
 			+ " case"
 			+ "		  when u.user_type = 'doctor' then d.doctor_first_name"
 			+ "		  when u.user_type = 'patient' then p.patient_first_name"
@@ -98,13 +95,9 @@ public interface ConversationRepository extends JpaRepository<Conversation,Long>
 			+ "		  when u.user_type = 'patient' then p.patient_last_name"
 			+ "		  when u.user_type = 'secretary' then s.secretary_last_name"
 		    + " end as last_name"
-			+ "	from conversation c, users u, patients p, doctors d, pharmacies ph, message m, secretaries s, users u1"
-			+ "	where c.conversation_id=?1 and"
-			+ " u1.user_secure_login = ?2 and"
-			+ " (u1.user_id = c.opened_by or u1.user_id = c.opened_to) and"
-			+ " (u.user_id = c.opened_by or u.user_id = c.opened_to) and"
-			+ " u.user_id=if(c.opened_by=u.user_id, c.opened_to,c.opened_by) and"
-			+ " (c.opened_by=u.user_id or c.opened_to=u.user_id) and"
+			+ "	from conversation c, users u, patients p, doctors d, pharmacies ph, message m, secretaries s"
+			+ "	where c.conversation_id=?2 and"
+			+ " u.user_id=if(c.opened_by=?1, c.opened_to,c.opened_by) and"
 			+ " m.message_date=c.last_update_date"
 			+ " and ((m.sender_id=c.opened_by and m.recipient_id=c.opened_to) or (m.sender_id=c.opened_to and m.recipient_id=c.opened_by))"
 			+ " and case "
@@ -114,7 +107,7 @@ public interface ConversationRepository extends JpaRepository<Conversation,Long>
 			+ "		  when u.user_type = 'secretary' then s.user_id = u.user_id"
 			+ "		end"
 			+ " group by c.conversation_id",nativeQuery=true)
-	ConversationsGetDto getFullConversationInfoByConversationId(long id, String secureLogin);
+	ConversationsGetDto getFullConversationInfoByConversationId(long userId, long convId);
 
 	@Transactional
 	@Modifying
@@ -122,6 +115,6 @@ public interface ConversationRepository extends JpaRepository<Conversation,Long>
 			+ " set c.is_unread=?3"
 			+ " where c.conversation_id=?1"
 			+ " and(c.opened_by = u.user_id or c.opened_to = u.user_id)"
-			+ " and u.user_secure_login=?2",nativeQuery=true)
-	int updateIsUnreadByConversationId(Long conversationId,String securelogin, boolean isUnread);
+			+ " and u.user_id=?2",nativeQuery=true)
+	int updateIsUnreadByConversationId(Long conversationId,Long long1, boolean isUnread);
 }

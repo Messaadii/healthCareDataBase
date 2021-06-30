@@ -41,5 +41,6 @@ public interface DoctorGetDto {
 	@Value("#{target.doctor_longitude}")
 	String getDoctorLongitude();
 	String getSecureLogin();
+	String getSpeciality();
 
 }

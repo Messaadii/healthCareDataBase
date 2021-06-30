@@ -4,7 +4,6 @@ public class ReadConversationDto {
 	
 	private long id;
 	private long userId;
-	private String secureLogin;
 	public long getId() {
 		return id;
 	}
@@ -17,13 +16,4 @@ public class ReadConversationDto {
 	public void setUserId(long userId) {
 		this.userId = userId;
 	}
-	public String getSecureLogin() {
-		return secureLogin;
-	}
-	public void setSecureLogin(String secureLogin) {
-		this.secureLogin = secureLogin;
-	}
-	
-	
-
 }

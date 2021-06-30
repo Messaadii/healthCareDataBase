@@ -53,8 +53,8 @@ public class MessageController {
 		data.setType("message");
 		data.setMessage(message);
 		template.convertAndSend("/topic/notification/"+message.getRecipientId(),data);
-		if(dataRequest.getSecureLogin() != null)
-			conversationRepository.updateIsUnreadByConversationId(message.getConversationId(),dataRequest.getSecureLogin(),true);
+		if(dataRequest.getRead() == true)
+			conversationRepository.updateIsUnreadByConversationId(message.getConversationId(),dataRequest.getSenderId(),true);
 		StringDto string = new StringDto(message.getMessageDate());
 		return string;
 	}

@@ -24,7 +24,7 @@ public interface AdminRepository extends JpaRepository<Admin, Long>{
 			+ " u.user_city,"
 			+ " u.user_username,"
 			+ " u.user_secure_login as secureLogin"
-			+ " from admins a, users u where u.user_id = a.user_id and u.user_secure_login= ?1",nativeQuery=true)
-	AdminGetDto getAdminInfoFromSecureLogin(String one);
+			+ " from admins a, users u where u.user_id = a.user_id and u.user_id= ?1",nativeQuery=true)
+	AdminGetDto getAdminInfoById(long id);
 
 }

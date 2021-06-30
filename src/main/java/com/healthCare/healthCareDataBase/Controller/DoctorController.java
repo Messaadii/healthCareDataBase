@@ -35,6 +35,7 @@ import com.healthCare.healthCareDataBase.Dtos.DoctorGetDto;
 import com.healthCare.healthCareDataBase.Dtos.DoctorSettingsDto;
 import com.healthCare.healthCareDataBase.Dtos.GetMySecretariesDto;
 import com.healthCare.healthCareDataBase.Dtos.GetSecretaryWorkRequestDto;
+import com.healthCare.healthCareDataBase.Dtos.GetUserIdDto;
 import com.healthCare.healthCareDataBase.Dtos.IdTurnAndDate;
 import com.healthCare.healthCareDataBase.Dtos.IntegerAndString;
 import com.healthCare.healthCareDataBase.Dtos.OneString;
@@ -137,22 +138,22 @@ public class DoctorController {
 		}
 	}
 	
-	@PostMapping(value="/getDoctorInfoFromSecureLogin")
-	public DoctorGetDto getPatientInfoFromSecureLogin(@RequestBody final OneString secureLogin) {
-		return doctorRepository.getDoctorInfoFromSecureLogin(secureLogin.getOne());
+	@PostMapping(value="/getDoctorInfoById")
+	public DoctorGetDto getDoctorInfoById(@RequestBody final GetUserIdDto data) {
+		return doctorRepository.getDoctorInfoById(data.getUserId());
 	}
 	
-	@PostMapping(value="/updateDoctorInfoBySecureLogin")
-	public boolean updateDoctorInfoBySecureLogin(@RequestBody final Doctor doctor) {
+	@PostMapping(value="/updateDoctorInfoById")
+	public boolean updateDoctorInfoById(@RequestBody final Doctor doctor) {
 		if(userRepository.existsByUserUsername(doctor.getUserUsername())) {
-			if(userRepository.findUserNameBySecureLogin(doctor.getUserSecureLogin()).equals(doctor.getUserUsername())){ 
-				doctorRepository.updateDoctorInfoBySecureLogin(doctor.getUserSecureLogin(),doctor.getUserUsername(), doctor.getDoctorFirstName(),doctor.getDoctorLastName(),doctor.getUserCity(),doctor.getDoctorBirthDay(),doctor.getDoctorGender());
+			if(userRepository.findUserNameByUserId(doctor.getUserId()).equals(doctor.getUserUsername())){ 
+				doctorRepository.updateDoctorInfoById(doctor.getUserId(),doctor.getUserUsername(), doctor.getDoctorFirstName(),doctor.getDoctorLastName(),doctor.getUserCity(),doctor.getDoctorBirthDay(),doctor.getDoctorGender());
 				  return true;
 				}else
 				  return false;
 		}
 		else {
-			doctorRepository.updateDoctorInfoBySecureLogin(doctor.getUserSecureLogin(),doctor.getUserUsername(), doctor.getDoctorFirstName(),doctor.getDoctorLastName(),doctor.getUserCity(),doctor.getDoctorBirthDay(),doctor.getDoctorGender());
+			doctorRepository.updateDoctorInfoById(doctor.getUserId(),doctor.getUserUsername(), doctor.getDoctorFirstName(),doctor.getDoctorLastName(),doctor.getUserCity(),doctor.getDoctorBirthDay(),doctor.getDoctorGender());
 			return true;
 		}
 	}
@@ -167,28 +168,6 @@ public class DoctorController {
 		Pageable pageable = PageRequest.of(page, size, Sort.by("user_id"));
 		return doctorRepository.getPendingDoctors(pageable);
 	}
-
-	@PostMapping(value="changeDoctorStatusBySecureLogin")
-	public boolean changeDoctorStatusBySecureLogin(@RequestBody final TwoStrings twoStrings) {
-		if("approved".equals(twoStrings.getStringTwo())) {
-			
-			long userId = doctorRepository.getDoctorIdFromSecureLogin(twoStrings.getStringOne());
-			
-			Notification notification = new Notification();
-			notification.setNotificationType("setYourGeoLocation");
-			notification.setSenderId(-1);
-			notification.setRecipientId(userId);
-			notificationController.add(notification);
-			
-			WebSocketNotificationDto webSocketNot = new WebSocketNotificationDto();
-			webSocketNot.setType("notification");
-			webSocketNot.setData("");
-			webSocketNot.setNotification(notification);
-			template.convertAndSend("/topic/notification/"+userId,webSocketNot);
-		}
-		doctorRepository.changeDoctorStatusBySecureLogin(twoStrings.getStringOne(),twoStrings.getStringTwo());
-		return true;
-	}
 	
 	@PostMapping(value="changeDoctorStatusById")
 	public boolean changeDoctorStatusById(@RequestBody final IntegerAndString integerAndString) {
@@ -202,9 +181,9 @@ public class DoctorController {
 		return true;
 	}
 	
-	@PostMapping(value="updateDoctorSettingsBySecurelogin")
-	public boolean updateDoctorSettingsBySecurelogin(@RequestBody final DoctorSettingsDto doctorSettingsDto) {
-		doctorRepository.updateDoctorSettingsBySecurelogin(doctorSettingsDto.getSecureLogin(),doctorSettingsDto.getMaxPatientPerDay(),doctorSettingsDto.getStartTime(),doctorSettingsDto.getExactAddress(),doctorSettingsDto.getWorkDays(),doctorSettingsDto.getAppointmentPrice(),doctorSettingsDto.getAppointmentApproximateDuration());
+	@PostMapping(value="updateDoctorSettingsById")
+	public boolean updateDoctorSettingsById(@RequestBody final DoctorSettingsDto doctorSettingsDto) {
+		doctorRepository.updateDoctorSettingsById(doctorSettingsDto.getUserId(),doctorSettingsDto.getMaxPatientPerDay(),doctorSettingsDto.getStartTime(),doctorSettingsDto.getExactAddress(),doctorSettingsDto.getWorkDays(),doctorSettingsDto.getAppointmentPrice(),doctorSettingsDto.getAppointmentApproximateDuration());
 		return true;
 	}
 	

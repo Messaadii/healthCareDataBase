@@ -27,8 +27,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query(value="update users u set u.user_secure_login= ?2 where u.user_id = ?1",nativeQuery=true)
 	public void updateUserSecureLoginByUserId(Long id,String secureLogin);
 	
-	@Query(value="select u.user_username from users u where u.user_secure_login= ?1",nativeQuery=true)
-	Object findUserNameBySecureLogin(String doctorSecureLogin);
+	@Query(value="select u.user_username from users u where u.user_id= ?1",nativeQuery=true)
+	Object findUserNameByUserId(long userId);
 	
 	@Modifying
     @Transactional

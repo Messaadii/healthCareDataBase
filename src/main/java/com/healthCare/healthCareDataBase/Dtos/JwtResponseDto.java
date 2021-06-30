@@ -7,12 +7,14 @@ public class JwtResponseDto {
 	private String token;
 	private String type = "Bearer";
 	private String secureLogin;
+	private Long userId;
 	private List<String> roles;
 
-	public JwtResponseDto(String accessToken,String secureLogin, List<String> roles) {
+	public JwtResponseDto(String accessToken,String secureLogin, List<String> roles, Long userId) {
 		this.token = accessToken;
 		this.secureLogin = secureLogin;
 		this.roles = roles;
+		this.userId=userId;
 	}
 
 	public String getAccessToken() {
@@ -41,6 +43,14 @@ public class JwtResponseDto {
 
 	public void setSecureLogin(String secureLogin) {
 		this.secureLogin = secureLogin;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}	
 	
 }

@@ -9,7 +9,7 @@ public class DoctorSettingsDto {
 	private String workDays;
 	private Integer appointmentApproximateDuration;
 	private Integer appointmentPrice;
-	private String secureLogin;
+	private Long userId;
 	
 	
 	public Integer getMaxPatientPerDay() {
@@ -48,13 +48,11 @@ public class DoctorSettingsDto {
 	public void setAppointmentPrice(Integer appointmentPrice) {
 		this.appointmentPrice = appointmentPrice;
 	}
-	public String getSecureLogin() {
-		return secureLogin;
+	public Long getUserId() {
+		return userId;
 	}
-	public void setSecureLogin(String secureLogin) {
-		this.secureLogin = secureLogin;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 	
-	
-
 }

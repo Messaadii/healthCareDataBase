@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.AdminGetDto;
-import com.healthCare.healthCareDataBase.Dtos.OneString;
+import com.healthCare.healthCareDataBase.Dtos.GetUserIdDto;
 import com.healthCare.healthCareDataBase.Model.Admin;
 import com.healthCare.healthCareDataBase.Repository.AdminRepository;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
@@ -37,8 +37,8 @@ public class AdminController {
 		return adminRepository.findAll();
 	}
 	
-	@PostMapping(value="/getAdminInfoFromSecureLogin")
-	public AdminGetDto getAdminInfoFromSecureLogin(@RequestBody final OneString secureLogin) {
-		return adminRepository.getAdminInfoFromSecureLogin(secureLogin.getOne());
+	@PostMapping(value="/getAdminInfoById")
+	public AdminGetDto getAdminInfoById(@RequestBody GetUserIdDto data) {
+		return adminRepository.getAdminInfoById(data.getUserId());
 	}
 }

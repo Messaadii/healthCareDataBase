@@ -102,7 +102,8 @@ public class AuthController {
 		
 		return ResponseEntity.ok(new JwtResponseDto(jwt, 
 				 secureLogin,
-				 roles));
+				 roles,
+				 userDetails.getId()));
 	}
 	
 	public String genrateSecureLogin(int len){

@@ -2,20 +2,20 @@ package com.healthCare.healthCareDataBase.Dtos;
 
 public class GetConversationByIdDto {
 	
-	private long id;
-	private String secureLogin;
-	public long getId() {
-		return id;
+	private long userId;
+	private long convId;
+	
+	public long getConvId() {
+		return convId;
 	}
-	public void setId(long id) {
-		this.id = id;
+	public void setConvId(long convId) {
+		this.convId = convId;
 	}
-	public String getSecureLogin() {
-		return secureLogin;
+	public long getUserId() {
+		return userId;
 	}
-	public void setSecureLogin(String secureLogin) {
-		this.secureLogin = secureLogin;
+	public void setUserId(long userId) {
+		this.userId = userId;
 	}
 	
-
 }

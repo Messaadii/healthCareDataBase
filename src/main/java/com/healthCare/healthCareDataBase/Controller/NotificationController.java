@@ -71,7 +71,7 @@ public class NotificationController {
 	
 	@PostMapping(value="/deleteNotificationById")
 	public boolean deleteNotificationById(@RequestBody final DeleteNotificationDto data) {
-		int deletedCount = notificationRepository.deleteNotificationById(data.getId(),data.getSecureLogin());
+		int deletedCount = notificationRepository.deleteNotificationById(data.getId());
 		if(deletedCount!=0)
 			return true;
 		else

@@ -44,21 +44,19 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " d.doctor_longitude,"
 			+ " u.user_username,"
 			+ " u.user_city,"
-			+ " u.user_secure_login as secureLogin"
-			+ " from doctors d, users u "
-			+ " where u.user_id = d.user_id and u.user_secure_login= ?1",nativeQuery=true)
-	DoctorGetDto getDoctorInfoFromSecureLogin(String one);
+			+ " u.user_secure_login as secureLogin,"
+			+ " s.speciality_name as speciality"
+			+ " from doctors d, users u,speciality s, doctor_speciality ds"
+			+ " where u.user_id = d.user_id and u.user_id= ?1"
+			+ " and ds.doctor_id = u.user_id"
+			+ " and ds.speciality_id = s.speciality_id",nativeQuery=true)
+	DoctorGetDto getDoctorInfoById(long userId);
 
 	@Modifying
     @Transactional
-	@Query(value="update doctors d, users u set u.user_username=?2, d.doctor_first_name=?3, d.doctor_last_name=?4, u.user_city=?5, d.doctor_Birth_day=?6, d.doctor_gender=?7 where u.user_id = d.user_id and u.user_secure_login= ?1",nativeQuery=true)
-	void updateDoctorInfoBySecureLogin(String userSecureLogin, String userUsername, String doctorFirstName,
+	@Query(value="update doctors d, users u set u.user_username=?2, d.doctor_first_name=?3, d.doctor_last_name=?4, u.user_city=?5, d.doctor_Birth_day=?6, d.doctor_gender=?7 where u.user_id = d.user_id and u.user_id= ?1",nativeQuery=true)
+	void updateDoctorInfoById(long userId, String userUsername, String doctorFirstName,
 			String doctorLastName, String userCity, String doctorBirthDay, String doctorGender);
-
-	@Modifying
-    @Transactional
-	@Query(value="update doctors d, users u set d.doctor_status=?2 where u.user_id = d.user_id and u.user_secure_login= ?1",nativeQuery=true)
-	void changeDoctorStatusBySecureLogin(String stringOne, String stringTwo);
 
 	@Query(value="select d.doctor_user_name from doctors d where d.doctor_secure_login= ?1",nativeQuery=true)
 	Object findUserNameBySecureLogin(String doctorSecureLogin);
@@ -83,8 +81,8 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ "d.work_days=?5,"
 			+ "d.appointment_price=?6,"
 			+ "d.appointment_approximate_duration=?7"
-			+ " where u.user_id = d.user_id and u.user_secure_login= ?1",nativeQuery=true)
-	void updateDoctorSettingsBySecurelogin(String secureLogin, Integer maxPatientPerDay, String startTime,
+			+ " where u.user_id = d.user_id and u.user_id= ?1",nativeQuery=true)
+	void updateDoctorSettingsById(Long id, Integer maxPatientPerDay, String startTime,
 			String exactAddress, String workDays, Integer appointmentPrice, Integer appointmentApproximateDuration);
 	
 	@Query(value="select u.user_id,"

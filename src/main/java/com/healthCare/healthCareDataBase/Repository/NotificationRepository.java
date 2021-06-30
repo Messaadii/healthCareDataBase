@@ -81,9 +81,7 @@ public interface NotificationRepository extends JpaRepository<Notification,Long>
 	@Modifying
     @Transactional
 	@Query(value="delete from notification n"
-			+ " where n.notification_id = ?1 and"
-			+ " n.recipient_id = (select u.user_id from users u"
-			+ " where u.user_secure_login = ?2)",nativeQuery=true)
-	int deleteNotificationById(long id, String secureLogin);
+			+ " where n.notification_id = ?1",nativeQuery=true)
+	int deleteNotificationById(long id);
 
 }

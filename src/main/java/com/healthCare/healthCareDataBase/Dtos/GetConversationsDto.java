@@ -2,16 +2,9 @@ package com.healthCare.healthCareDataBase.Dtos;
 
 public class GetConversationsDto {
 	
-	private String secureLogin;
 	private long userId;
 	private Integer page,size;
 	
-	public String getSecureLogin() {
-		return secureLogin;
-	}
-	public void setSecureLogin(String secureLogin) {
-		this.secureLogin = secureLogin;
-	}
 	public Integer getPage() {
 		return page;
 	}
