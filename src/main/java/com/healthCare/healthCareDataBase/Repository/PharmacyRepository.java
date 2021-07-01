@@ -27,11 +27,10 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 			+ " ph.pharmacy_longitude,"
 			+ " ph.pharmacy_latitude,"
 			+ " u.user_city,"
-			+ " u.user_username,"
-			+ " u.user_secure_login as secureLogin"
+			+ " u.user_username"
 			+ " from pharmacies ph, users u"
-			+ " where u.user_id = ph.user_id and u.user_secure_login= ?1",nativeQuery=true)
-	PharmacyGetDto getPharmacyInfoFromSecureLogin(String secureLogin);
+			+ " where u.user_id = ph.user_id and u.user_id= ?1",nativeQuery=true)
+	PharmacyGetDto getPharmacyInfoById(Long userId);
 
 	@Query(value="select p.pharmacy_id from pharmacy p where p.pharmacy_user_name=?1 and p.pharmacy_password=?2",nativeQuery=true)
 	Integer getPharmacyIdFromUsernameAndPass(String username, String password);
@@ -47,8 +46,8 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 			+ " set ph.pharmacy_full_name=?2,"
 			+ " u.user_city=?3"
 			+ " where ph.user_id = u.user_id and"
-			+ " u.user_secure_login= ?1",nativeQuery=true)
-	void updatePharmacyInfoBySecureLogin(String pharmacySecureLogin, String pharmacyName,
+			+ " u.user_id= ?1",nativeQuery=true)
+	void updatePharmacyInfoById(Long userId, String pharmacyName,
 			String userCity);
 
 	
@@ -57,13 +56,12 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 
 	@Modifying
     @Transactional
-	@Query(value="update pharmacies ph,"
-			+ " users u set ph.pharmacy_status = ?2,"
+	@Query(value="update pharmacies ph"
+			+ " set ph.pharmacy_status = ?2,"
 			+ " ph.pharmacy_exact_address = ?3,"
 			+ "	ph.pharmacy_type = ?4"
-			+ " where u.user_id = ph.user_id and"
-			+ " u.user_secure_login= ?1",nativeQuery=true)
-	void changePharamcyStatusAndSettingsBySecureLogin(String secureLogin,String status, String exactAddress, String accountType);
+			+ " where ph.user_id = ?1",nativeQuery=true)
+	void changePharamcyStatusAndSettingsById(Long userId,String status, String exactAddress, String accountType);
 
 	@Query(value="select ph.pharmacy_full_name,"
 			+ " ph.user_id,"
@@ -90,11 +88,11 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, Long>{
 
 	@Modifying
     @Transactional
-	@Query(value="update pharmacies p, users u set"
+	@Query(value="update pharmacies p set"
 			+ " p.pharmacy_latitude=?2,"
 			+ " p.pharmacy_longitude=?3"
-			+ " where u.user_id = p.user_id and u.user_secure_login= ?1",nativeQuery=true)
-	void updatePositionBySecureLogin(String secureLogin, String latitude, String longitude);
+			+ " where p.user_id = ?1",nativeQuery=true)
+	void updatePositionById(Long userId, String latitude, String longitude);
 	
 	@Query(value="select p.pharmacy_full_name,"
 			+ " p.pharmacy_exact_address,"

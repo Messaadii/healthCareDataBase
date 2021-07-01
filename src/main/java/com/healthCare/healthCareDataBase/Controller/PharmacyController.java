@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.healthCare.healthCareDataBase.Dtos.FindPharmacyGet;
 import com.healthCare.healthCareDataBase.Dtos.FindPresDto;
+import com.healthCare.healthCareDataBase.Dtos.GetUserIdDto;
 import com.healthCare.healthCareDataBase.Dtos.IntegerAndString;
 import com.healthCare.healthCareDataBase.Dtos.OneString;
 import com.healthCare.healthCareDataBase.Dtos.PageableAndIdDto;
@@ -70,20 +71,20 @@ public class PharmacyController {
 		return pharmacyRepository.getPharmacyIdFromUsernameAndPass(username,password);
 	}
 	
-	@PostMapping(value="/getPharmacyInfoFromSecureLogin")
-	public PharmacyGetDto getPharmacyInfoFromSecureLogin(@RequestBody final OneString secureLogin) {
-		return pharmacyRepository.getPharmacyInfoFromSecureLogin(secureLogin.getOne());
+	@PostMapping(value="/getPharmacyInfoById")
+	public PharmacyGetDto getPharmacyInfoById(@RequestBody final GetUserIdDto data) {
+		return pharmacyRepository.getPharmacyInfoById(data.getUserId());
 	}
 	
-	@PostMapping(value="/updatePharmacyInfoBySecureLogin")
-	public boolean updatePharmacyInfoBySecureLogin(@RequestBody final Pharmacy pharmacy) {
-		pharmacyRepository.updatePharmacyInfoBySecureLogin(pharmacy.getUserSecureLogin(), pharmacy.getPharmacyFullName(),pharmacy.getUserCity());
+	@PostMapping(value="/updatePharmacyInfoById")
+	public boolean updatePharmacyInfoById(@RequestBody final Pharmacy pharmacy) {
+		pharmacyRepository.updatePharmacyInfoById(pharmacy.getUserId(), pharmacy.getPharmacyFullName(),pharmacy.getUserCity());
 			return true;
 	}
 	
-	@PostMapping(value="changePharamcyStatusAndSettingsBySecureLogin")
-	public boolean changePharamcyStatusAndSettingsBySecureLogin(@RequestBody final PharmacySettingsDto data) {
-		pharmacyRepository.changePharamcyStatusAndSettingsBySecureLogin(data.getSecureLogin(),data.getStatus(),data.getExactAddress(),data.getAccountType());
+	@PostMapping(value="changePharamcyStatusAndSettingsById")
+	public boolean changePharamcyStatusAndSettingsById(@RequestBody final PharmacySettingsDto data) {
+		pharmacyRepository.changePharamcyStatusAndSettingsById(data.getUserId(),data.getStatus(),data.getExactAddress(),data.getAccountType());
 		return true;
 	}
 	
@@ -125,9 +126,9 @@ public class PharmacyController {
 		return true;
 	}
 	
-	@PostMapping(value="/updatePositionBySecureLogin")
-	public boolean updatePositionBySecureLogin(@RequestBody final UpdatePositionDto data) {
-		pharmacyRepository.updatePositionBySecureLogin(data.getSecureLogin(),data.getLatitude(),data.getLongitude());
+	@PostMapping(value="/updatePositionById")
+	public boolean updatePositionById(@RequestBody final UpdatePositionDto data) {
+		pharmacyRepository.updatePositionById(data.getUserId(),data.getLatitude(),data.getLongitude());
 		return true;
 	}
 	

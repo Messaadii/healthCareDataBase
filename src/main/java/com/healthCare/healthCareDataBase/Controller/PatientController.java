@@ -23,6 +23,7 @@ import com.healthCare.healthCareDataBase.Dtos.GetHeightValuesDto;
 import com.healthCare.healthCareDataBase.Dtos.GetHeightValuesRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.GetMyUsersRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.GetMyUsersWithPag;
+import com.healthCare.healthCareDataBase.Dtos.GetUserIdDto;
 import com.healthCare.healthCareDataBase.Dtos.GetWeightValuesDto;
 import com.healthCare.healthCareDataBase.Dtos.OneString;
 import com.healthCare.healthCareDataBase.Dtos.PatientGetDto;
@@ -69,14 +70,14 @@ public class PatientController {
 		return patientRepository.getPatientIdFromUsernameAndPass(username,password);
 	}
 	
-	@PostMapping(value="/getPatientInfoFromSecureLogin")
-	public PatientGetDto getPatientInfoFromSecureLogin(@RequestBody final OneString secureLogin) {
-		return patientRepository.getPatientInfoFromSecureLogin(secureLogin.getOne());
+	@PostMapping(value="/getPatientInfoById")
+	public PatientGetDto getPatientInfoById(@RequestBody final GetUserIdDto data) {
+		return patientRepository.getPatientInfoById(data.getUserId());
 	}
 	
-	@PostMapping(value="/updatePatientInfoBySecureLogin")
-	public boolean updatePatientInfoBySecureLogin(@RequestBody final Patient patient) {
-			patientRepository.updatePatientInfoBySecureLogin(patient.getUserSecureLogin(), patient.getPatientFirstName(),patient.getPatientLastName(),patient.getUserCity(),patient.getPatientBirthDay(),patient.getPatientGender());
+	@PostMapping(value="/updatePatientInfoById")
+	public boolean updatePatientInfoById(@RequestBody final Patient patient) {
+			patientRepository.updatePatientInfoById(patient.getUserId(), patient.getPatientFirstName(),patient.getPatientLastName(),patient.getUserCity(),patient.getPatientBirthDay(),patient.getPatientGender());
 			return true;
 	}
 	
@@ -130,23 +131,23 @@ public class PatientController {
 	@PostMapping(value="getMyDoctors")
 	public GetMyUsersWithPag getMyDoctors(@RequestBody final GetMyUsersRequestDto data){
 		Pageable pageable = PageRequest.of(data.getPage(), data.getSize());
-		return new GetMyUsersWithPag (patientRepository.getMyDoctors(data.getSecureLogin(),pageable),
-				data.getPage() == 0 ? (patientRepository.getMyDoctorsNumber(data.getSecureLogin()) != null ? patientRepository.getMyDoctorsNumber(data.getSecureLogin()) : 0) : 0);
+		return new GetMyUsersWithPag (patientRepository.getMyDoctors(data.getUserId(),pageable),
+				data.getPage() == 0 ? (patientRepository.getMyDoctorsNumber(data.getUserId()) != null ? patientRepository.getMyDoctorsNumber(data.getUserId()) : 0) : 0);
 	}
 	
 	@PostMapping(value="getMySecretaries")
 	public GetMyUsersWithPag getMySecretaries(@RequestBody final GetMyUsersRequestDto data){
 		Pageable pageable = PageRequest.of(data.getPage(), data.getSize());
-		return new GetMyUsersWithPag (patientRepository.getMySecretaries(data.getSecureLogin(),pageable),
-				data.getPage() == 0 ? (patientRepository.getMySecretariesNumber(data.getSecureLogin()) != null ? patientRepository.getMySecretariesNumber(data.getSecureLogin()) : 0) : 0);
+		return new GetMyUsersWithPag (patientRepository.getMySecretaries(data.getUserId(),pageable),
+				data.getPage() == 0 ? (patientRepository.getMySecretariesNumber(data.getUserId()) != null ? patientRepository.getMySecretariesNumber(data.getUserId()) : 0) : 0);
 	}
 	
 	@PostMapping(value="getMyPharmacies")
 	public GetMyUsersWithPag getMyPharmacies(@RequestBody final GetMyUsersRequestDto data){
 		Pageable pageable = PageRequest.of(data.getPage(), data.getSize());
 		
-		return new GetMyUsersWithPag (patientRepository.getMyPharmacies(data.getSecureLogin(),pageable),
-				data.getPage() == 0 ? (patientRepository.getMyPharmaciesNumber(data.getSecureLogin()) != null ? patientRepository.getMyPharmaciesNumber(data.getSecureLogin()) : 0) : 0);
+		return new GetMyUsersWithPag (patientRepository.getMyPharmacies(data.getUserId(),pageable),
+				data.getPage() == 0 ? (patientRepository.getMyPharmaciesNumber(data.getUserId()) != null ? patientRepository.getMyPharmaciesNumber(data.getUserId()) : 0) : 0);
 	}
 	
 	@PostMapping(value="getHeightValues")

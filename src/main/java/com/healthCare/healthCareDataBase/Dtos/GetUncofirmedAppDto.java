@@ -2,15 +2,9 @@ package com.healthCare.healthCareDataBase.Dtos;
 
 public class GetUncofirmedAppDto {
 	
-	private String secureLogin;
 	private long secretaryId;
 	private int page,size;
-	public String getSecureLogin() {
-		return secureLogin;
-	}
-	public void setSecureLogin(String secureLogin) {
-		this.secureLogin = secureLogin;
-	}
+
 	public long getSecretaryId() {
 		return secretaryId;
 	}

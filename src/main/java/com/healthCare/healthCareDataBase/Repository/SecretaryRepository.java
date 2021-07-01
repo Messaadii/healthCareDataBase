@@ -27,12 +27,11 @@ public interface SecretaryRepository extends JpaRepository<Secretary,Long>{
 			+ " s.doctor_id as doctorId,"
 			+ " u.user_city as userCity,"
 			+ " u.user_username as userUsername,"
-			+ " u.user_id as userId,"
-			+ " u.user_secure_login as secureLogin"
+			+ " u.user_id as userId"
 			+ " from users u, secretaries s"
 			+ " where u.user_id = s.user_id"
-			+ " and u.user_secure_login = ?1",nativeQuery=true)
-	SecretaryInfoDto getSecretaryInfoBySecureLogin(String secureLogin);
+			+ " and u.user_id = ?1",nativeQuery=true)
+	SecretaryInfoDto getSecretaryInfoById(Long userId);
 
 	@Query(value="select s.secretary_status"
 			+ " from secretaries s, users u"
@@ -54,17 +53,17 @@ public interface SecretaryRepository extends JpaRepository<Secretary,Long>{
 			+ " s.secretary_birth_day = ?3,"
 			+ " s.secretary_gender = ?4,"
 			+ " u.user_city = ?5"
-			+ " where u.user_secure_login = ?6 and"
+			+ " where u.user_id = ?6 and"
 			+ " s.user_id = u.user_id",nativeQuery=true)
-	void updateSecretaryInfoBySecureLogin(String firstName, String lastName, String birthday, String gender,
-			String city,String secureLogin);
+	void updateSecretaryInfoById(String firstName, String lastName, String birthday, String gender,
+			String city,Long userId);
 
 	@Modifying
     @Transactional
 	@Query(value="update users u"
 			+ " set u.user_password = ?1"
-			+ " where u.user_secure_login = ?2",nativeQuery=true)
-	void updatePasswordBySecureLogin(String password, String secureLogin);
+			+ " where u.user_id = ?2",nativeQuery=true)
+	void updatePasswordById(String password, Long userId);
 
 	@Query(value="select sw.start_time as startTime,"
 			+ " sw.end_time as endTime,"
@@ -80,10 +79,8 @@ public interface SecretaryRepository extends JpaRepository<Secretary,Long>{
     @Transactional
 	@Query(value="update notification n"
 			+ " set n.notification_parameter = 'accepted'"
-			+ " where n.notification_id = ?1"
-			+ " and n.recipient_id = (select u.user_id "
-			+ " from users u where u.user_secure_login = ?2)",nativeQuery=true)
-	int acceptDoctorAddRequest(long notificationId, String secureLogin);
+			+ " where n.notification_id = ?1",nativeQuery=true)
+	int acceptDoctorAddRequest(long notificationId);
 
 	@Modifying
     @Transactional
@@ -104,10 +101,8 @@ public interface SecretaryRepository extends JpaRepository<Secretary,Long>{
     @Transactional
 	@Query(value="update notification n"
 			+ " set n.notification_parameter = 'refused'"
-			+ " where n.notification_id = ?1"
-			+ " and n.recipient_id = (select u.user_id"
-			+ "	from users u where u.user_secure_login = ?2)",nativeQuery=true)
-	int refuseDoctorAddRequest(long notificationId, String secureLogin);
+			+ " where n.notification_id = ?1",nativeQuery=true)
+	int refuseDoctorAddRequest(long notificationId);
 
 	@Query(value="select p.user_id as userId,"
 			+ " p.patient_first_name as patientFirstName,"
@@ -120,20 +115,19 @@ public interface SecretaryRepository extends JpaRepository<Secretary,Long>{
 			+ " a.appointment_date as appointmentDate,"
 			+ " a.appointment_status as appointmentStatus"
 			+ " from appointment a, users u, patients p, secretaries s"
-			+ " where s.user_id = u.user_id and u.user_id = ?1 and u.user_secure_login = ?2"
+			+ " where s.user_id = ?1"
 			+ " and a.doctor_id = s.doctor_id"
 			+ " and (a.appointment_status = 'unconfirmed' or a.appointment_status = 'changeDateRequest')"
-			+ " and p.user_id = a.patient_id",nativeQuery=true)
-	List<GetUncofirmedAppReturnDto> getUncofirmedApp(long secretaryId, String secureLogin, Pageable pageable);
+			+ " and p.user_id = a.patient_id"
+			+ " and p.user_id = u.user_id",nativeQuery=true)
+	List<GetUncofirmedAppReturnDto> getUncofirmedApp(long secretaryId, Pageable pageable);
 
 	@Query(value="select count(*)"
-			+ " from secretaries s,users u, appointment a"
-			+ " where u.user_secure_login = ?2"
-			+ " and u.user_id = ?1"
-			+ " and s.user_id = u.user_id "
+			+ " from secretaries s, appointment a"
+			+ " where s.user_id = ?1"
 			+ " and a.doctor_id = s.doctor_id"
 			+ " and (a.appointment_status ='unconfirmed' or a.appointment_status = 'changeDateRequest')",nativeQuery=true)
-	int getUncofirmedAppCount(long secretaryId, String secureLogin);
+	int getUncofirmedAppCount(long secretaryId);
 
 	@Query(value="select p.user_id as userId,"
 			+ " p.patient_first_name as patientFirstName,"
@@ -145,24 +139,22 @@ public interface SecretaryRepository extends JpaRepository<Secretary,Long>{
 			+ " a.appointment_id as appointmentId,"
 			+ " a.appointment_date as appointmentDate,"
 			+ " a.appointment_status as appointmentStatus"
-			+ " from appointment a, users u, patients p, secretaries s"
-			+ " where s.user_id = u.user_id and u.user_id = ?2 and u.user_secure_login = ?3"
+			+ " from appointment a, patients p, secretaries s"
+			+ " where s.user_id = ?2"
 			+ " and a.doctor_id = s.doctor_id"
 			+ " and a.appointment_id = ?1"
 			+ " and p.user_id = a.patient_id",nativeQuery=true)
-	GetUncofirmedAppReturnDto getAppointmentInfoById(long appointmentId, long secretaryId, String secureLogin);
+	GetUncofirmedAppReturnDto getAppointmentInfoById(long appointmentId, long secretaryId);
 
 	@Modifying
     @Transactional
 	@Query(value="update appointment a"
-			+ " set a.appointment_status = ?4"
+			+ " set a.appointment_status = ?3"
 			+ " where a.appointment_id = ?1"
 			+ " and a.doctor_id = (select s.doctor_id"
-			+ " from secretaries s, users u"
-			+ " where u.user_id = ?2"
-			+ " and u.user_secure_login =?3"
-			+ " and s.user_id = u.user_id)",nativeQuery=true)
-	void updateAppointmentStatusById(long appointmentId, long secretaryId, String secureLogin,String status);
+			+ " from secretaries s"
+			+ " where s.user_id = ?2)",nativeQuery=true)
+	void updateAppointmentStatusById(long appointmentId, long secretaryId,String status);
 
 	@Modifying
     @Transactional
@@ -232,14 +224,14 @@ public interface SecretaryRepository extends JpaRepository<Secretary,Long>{
 			+ " a.appointment_id as appointmentId,"
 			+ " a.appointment_date as appointmentDate,"
 			+ " a.appointment_status as appointmentStatus"
-			+ " from appointment a, users u, patients p, secretaries s"
-			+ " where s.user_id = u.user_id and u.user_id = ?2 and u.user_secure_login = ?3"
+			+ " from appointment a, patients p, secretaries s"
+			+ " where s.user_id = ?2"
 			+ " and a.doctor_id = s.doctor_id"
 			+ " and a.appointment_id > ?1"
 			+ " and (a.appointment_status ='unconfirmed' or a.appointment_status = 'changeDateRequest') "
 			+ " and p.user_id = a.patient_id"
 			+ " order by a.appointment_id asc limit 1",nativeQuery=true)
-	GetUncofirmedAppReturnDto getNextRequestByAppId(long appointmentId, long secretaryId, String secureLogin);
+	GetUncofirmedAppReturnDto getNextRequestByAppId(long appointmentId, long secretaryId);
 
 	@Query(value="select a.patient_id as patientId,"
 			+ " a.appointment_date as appointmentDate,"

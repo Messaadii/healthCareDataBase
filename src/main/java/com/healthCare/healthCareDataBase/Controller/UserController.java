@@ -57,14 +57,11 @@ public class UserController {
 		return userRepository.existsByUserUsername(username);
 	}
 	
-	@PostMapping(value="/updateUserPasswordBySecurelogin")
-	public boolean updateUserPasswordBySecurelogin(@RequestBody final UpdatePasswordRequestDto doctor) {
-		if(userRepository.existsByUserSecureLogin(doctor.getUserSecureLogin())) {
-			doctor.setUserPassword(encoder.encode(doctor.getUserPassword()));
-			userRepository.updateUserPasswordBySecurelogin(doctor.getUserSecureLogin(),doctor.getUserPassword());
-			return true;
-		}else
-			return false;
+	@PostMapping(value="/updateUserPasswordById")
+	public boolean updateUserPasswordById(@RequestBody final UpdatePasswordRequestDto doctor) {
+		doctor.setUserPassword(encoder.encode(doctor.getUserPassword()));
+		userRepository.updateUserPasswordById(doctor.getUserId(),doctor.getUserPassword());
+		return true;
 	}
 	
 	@PostMapping(value="/updateUserPasswordByEmail")
@@ -72,16 +69,6 @@ public class UserController {
 		doctor.setPassword(encoder.encode(doctor.getPassword()));
 		userRepository.updateUserPasswordByEmail(doctor.getEmail(),doctor.getPassword());
 		return true;
-	}
-	
-	@PostMapping(value="/updateUsernameBySecureLogin")
-	public boolean updateUsernameBySecureLogin(@RequestBody final TwoStrings twoStrings) {
-		if(userRepository.existsByUserUsername(twoStrings.getStringTwo())) {
-			return false;
-		}else{
-			userRepository.updateUsernameBySecureLogin(twoStrings.getStringOne(),twoStrings.getStringTwo());
-			return true;
-		}
 	}
 	
 	@GetMapping(value="getUserFullNameById/{id}")

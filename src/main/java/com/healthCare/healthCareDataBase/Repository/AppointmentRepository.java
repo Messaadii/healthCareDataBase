@@ -55,14 +55,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 			+ " d.doctor_last_name as doctorLastName,"
 			+ " d.user_id as doctorId,"
 			+ " a.appointment_id as appointmentId"
-			+ " from appointment a, patients p, users u, doctors d"
-			+ " where a.doctor_id = u.user_id"
-			+ " and u.user_secure_login = ?3"
-			+ " and a.doctor_id=d.user_id"
+			+ " from appointment a, patients p, doctors d"
+			+ " where a.doctor_id = ?3"
 			+ " and a.patient_turn = ?2"
 			+ " and a.appointment_date = ?1"
-			+ " and p.user_id = a.patient_id",nativeQuery=true)
-	public AppUsersInfoDto getUsersInfoByAppDayAndTurnAndDocSecureLogin(String format, int i, String secureLogin);
+			+ " and p.user_id = a.patient_id"
+			+ " and d.user_id = ?3",nativeQuery=true)
+	public AppUsersInfoDto getUsersInfoByAppDayAndTurnAndDocDocId(String format, int i, Long docId);
 
 	@Modifying
     @Transactional

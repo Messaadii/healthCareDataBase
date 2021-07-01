@@ -18,7 +18,6 @@ public interface PharmacyGetDto {
 	String getPharmacyLatitude();
 	@Value("#{target.pharmacy_longitude}")
 	String getPharmacyLongitude();
-	String getSecureLogin();
 
 }
 

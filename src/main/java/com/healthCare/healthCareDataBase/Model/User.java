@@ -35,9 +35,6 @@ public class User {
 	@Size(max = 15)
 	private String userCreationDate;
 	
-	@NotBlank
-	private String userSecureLogin;
-	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(	name = "user_roles", 
 				joinColumns = @JoinColumn(name = "user_id"), 
@@ -95,14 +92,6 @@ public class User {
 
 	public void setUserCreationDate(String userCreationDate) {
 		this.userCreationDate = userCreationDate;
-	}
-
-	public String getUserSecureLogin() {
-		return userSecureLogin;
-	}
-
-	public void setUserSecureLogin(String userSecureLogin) {
-		this.userSecureLogin = userSecureLogin;
 	}
 
 	public User(@NotBlank @Size(max = 20) String userUsername,

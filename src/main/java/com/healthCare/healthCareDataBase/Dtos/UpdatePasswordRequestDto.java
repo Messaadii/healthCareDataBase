@@ -3,19 +3,18 @@ package com.healthCare.healthCareDataBase.Dtos;
 public class UpdatePasswordRequestDto {
 
 	private String userPassword;
-	private String userSecureLogin;
+	private Long userId;
 	public String getUserPassword() {
 		return userPassword;
 	}
 	public void setUserPassword(String userPassword) {
 		this.userPassword = userPassword;
 	}
-	public String getUserSecureLogin() {
-		return userSecureLogin;
+	public Long getUserId() {
+		return userId;
 	}
-	public void setUserSecureLogin(String userSecureLogin) {
-		this.userSecureLogin = userSecureLogin;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
-	
 	
 }

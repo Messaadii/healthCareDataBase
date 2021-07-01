@@ -2,14 +2,15 @@ package com.healthCare.healthCareDataBase.Dtos;
 
 public class UpdatePositionDto {
 	
-	private String secureLogin;
+	private Long userId;
 	private String latitude;
 	private String longitude;
-	public String getSecureLogin() {
-		return secureLogin;
+	
+	public Long getUserId() {
+		return userId;
 	}
-	public void setSecureLogin(String secureLogin) {
-		this.secureLogin = secureLogin;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 	public String getLatitude() {
 		return latitude;

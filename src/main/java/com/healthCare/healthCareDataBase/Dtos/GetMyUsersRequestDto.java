@@ -2,15 +2,15 @@ package com.healthCare.healthCareDataBase.Dtos;
 
 public class GetMyUsersRequestDto {
 
-	private String secureLogin;
+	private Long userId;
 	private int page,size;
 
-	public String getSecureLogin() {
-		return secureLogin;
+	public Long getUserId() {
+		return userId;
 	}
 
-	public void setSecureLogin(String secureLogin) {
-		this.secureLogin = secureLogin;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public int getPage() {

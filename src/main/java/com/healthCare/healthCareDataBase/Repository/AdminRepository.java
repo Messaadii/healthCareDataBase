@@ -22,8 +22,7 @@ public interface AdminRepository extends JpaRepository<Admin, Long>{
 	@Query(value="select a.user_id,"
 			+ " a.admin_full_name,"
 			+ " u.user_city,"
-			+ " u.user_username,"
-			+ " u.user_secure_login as secureLogin"
+			+ " u.user_username"
 			+ " from admins a, users u where u.user_id = a.user_id and u.user_id= ?1",nativeQuery=true)
 	AdminGetDto getAdminInfoById(long id);
 

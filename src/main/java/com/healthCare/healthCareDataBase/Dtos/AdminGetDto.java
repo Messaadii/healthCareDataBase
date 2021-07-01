@@ -12,5 +12,4 @@ public interface AdminGetDto {
 	String getUserCity();
 	@Value("#{target.user_username}")
 	String getUserUsername();
-	String getSecureLogin();
 }

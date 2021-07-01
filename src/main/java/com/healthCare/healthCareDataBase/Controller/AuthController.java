@@ -1,6 +1,5 @@
 package com.healthCare.healthCareDataBase.Controller;
 
-import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -92,28 +91,11 @@ public class AuthController {
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
-
-		String secureLogin = genrateSecureLogin(25);
-		while(userRepository.existsByUserSecureLogin(secureLogin)) {
-			secureLogin = genrateSecureLogin(25);
-		}
 		
-		userRepository.updateUserSecureLoginByUserId(userDetails.getId(),secureLogin);
-		
-		return ResponseEntity.ok(new JwtResponseDto(jwt, 
-				 secureLogin,
+		return ResponseEntity.ok(new JwtResponseDto(jwt,
 				 roles,
 				 userDetails.getId()));
 	}
-	
-	public String genrateSecureLogin(int len){
-		 String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&é(-/+*)=}@à^ç_è[]{#";
-		 SecureRandom rnd = new SecureRandom();
-		   StringBuilder sb = new StringBuilder(len);
-		   for(int i = 0; i < len; i++)
-		      sb.append(AB.charAt(rnd.nextInt(AB.length())));
-		   return sb.toString();
-		   }
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequestDto signUpRequest) throws MessagingException {

@@ -228,10 +228,10 @@ public class DoctorController {
 		return patientRepository.getAppPatientInfoByDoctorIdTurnAndDate(data.getId(),data.getDate(),data.getTurn());
 	}
 
-	@PostMapping(value="changeCurrentPatientBySecureLogin")
-	public boolean changeCurrentPatientBySecureLogin(@RequestBody final SecureLoginAndPatientTurnDto data) {
+	@PostMapping(value="changeCurrentPatientById")
+	public boolean changeCurrentPatientById(@RequestBody final SecureLoginAndPatientTurnDto data) {
 		
-		doctorRepository.changeCurrentPatientBySecureLogin(data.getSecureLogin(),data.getPatientTurn());
+		doctorRepository.changeCurrentPatientById(data.getDoctorId(),data.getPatientTurn());
 		
 		WebSocketNotificationDto webSocketNotPos = new WebSocketNotificationDto();
 		webSocketNotPos.setData(userRepository.getUsernameByUserid(data.getDoctorId()));
@@ -256,7 +256,7 @@ public class DoctorController {
 				
 				for(int p = 1;p <= data.getAllPatientNumber() ;p++) {
 					
-					AppUsersInfoDto usersInfo = appointmentRepository.getUsersInfoByAppDayAndTurnAndDocSecureLogin(dateFormat.format(cal.getTime()),p,data.getSecureLogin());
+					AppUsersInfoDto usersInfo = appointmentRepository.getUsersInfoByAppDayAndTurnAndDocDocId(dateFormat.format(cal.getTime()),p,data.getDoctorId());
 
 					notStartSession.setIsUnread(true);
 					notStartSession.setNotificationType("doctorStartSession");
@@ -280,7 +280,7 @@ public class DoctorController {
 				
 				if(i<=data.getAllPatientNumber()) {
 					
-					AppUsersInfoDto usersInfo = appointmentRepository.getUsersInfoByAppDayAndTurnAndDocSecureLogin(dateFormat.format(cal.getTime()),i,data.getSecureLogin());
+					AppUsersInfoDto usersInfo = appointmentRepository.getUsersInfoByAppDayAndTurnAndDocDocId(dateFormat.format(cal.getTime()),i,data.getDoctorId());
 				
 					notTurnClose.setIsUnread(true);
 					notTurnClose.setNotificationType("patientTurnClose");
@@ -313,9 +313,9 @@ public class DoctorController {
 		return doctorRepository.getTopRatedDoctor(pageable);
 	}
 	
-	@PostMapping(value="/updatePositionBySecureLogin")
-	public boolean updatePositionBySecureLogin(@RequestBody final UpdatePositionDto data) {
-		doctorRepository.updatePositionBySecureLogin(data.getSecureLogin(),data.getLatitude(),data.getLongitude());
+	@PostMapping(value="/updatePositionById")
+	public boolean updatePositionById(@RequestBody final UpdatePositionDto data) {
+		doctorRepository.updatePositionById(data.getUserId(),data.getLatitude(),data.getLongitude());
 		return true;
 	}
 	
@@ -428,12 +428,12 @@ public class DoctorController {
 	
 	@PostMapping(value="getMySecretaries")
 	public List<SecretaryPublicInfoDto> getMySecretaries(@RequestBody final GetMySecretariesDto data){
-		return doctorRepository.getMySecretaries(data.getDoctorId(),data.getSecureLogin());
+		return doctorRepository.getMySecretaries(data.getDoctorId());
 	}
 	
 	@PostMapping(value="getSecretaryWorkById")
 	public List<SecretaryWorkDto> getSecretaryWorkById(@RequestBody final GetSecretaryWorkRequestDto data){
-		return doctorRepository.getSecretaryWorkById(data.getSecretaryId(),data.getSecureLogin());
+		return doctorRepository.getSecretaryWorkById(data.getSecretaryId());
 	}
 	
 	@PostMapping(value="checkSecretaryCode")

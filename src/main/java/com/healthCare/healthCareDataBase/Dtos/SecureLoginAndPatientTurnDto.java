@@ -2,17 +2,10 @@ package com.healthCare.healthCareDataBase.Dtos;
 
 public class SecureLoginAndPatientTurnDto {
 	
-	private String secureLogin;
 	private Integer patientTurn;
 	private Integer allPatientNumber;
 	private long doctorId;
 	
-	public String getSecureLogin() {
-		return secureLogin;
-	}
-	public void setSecureLogin(String secureLogin) {
-		this.secureLogin = secureLogin;
-	}
 	public Integer getPatientTurn() {
 		return patientTurn;
 	}

@@ -40,7 +40,6 @@ public interface DoctorGetDto {
 	String getDoctorLatitude();
 	@Value("#{target.doctor_longitude}")
 	String getDoctorLongitude();
-	String getSecureLogin();
 	String getSpeciality();
 
 }

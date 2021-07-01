@@ -12,6 +12,5 @@ public interface SecretaryInfoDto {
 	public String getUserCity();
 	public String getUserUsername();
 	public long getUserId();
-	public String getSecureLogin();
 
 }

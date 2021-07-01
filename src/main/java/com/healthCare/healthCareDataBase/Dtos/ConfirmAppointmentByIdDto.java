@@ -3,7 +3,7 @@ package com.healthCare.healthCareDataBase.Dtos;
 public class ConfirmAppointmentByIdDto {
 	
 	private long secretaryId, appointmentId,patientId,doctorId;
-	private String secureLogin,appointmentStatus;
+	private String appointmentStatus;
 	public long getSecretaryId() {
 		return secretaryId;
 	}
@@ -15,12 +15,6 @@ public class ConfirmAppointmentByIdDto {
 	}
 	public void setAppointmentId(long appointmentId) {
 		this.appointmentId = appointmentId;
-	}
-	public String getSecureLogin() {
-		return secureLogin;
-	}
-	public void setSecureLogin(String secureLogin) {
-		this.secureLogin = secureLogin;
 	}
 	public long getPatientId() {
 		return patientId;

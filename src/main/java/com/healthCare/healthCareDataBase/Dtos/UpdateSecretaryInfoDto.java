@@ -7,7 +7,7 @@ public class UpdateSecretaryInfoDto {
 	private String birthday;
 	private String city;
 	private String gender;
-	private String secureLogin;
+	private Long userId;
 	public String getFirstName() {
 		return firstName;
 	}
@@ -38,10 +38,11 @@ public class UpdateSecretaryInfoDto {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
-	public String getSecureLogin() {
-		return secureLogin;
+	public Long getUserId() {
+		return userId;
 	}
-	public void setSecureLogin(String secureLogin) {
-		this.secureLogin = secureLogin;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
+	
 }

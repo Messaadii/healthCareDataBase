@@ -2,19 +2,12 @@ package com.healthCare.healthCareDataBase.Dtos;
 
 public class AcceptDoctorAddRequestDto {
 	
-	private long doctorId,notificationId,secretaryId;;
-	private String secureLogin;
+	private long doctorId,notificationId,secretaryId;
 	public long getDoctorId() {
 		return doctorId;
 	}
 	public void setDoctorId(long doctorId) {
 		this.doctorId = doctorId;
-	}
-	public String getSecureLogin() {
-		return secureLogin;
-	}
-	public void setSecureLogin(String secureLogin) {
-		this.secureLogin = secureLogin;
 	}
 	public long getNotificationId() {
 		return notificationId;

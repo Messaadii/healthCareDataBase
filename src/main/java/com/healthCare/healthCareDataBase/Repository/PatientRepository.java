@@ -37,16 +37,15 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 			+ " p.medical_profile_id,"
 			+ " p.patient_status,"
 			+ " u.user_username,"
-			+ " u.user_city,"
-			+ " u.user_secure_login as secureLogin"
+			+ " u.user_city"
 			+ " from patients p, users u "
-			+ " where u.user_id = p.user_id and u.user_secure_login= ?1",nativeQuery=true)
-	PatientGetDto getPatientInfoFromSecureLogin(String secureLogin);
+			+ " where u.user_id = p.user_id and u.user_id = ?1",nativeQuery=true)
+	PatientGetDto getPatientInfoById(Long userId);
 
 	@Modifying
     @Transactional
-	@Query(value="update patients p, users u set p.patient_first_name=?2, p.patient_last_name=?3, u.user_city=?4, p.patient_Birth_day=?5, p.patient_gender=?6 where u.user_id = p.user_id and u.user_secure_login= ?1",nativeQuery=true)
-	void updatePatientInfoBySecureLogin(String patientSecureLogin, String patientFirstName,
+	@Query(value="update patients p, users u set p.patient_first_name=?2, p.patient_last_name=?3, u.user_city=?4, p.patient_Birth_day=?5, p.patient_gender=?6 where u.user_id = p.user_id and u.user_id= ?1",nativeQuery=true)
+	void updatePatientInfoById(Long userId, String patientFirstName,
 			String patientLastName, String patientCity, String patientBirthDay, String patientGender);
 
 	@Query(value="select p.patient_user_name from patients p where p.patient_secure_login= ?1",nativeQuery=true)
@@ -102,73 +101,67 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 			+ " d.doctor_last_name as lastName,"
 			+ " d.doctor_rate as userRate,"
 			+ " (select if(count(r.rate)=1,r.rate,0) from rate r where r.rated_by = a.patient_id and r.rate_to = a.doctor_id) as rate"
-			+ " from appointment a, doctors d, users u"
-			+ " where u.user_secure_login = ?1"
-			+ " and u.user_id = a.patient_id"
+			+ " from appointment a, doctors d"
+			+ " where a.patient_id = ?1"
 			+ " and a.doctor_id = d.user_id"
 			+ " and a.appointment_status = 'completed'"
 			+ " group by d.user_id"
 			+ " order by a.appointment_date desc",nativeQuery=true)
-	List<GetMyUsersDto> getMyDoctors(String secureLogin, Pageable pageable);
+	List<GetMyUsersDto> getMyDoctors(Long userId, Pageable pageable);
 
 	@Query(value="select count(*)"
-			+ " from appointment a, users u, doctors d"
-			+ " where u.user_secure_login = ?1"
-			+ " and u.user_id = a.patient_id"
+			+ " from appointment a, doctors d"
+			+ " where a.patient_id = ?1"
 			+ " and a.doctor_id = d.user_id"
 			+ " and a.appointment_status = 'completed'"
 			+ " group by d.user_id",nativeQuery=true)
-	Long getMyDoctorsNumber(String secureLogin);
+	Long getMyDoctorsNumber(Long userId);
 
 	@Query(value="select s.user_id as userId,"
 			+ " s.secretary_first_name as firstName,"
 			+ " s.secretary_last_name as lastName,"
 			+ " s.secretary_rate as userRate,"
 			+ " (select if(count(r.rate)=1,r.rate,0) from rate r where r.rated_by = a.patient_id and r.rate_to = s.user_id) as rate"
-			+ " from users u, appointment a, secretaries s"
-			+ " where u.user_secure_login = ?1"
-			+ " and a.patient_id = u.user_id"
+			+ " from appointment a, secretaries s"
+			+ " where a.patient_id = ?1"
 			+ " and a.appointment_status = 'completed'"
 			+ " and s.doctor_id = a.doctor_id"
 			+ " group by s.user_id"
 			+ " order by a.appointment_date desc",nativeQuery=true)
-	List<GetMyUsersDto> getMySecretaries(String secureLogin, Pageable pageable);
+	List<GetMyUsersDto> getMySecretaries(Long userId, Pageable pageable);
 	
 	@Query(value="select count(*)"
-			+ " from appointment a, users u, secretaries s"
-			+ " where u.user_secure_login = ?1"
-			+ " and u.user_id = a.patient_id"
+			+ " from appointment a,secretaries s"
+			+ " where a.patient_id = ?1"
 			+ " and a.appointment_status = 'completed'"
 			+ " and s.doctor_id = a.doctor_id"
 			+ " group by s.user_id",nativeQuery=true)
-	Long getMySecretariesNumber(String secureLogin);
+	Long getMySecretariesNumber(Long userId);
 
 	@Query(value="select ph.user_id as userId,"
 			+ " ph.pharmacy_full_name as firstName,"
 			+ " '' as lastName,"
 			+ " ph.pharmacy_rate as userRate,"
-			+ " (select if(count(r.rate)=1,r.rate,0) from rate r where r.rated_by = u.user_id and r.rate_to = ph.user_id) as rate"
-			+ " from users u, pharmacies ph, notification n, prescription p"
-			+ " where u.user_secure_login = ?1"
-			+ " and p.patient_id = u.user_id"
+			+ " (select if(count(r.rate)=1,r.rate,0) from rate r where r.rated_by = ?1 and r.rate_to = ph.user_id) as rate"
+			+ " from pharmacies ph, notification n, prescription p"
+			+ " where p.patient_id = ?1"
 			+ " and p.prescription_status = 'used'"
 			+ " and n.notification_type = 'userSelectYouForPres'"
 			+ " and n.notification_parameter = p.prescription_id"
 			+ " and ph.user_id = n.recipient_id"
 			+ " group by ph.user_id"
 			+ " order by n.time_sent desc",nativeQuery=true)
-	List<GetMyUsersDto> getMyPharmacies(String secureLogin, Pageable pageable);
+	List<GetMyUsersDto> getMyPharmacies(Long userId, Pageable pageable);
 	
 	@Query(value="select count(ph.user_id)"
-			+ " from users u, pharmacies ph, notification n, prescription p"
-			+ " where u.user_secure_login = ?1"
-			+ " and p.patient_id = u.user_id"
+			+ " from pharmacies ph, notification n, prescription p"
+			+ " where p.patient_id = ?1"
 			+ " and p.prescription_status = 'used'"
 			+ " and n.notification_type = 'userSelectYouForPres'"
 			+ " and n.notification_parameter = p.prescription_id"
 			+ " and ph.user_id = n.recipient_id"
 			+ " group by ph.user_id",nativeQuery=true)
-	Long getMyPharmaciesNumber(String secureLogin);
+	Long getMyPharmaciesNumber(Long userId);
 
 	@Query(value="select od.old_data_value as height,"
 			+ " od.update_date as time"

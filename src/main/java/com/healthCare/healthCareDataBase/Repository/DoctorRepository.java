@@ -44,7 +44,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " d.doctor_longitude,"
 			+ " u.user_username,"
 			+ " u.user_city,"
-			+ " u.user_secure_login as secureLogin,"
 			+ " s.speciality_name as speciality"
 			+ " from doctors d, users u,speciality s, doctor_speciality ds"
 			+ " where u.user_id = d.user_id and u.user_id= ?1"
@@ -160,10 +159,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 
 	@Modifying
     @Transactional
-	@Query(value="update doctors d, users u set "
+	@Query(value="update doctors d set "
 			+ "d.current_patient=?2 "
-			+ "where u.user_id = d.user_id and u.user_secure_login= ?1",nativeQuery=true)
-	void changeCurrentPatientBySecureLogin(String secureLogin, Integer patientTurn);
+			+ "where d.user_id = ?1",nativeQuery=true)
+	void changeCurrentPatientById(Long docId, Integer patientTurn);
 
 	@Query(value="select"
 			+ " d.user_id,"
@@ -198,11 +197,11 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 
 	@Modifying
     @Transactional
-	@Query(value="update doctors d, users u set"
+	@Query(value="update doctors d set"
 			+ " d.doctor_latitude=?2,"
 			+ " d.doctor_longitude=?3"
-			+ " where u.user_id = d.user_id and u.user_secure_login= ?1",nativeQuery=true)
-	void updatePositionBySecureLogin(String secureLogin, String latitude, String longitude);
+			+ " where d.user_id = ?1",nativeQuery=true)
+	void updatePositionById(Long userId, String latitude, String longitude);
 
 	@Query(value="select d.doctor_status"
 			+ " from doctors d, users u"
@@ -221,24 +220,19 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " s.secretary_rate as secretaryRate,"
 			+ " s.secretary_birth_day as secretaryBirthDay,"
 			+ " s.user_id as userId"
-			+ " from secretaries s, users u"
-			+ " where u.user_secure_login = ?2"
-			+ " and u.user_id = ?1"
-			+ " and u.user_id = s.doctor_id",nativeQuery=true)
-	List<SecretaryPublicInfoDto> getMySecretaries(long doctorId, String secureLogin);
+			+ " from secretaries s"
+			+ " where s.doctor_id = ?1",nativeQuery=true)
+	List<SecretaryPublicInfoDto> getMySecretaries(long doctorId);
 
 	@Query(value="select sw.start_time as startTime,"
 			+ " sw.end_time as endTime,"
 			+ " concat(d.doctor_first_name,' ',doctor_last_name) as doctorName,"
 			+ " d.user_id as doctorId"
-			+ " from secretary_work sw, doctors d, users u, secretaries s"
-			+ " where sw.doctor_id = d.user_id"
-			+ " and sw.secretary_id = ?1"
-			+ " and s.user_id = ?1"
-			+ " and s.doctor_id = u.user_id"
-			+ " and u.user_secure_login = ?2"
+			+ " from secretary_work sw, doctors d"
+			+ " where sw.secretary_id = ?1"
+			+ " and d.user_id = sw.doctor_id"
 			+ " order by sw.start_time desc",nativeQuery=true)
-	List<SecretaryWorkDto> getSecretaryWorkById(long secretaryId, String secureLogin);
+	List<SecretaryWorkDto> getSecretaryWorkById(long secretaryId);
 
 	@Query(value="select if(count(n.notification_id) = 1,n.notification_id,0)"
 			+ " from notification n"
