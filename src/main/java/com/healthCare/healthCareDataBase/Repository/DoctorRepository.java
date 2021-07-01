@@ -44,11 +44,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " d.doctor_longitude,"
 			+ " u.user_username,"
 			+ " u.user_city,"
-			+ " s.speciality_name as speciality"
-			+ " from doctors d, users u,speciality s, doctor_speciality ds"
-			+ " where u.user_id = d.user_id and u.user_id= ?1"
-			+ " and ds.doctor_id = u.user_id"
-			+ " and ds.speciality_id = s.speciality_id",nativeQuery=true)
+			+ " (select s.speciality_code from "
+			+ " speciality s where s.speciality_id = d.speciality_id) as speciality"
+			+ " from doctors d, users u"
+			+ " where u.user_id = d.user_id and u.user_id= ?1",nativeQuery=true)
 	DoctorGetDto getDoctorInfoById(long userId);
 
 	@Modifying
@@ -60,7 +59,18 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 	@Query(value="select d.doctor_user_name from doctors d where d.doctor_secure_login= ?1",nativeQuery=true)
 	Object findUserNameBySecureLogin(String doctorSecureLogin);
 	
-	@Query(value="select d.user_id, d.doctor_first_name, d.doctor_last_name, d.doctor_gender, d.doctor_status, u.user_city, u.user_username, s.speciality_code from doctors d, users u, doctor_speciality ds, speciality s where u.user_id = d.user_id and (d.doctor_status='pending' or d.doctor_status='reVerify') and d.user_id = ds.doctor_id and ds.speciality_id = s.speciality_id",nativeQuery=true)
+	@Query(value="select d.user_id,"
+			+ " d.doctor_first_name,"
+			+ " d.doctor_last_name,"
+			+ " d.doctor_gender,"
+			+ " d.doctor_status,"
+			+ " u.user_city,"
+			+ " u.user_username,"
+			+ " s.speciality_code"
+			+ " from doctors d, users u, speciality s"
+			+ " where u.user_id = d.user_id"
+			+ " and (d.doctor_status='pending' or d.doctor_status='reVerify')"
+			+ " and d.speciality_id = s.speciality_id",nativeQuery=true)
 	List<PendingDoctorGetDto> getPendingDoctors(Pageable pageable);
 	
 	@Query(value = "SELECT count(d.user_id) from doctors d where d.doctor_status='pending' or d.doctor_status='reVerify'",nativeQuery=true)
@@ -90,12 +100,11 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " u.user_city,"
 			+ " d.doctor_gender,"
 			+ " d.doctor_rate"
-			+ " from doctors d, users u, speciality s, doctor_speciality ds"
-			+ " where d.user_id = u.user_id and"
-			+ " d.user_id = ds.doctor_id"
-			+ " and ds.speciality_id = s.speciality_id and"
-			+ " s.speciality_code = ?1 and"
-			+ " d.doctor_status = 'approved'",nativeQuery=true)
+			+ " from doctors d, users u, speciality s"
+			+ " where d.user_id = u.user_id"
+			+ " and d.speciality_id = s.speciality_id"
+			+ " and s.speciality_code = ?1"
+			+ " and d.doctor_status = 'approved'",nativeQuery=true)
 	List<SearchedDoctorDto> getApprovedDoctorsBySpecialityId(String specialityCode, Pageable pageable);
 	
 	@Query(value="select u.user_id,"
@@ -104,10 +113,9 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " u.user_city,"
 			+ " d.doctor_gender,"
 			+ " d.doctor_rate"
-			+ " from doctors d, users u, speciality s, doctor_speciality ds"
-			+ " where d.user_id = u.user_id and"
-			+ " d.user_id = ds.doctor_id"
-			+ " and ds.speciality_id = s.speciality_id and"
+			+ " from doctors d, users u, speciality s"
+			+ " where d.user_id = u.user_id"
+			+ " and d.speciality_id = s.speciality_id and"
 			+ " s.speciality_code = ?1 and"
 			+ " d.doctor_status = 'approved' and"
 			+ " u.user_city = ?2",nativeQuery=true)
@@ -182,10 +190,9 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 			+ " d.doctor_gender,"
 			+ " d.doctor_rate,"
 			+ " s.speciality_name"
-			+ " from doctors d, users u, speciality s, doctor_speciality ds"
-			+ " where d.user_id = u.user_id and"
-			+ " d.user_id = ds.doctor_id"
-			+ " and ds.speciality_id = s.speciality_id and"
+			+ " from doctors d, users u, speciality s"
+			+ " where d.user_id = u.user_id"
+			+ " and d.speciality_id = s.speciality_id and"
 			+ " d.doctor_status = 'approved'",nativeQuery=true)
 	List<TopRatedDoctorsDto> getTopRatedDoctor(Pageable pageable);
 

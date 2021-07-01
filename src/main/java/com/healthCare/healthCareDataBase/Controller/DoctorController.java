@@ -51,7 +51,6 @@ import com.healthCare.healthCareDataBase.Dtos.SecureLoginAndPatientTurnDto;
 import com.healthCare.healthCareDataBase.Dtos.SendMailDto;
 import com.healthCare.healthCareDataBase.Dtos.SignupRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.TopRatedDoctorsDto;
-import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
 import com.healthCare.healthCareDataBase.Dtos.UpdatePositionDto;
 import com.healthCare.healthCareDataBase.Dtos.WebSocketNotificationDto;
 import com.healthCare.healthCareDataBase.Model.Doctor;

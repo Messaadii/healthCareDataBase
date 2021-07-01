@@ -40,13 +40,6 @@ public class SpecialityController {
 		}	
 	}
 	
-	@DeleteMapping(value="deleteByDoctorId/{docId}")
-	@Transactional
-	public boolean deleteByDoctorId(@PathVariable(name="docId") Integer docId) {
-		specialityRepository.deleteByDocorId(docId);
-		return true;
-	}
-	
 	@GetMapping(value="/test/{docId}")
 	public Integer test(@PathVariable("docId") Integer docId) {
 		return specialityRepository.getSpecialityCodeByDoctorId(docId);

@@ -9,9 +9,6 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
@@ -33,7 +30,6 @@ public class Doctor extends User{
 		this.doctorRate = 0;
 		this.doctorStatus = doctorStatus;
 		this.currentPatient = 0;
-		this.speciality = new ArrayList<Speciality>();
 		this.appointment = new ArrayList<Appointment>();
 	}
 
@@ -51,6 +47,9 @@ public class Doctor extends User{
 	
 	@Column(name="doctorRate")
 	private double doctorRate;
+	
+	@Column(name="specialityId")
+	private Long specialityId;
 	
 	@Column(name="doctorStatus")
 	private String doctorStatus;
@@ -81,10 +80,6 @@ public class Doctor extends User{
 	
 	@Column(name="doctorLongitude")
 	private String doctorLongitude;
-	
-	@ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinTable(name = "doctor_speciality",joinColumns = { @JoinColumn(name = "doctor_id", referencedColumnName = "user_id") },inverseJoinColumns = { @JoinColumn(name = "speciality_id", referencedColumnName = "specialityId") })
-	private  List<Speciality> speciality;
 	
 	@OneToMany(targetEntity=Appointment.class, mappedBy="doctorId",cascade=CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Appointment> appointment;
@@ -124,6 +119,14 @@ public class Doctor extends User{
 	public String getDoctorLastName() {
 		return doctorLastName;
 	}
+	
+	public Long getSpecialityId() {
+		return specialityId;
+	}
+
+	public void setSpecialityId(Long specialityId) {
+		this.specialityId = specialityId;
+	}
 
 	public void setDoctorLastName(String doctorLastName) {
 		this.doctorLastName = doctorLastName;
@@ -135,14 +138,6 @@ public class Doctor extends User{
 
 	public void setDoctorRate(double doctorRate) {
 		this.doctorRate = doctorRate;
-	}
-
-	public List<Speciality> getSpeciality() {
-		return speciality;
-	}
-
-	public void setSpeciality(List<Speciality> speciality) {
-		this.speciality = speciality;
 	}
 
 	public String getStartTime() {
