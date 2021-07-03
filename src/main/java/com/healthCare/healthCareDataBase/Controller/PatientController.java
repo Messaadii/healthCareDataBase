@@ -25,7 +25,6 @@ import com.healthCare.healthCareDataBase.Dtos.GetMyUsersRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.GetMyUsersWithPag;
 import com.healthCare.healthCareDataBase.Dtos.GetUserIdDto;
 import com.healthCare.healthCareDataBase.Dtos.GetWeightValuesDto;
-import com.healthCare.healthCareDataBase.Dtos.OneString;
 import com.healthCare.healthCareDataBase.Dtos.PatientGetDto;
 import com.healthCare.healthCareDataBase.Dtos.UpdateMedicalProfileIdRequest;
 import com.healthCare.healthCareDataBase.Model.OldData;
@@ -38,7 +37,7 @@ import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
 import com.healthCare.healthCareDataBase.Repository.UserRepository;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin
 @RestController
 @RequestMapping(value="/api/patient")
 public class PatientController {
@@ -152,18 +151,17 @@ public class PatientController {
 	
 	@PostMapping(value="getHeightValues")
 	public List<GetHeightValuesDto> getHeightValues(@RequestBody final GetHeightValuesRequestDto data){
-		List<GetHeightValuesDto> list =patientRepository.getHeightValues(data.getSecureLogin());
-
-		list.add(patientRepository.getCurrentHeight(data.getSecureLogin()));
+		List<GetHeightValuesDto> list =patientRepository.getHeightValues(data.getUserId());
+		list.add(patientRepository.getCurrentHeight(data.getUserId()));
 		
 		return list;
 	}
 	
 	@PostMapping(value="getWeightValues")
 	public List<GetWeightValuesDto> getWeightValues(@RequestBody final GetHeightValuesRequestDto data){
-		List<GetWeightValuesDto> list =patientRepository.getWeightValues(data.getSecureLogin());
+		List<GetWeightValuesDto> list =patientRepository.getWeightValues(data.getUserId());
 
-		list.add(patientRepository.getCurrentWeight(data.getSecureLogin()));
+		list.add(patientRepository.getCurrentWeight(data.getUserId()));
 		
 		return list;
 	}
