@@ -37,11 +37,15 @@ public class ValidationController {
 	
 	@PostMapping(value="/add") 
 	public boolean add(@RequestBody final Validation validation) {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Calendar cal = Calendar.getInstance();
-		validation.setValidationDate(dateFormat.format(cal.getTime()));
-		validationRepository.save(validation);
-		return true;
+		if("approved".equals(validation.getValidationDecision()) || validationRepository.checkIfAdminAlreadyValidateUser(validation.getUserId(),validation.getValidateBy()) == false) {
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			Calendar cal = Calendar.getInstance();
+			validation.setValidationDate(dateFormat.format(cal.getTime()));
+			validationRepository.save(validation);
+			return true;
+		}
+		else
+			return false;
 	}
 	
 	@GetMapping(value="/checkIfUserValidated/{email}")
