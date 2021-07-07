@@ -139,11 +139,12 @@ public interface SecretaryRepository extends JpaRepository<Secretary,Long>{
 			+ " a.appointment_id as appointmentId,"
 			+ " a.appointment_date as appointmentDate,"
 			+ " a.appointment_status as appointmentStatus"
-			+ " from appointment a, patients p, secretaries s"
+			+ " from appointment a, patients p, secretaries s, users u"
 			+ " where s.user_id = ?2"
 			+ " and a.doctor_id = s.doctor_id"
 			+ " and a.appointment_id = ?1"
-			+ " and p.user_id = a.patient_id",nativeQuery=true)
+			+ " and p.user_id = a.patient_id"
+			+ " and u.user_id = p.user_id",nativeQuery=true)
 	GetUncofirmedAppReturnDto getAppointmentInfoById(long appointmentId, long secretaryId);
 
 	@Modifying

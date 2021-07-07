@@ -26,4 +26,7 @@ public interface CommentRepository extends JpaRepository<Comment,Long> {
 	@Query(value="update comment c set c.comment_points = (c.comment_points-1) where c.comment_id=?1",nativeQuery=true)
 	void decrementQuestionPointById(Long postId);
 
+	@Query(value="select q.post_by from question q where q.question_id=?1",nativeQuery=true)
+	long getPosterIdByPostId(Long postId);
+
 }

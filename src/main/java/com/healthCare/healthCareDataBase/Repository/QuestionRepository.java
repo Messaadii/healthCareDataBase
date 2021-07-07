@@ -14,8 +14,7 @@ import com.healthCare.healthCareDataBase.Model.Question;
 public interface QuestionRepository extends JpaRepository<Question,Long> {
 
 	@Query(value="select * from question q"
-			+ " where if(?2 = 'all',if(?1 = 'all', q.question_name != '',q.question_name = ?1),q.question_name like ?2 or q.question like ?2)"
-			+ " ",nativeQuery=true)
+			+ " where if(?2 = 'all',if(?1 = 'all', q.question_name != '',q.question_name = ?1),q.question_name like ?2 or q.question like ?2)",nativeQuery=true)
 	List<Question> getQuestionsByType(String type,String words, Pageable pageable);
 
 	@Modifying
@@ -36,5 +35,8 @@ public interface QuestionRepository extends JpaRepository<Question,Long> {
 			+ " group by q.question_name"
 			+ " order by count(q.question_name) desc limit 15",nativeQuery=true)
 	List<String> getQuestionsTypes();
+
+	@Query(value="select * from question q where q.question_id = ?1",nativeQuery=true)
+	Question getQuestionById(long id);
 
 }

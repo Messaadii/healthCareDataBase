@@ -296,6 +296,22 @@ public class DoctorController {
 				}else
 					break;
 			}
+			
+			Notification appCompleted = new Notification();
+			WebSocketNotificationDto webSocketAppCompleted = new WebSocketNotificationDto();
+			
+			
+			AppUsersInfoDto usersInfo = appointmentRepository.getUsersInfoByAppDayAndTurnAndDocDocId(dateFormat.format(cal.getTime()),(data.getPatientTurn() - 1),data.getDoctorId());
+			
+			appCompleted.setNotificationType("patientAppCompleted");
+			appCompleted.setNotificationParameter(usersInfo.getAppointmentId()+"");
+				
+			webSocketAppCompleted.setData(usersInfo.getDoctorFirstName()+" "+usersInfo.getDoctorLastName());
+			webSocketAppCompleted.setType("notification");
+			webSocketAppCompleted.setNotification(appCompleted);
+
+			template.convertAndSend("/topic/notification/"+usersInfo.getPatientId(),webSocketAppCompleted);
+			
 		}
 		
 		return true;

@@ -166,6 +166,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/patient/getMyPharmacies").hasAuthority("PATIENT_ROLE")
 			.antMatchers("/api/rate/add").hasAuthority("PATIENT_ROLE")
 			.antMatchers("/api/question/getQuestionsTypes").hasAnyAuthority("PATIENT_ROLE","DOCTOR_ROLE","PHARMACIST_ROLE","SECRETARY_ROLE")
+			.antMatchers("/api/question/getQuestionById/**").hasAuthority("PATIENT_ROLE")
 			.anyRequest().authenticated();
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
