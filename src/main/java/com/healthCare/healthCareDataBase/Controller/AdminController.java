@@ -106,14 +106,18 @@ public class AdminController {
 	
 	@PostMapping(value="/changeAdminPosition")
 	public boolean changeAdminPosition(@RequestBody ChangeAdminPositionDto data) {
-		adminRepository.changeAdminPosition(data.getUserId(),data.getPosition());
-		
-		WebSocketNotificationDto webSocket = new WebSocketNotificationDto();
-		webSocket.setData(userRepository.getUsernameByUserid(data.getAdminId()));
-		webSocket.setType("changePositionTo"+data.getPosition());
-		template.convertAndSend("/topic/notification/"+data.getUserId(),webSocket);
-		
-		return true;
+		if(("observer".equals(data.getPosition()) || "delete".equals(data.getPosition())) && adminRepository.countSupervisorsNumber() <= 1) {
+			return false;
+		}else {
+			adminRepository.changeAdminPosition(data.getUserId(),data.getPosition());
+			
+			WebSocketNotificationDto webSocket = new WebSocketNotificationDto();
+			webSocket.setData(userRepository.getUsernameByUserid(data.getAdminId()));
+			webSocket.setType("changePositionTo"+data.getPosition());
+			template.convertAndSend("/topic/notification/"+data.getUserId(),webSocket);
+			
+			return true;
+		}
 	}
 	
 	@Modifying

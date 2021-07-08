@@ -59,4 +59,8 @@ public interface AdminRepository extends JpaRepository<Admin, Long>{
 			+ " where a.user_id = ?1",nativeQuery=true)
 	void changePharmacyStatusById(Long user_id, String status);
 
+	@Query(value="select count(*) from admins a"
+			+ " where a.admin_position = 'supervisor'",nativeQuery=true)
+	int countSupervisorsNumber();
+
 }
