@@ -14,8 +14,6 @@ import javax.validation.constraints.Size;
 @DiscriminatorValue("admin")
 public class Admin extends User{
 	
-	
-	
 	public Admin(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 120) String password, String city,
 			Set<Role> roles, String creationDate, String adminFullName) {
 		super(username, password, city, roles, creationDate);
@@ -24,6 +22,9 @@ public class Admin extends User{
 
 	@Column(name="adminFullName")
 	private String adminFullName;
+	
+	@Column(name="adminPosition")
+	private String adminPosition;
 
 	public String getAdminFullName() {
 		return adminFullName;
@@ -31,6 +32,14 @@ public class Admin extends User{
 
 	public void setAdminFullName(String adminFullName) {
 		this.adminFullName = adminFullName;
+	}
+
+	public String getAdminPosition() {
+		return adminPosition;
+	}
+
+	public void setAdminPosition(String adminPosition) {
+		this.adminPosition = adminPosition;
 	}
 
 	public Admin() {

@@ -2,7 +2,7 @@ package com.healthCare.healthCareDataBase.Dtos;
 
 import org.springframework.beans.factory.annotation.Value;
 
-public interface AdminGetDto {
+public interface AdminsDto {
 
 	@Value("#{target.user_id}")
 	Long getUserId();
@@ -12,5 +12,6 @@ public interface AdminGetDto {
 	String getUserCity();
 	@Value("#{target.user_username}")
 	String getUserUsername();
+	String getCreationDate();
 	String getAdminPosition();
 }

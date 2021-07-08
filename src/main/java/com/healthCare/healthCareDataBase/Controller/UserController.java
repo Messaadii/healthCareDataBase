@@ -23,6 +23,7 @@ import com.healthCare.healthCareDataBase.Dtos.TwoStrings;
 import com.healthCare.healthCareDataBase.Dtos.UpdatePasswordRequestDto;
 import com.healthCare.healthCareDataBase.Dtos.UpdateUserPasswordByEmailDto;
 import com.healthCare.healthCareDataBase.Dtos.UserTypeAndUserIdDto;
+import com.healthCare.healthCareDataBase.Repository.AdminRepository;
 import com.healthCare.healthCareDataBase.Repository.DoctorRepository;
 import com.healthCare.healthCareDataBase.Repository.PatientRepository;
 import com.healthCare.healthCareDataBase.Repository.PharmacyRepository;
@@ -51,6 +52,9 @@ public class UserController {
 	
 	@Autowired
 	SecretaryRepository secretaryRepository;
+	
+	@Autowired
+	AdminRepository adminRepository;
 	
 	@GetMapping(value="/existsByUsername/{username}")
 	public boolean existsByUsername(@PathVariable("username") final String username) {
@@ -103,8 +107,13 @@ public class UserController {
 				return true;
 			else
 				return false;
-		} else {
+		} else if ("pharmacist".equals(userType)){
 			if(data.getVerificationCode().equals(pharmacyRepository.getVerificationCodeByEmail(data.getUserEmail())))
+				return true;
+			else
+				return false;
+		} else {
+			if(data.getVerificationCode().equals(adminRepository.getVerificationCodeByEmail(data.getUserEmail())))
 				return true;
 			else
 				return false;
@@ -122,6 +131,8 @@ public class UserController {
 			  pharmacyRepository.changePharmacyStatusById(userType.getUser_id(),data.getStatus());
 		else if ("secretary".equals(userType.getUser_type()))
 			secretaryRepository.changePharmacyStatusById(userType.getUser_id(),data.getStatus());
+		else if ("admin".equals(userType.getUser_type()))
+			adminRepository.changePharmacyStatusById(userType.getUser_id(),data.getStatus());
 		return true;
 	}
 
