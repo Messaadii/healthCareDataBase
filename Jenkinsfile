@@ -21,7 +21,7 @@ pipeline {
           stage ('run docker image'){
           steps{
         	
-        	bat "docker run -p 8085:8080 -d moohamedd/jenkins_test_ci_back:v1 ."
+        	bat "docker run -p 8086:8080 -d moohamedd/jenkins_test_ci_back:v1 ."
     }}
 
     stage ('Push docker image'){
